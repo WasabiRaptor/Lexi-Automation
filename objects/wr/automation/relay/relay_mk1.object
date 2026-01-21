@@ -1,0 +1,57 @@
+{
+  "objectName" : "wr/relay_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "",
+  "shortdescription" : "Matter Relay",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["relay.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "relay.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [0, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaces" : [
+        [0,0], [1,0]
+      ]
+    },
+    {
+      "image" : "relay.png:default",
+      "direction" : "right",
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [0, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaces" : [
+        [0,0], [1,0]
+      ]
+    }
+  ],
+
+  "inputNodes" : [ [0, 1] ],
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }],
+  "outputNodes" : [ [0, 0] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+
+}

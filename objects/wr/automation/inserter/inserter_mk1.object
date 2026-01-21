@@ -1,0 +1,52 @@
+{
+  "objectName" : "wr/inserter_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "",
+  "shortdescription" : "Matter Inserter",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["inserter.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "inserter.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaces" : [
+        [0,0], [0,1]
+      ]
+    },
+    {
+      "image" : "inserter.png:default",
+      "direction" : "right",
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [0, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaces" : [
+        [0,0], [0,1]
+      ]
+    }
+  ],
+
+  "inputNodes" : [ [0, 1] ],
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }]
+
+}

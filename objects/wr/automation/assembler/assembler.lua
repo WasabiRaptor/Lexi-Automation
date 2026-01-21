@@ -1,3 +1,5 @@
+require("/objects/wr/automation/wr_automation.lua")
+
 local recipe
 local outputCount
 local inputs
@@ -11,6 +13,7 @@ function init()
         refreshOutput(true)
         return true
     end)
+    inputs = config.getParameter("matterStreamInput")
     message.setHandler("refreshInputs", function (_,_)
         refreshOutput()
     end)
@@ -21,61 +24,16 @@ function refreshOutput(force)
     if (not recipe) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
         object.setOutputNodeLevel(0, false)
         object.setConfigParameter("matterStreamOutput", nil)
+        inputs = nil
+        object.setConfigParameter("matterStreamInput", nil)
         return
     end
-    local inputNodes = object.getInputNodeIds(0)
     local outputNodes = object.getOutputNodeIds(0)
     local newOutputCount = 0
     for _, _ in pairs(outputNodes) do
         newOutputCount = newOutputCount + 1
     end
-
-    local newInputs = {}
-    for eid, index in pairs(inputNodes) do
-        if world.entityExists(eid) then
-            for i, newInput in ipairs((world.getObjectParameter(eid, "matterStreamOutput") or {})[index + 1] or {}) do
-                newInput.count = newInput.count or 0
-                local isNew = true
-                for j, input in ipairs(newInputs) do
-                    if root.itemDescriptorsMatch(input, newInput, recipe.matchInputParameters) then
-                        isNew = false
-                        input.count = input.count + newInput.count
-                        break
-                    end
-                end
-                if isNew then
-                    newInput.used = false
-                    for _, input in ipairs(recipe.input) do
-                        if root.itemDescriptorsMatch(input, newInput, recipe.matchInputParameters) then
-                            newInput.used = true
-                            break
-                        end
-                    end
-                    table.insert(newInputs, newInput)
-                end
-            end
-        end
-    end
-    for _, recipeItem in ipairs(recipe.input) do
-        local recieved = false
-        for _, inputItem in ipairs(newInputs) do
-            if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
-                recieved = true
-                break
-            end
-        end
-        if not recieved then
-            table.insert(newInputs, sb.jsonMerge(recipeItem, {count = 0, used = true}))
-        end
-    end
-
-    table.sort(newInputs, function(a, b)
-        if a.used == b.used then
-            return (a.name or a.item) < (b.name or b.item)
-        else
-            return a.used
-        end
-    end)
+    local newInputs = wr_automation.countInputs(recipe)
     if (not force) and sb.jsonEqual(newInputs, inputs) and (newOutputCount == outputCount) then return end
     object.setConfigParameter("matterStreamInput", newInputs)
     inputs = newInputs

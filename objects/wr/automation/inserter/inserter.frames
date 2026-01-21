@@ -1,0 +1,13 @@
+{
+
+  "frameGrid" : {
+    "size" : [16, 16],
+    "dimensions" : [7, 1],
+    "names" : [
+      [ "inactive.1", "active.1", "insert.1", "insert.2", "insert.3", "insert.4", "insert.5" ]
+    ]
+  },
+  "aliases" : {
+    "default" : "active.1"
+  }
+}
