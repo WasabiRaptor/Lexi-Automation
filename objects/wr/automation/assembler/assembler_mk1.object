@@ -1,0 +1,61 @@
+{
+  "objectName" : "wr/assembler_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "",
+  "shortdescription" : "Matter Assembler MK1",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["assembler.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "assembler.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    },
+    {
+      "image" : "assembler.png:default",
+      "direction" : "right",
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    }
+  ],
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
+  "filter" : ["craftinganvil"],
+
+  "minimumDuration" : 1, // the minimum duration to craft a recipe
+  "craftingSpeed" : 1, // the amount of times it crafts a recipe per cycle
+
+  "inputNodes" : [ [0, 0] ],
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }],
+  "outputNodes" : [ [1, 0] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+
+}

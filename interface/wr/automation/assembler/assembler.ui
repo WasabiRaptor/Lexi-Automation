@@ -1,0 +1,57 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [320, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [320, 256],
+
+	"title" : "Assembler",
+	"icon" : "/objects/wr/automation/assembler/icon.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "assembler.lua" ],
+	"children" : [
+        {"mode" : "h"},
+      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+            {"mode" : "v"},
+            {"type":"label","text":"Current Recipe", "align" : "center"},
+            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
+                {"mode" : "h"},
+                {"type": "itemSlot", "id" : "outputSlot", "autoInteract" : false, "glyph" : "output.png"},
+                [
+                    {"type": "label", "id" : "outputLabel", "text" : ""},
+                    [
+                        {"type": "label", "text": "0", "color" : "FF0000", "id" : "productionRate", "inline" : true},
+                        {"type": "label", "text": "/", "inline" : true},
+                        {"type": "label", "text": "0", "id" : "maxProductionRate", "inline" : true},
+                        {"type": "label", "text":"Per Second", "inline" : true}
+                    ]
+                ]
+            ]},
+            {"type":"label","text":"Ingredients", "align" : "center"},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+
+        ]},
+      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+            {"mode" : "v"},
+            {"type":"label","text":"Find Recipe", "align" : "center"},
+            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
+                {"mode" : "h"},
+                {"type": "itemSlot", "id" : "craftingStationSlot", "autoInteract" : true, "glyph" : "crafting.png", "toolTip" : "Crafting Station"},
+                {"type": "itemSlot", "id" : "craftingAddonSlot", "autoInteract" : true, "glyph" : "crafting.png", "toolTip" : "Crafting Addon", "visible" : false},
+                {"type": "itemSlot", "id" : "craftingItemSlot", "autoInteract" : true, "glyph" : "output.png", "toolTip" : "Output Item"},
+                {"type": "textBox", "id" : "searchBox", "caption" : "Search Recipes..."}
+            ]},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "recipeSearchScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+
+        ]}
+	]
+}

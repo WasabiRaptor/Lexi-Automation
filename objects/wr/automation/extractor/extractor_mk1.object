@@ -1,0 +1,54 @@
+{
+  "objectName" : "wr/extractor_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "",
+  "shortdescription" : "Matter Extractor MK1",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["extractor.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "extractor.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    },
+    {
+      "image" : "extractor.png:default",
+      "direction" : "right",
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    }
+  ],
+  "outputNodes" : [ [0, 0] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }],
+  "matterStreamOutput" : [
+    [
+      { "name" : "ironore", "count" : 1}
+    ]
+  ]
+
+}
