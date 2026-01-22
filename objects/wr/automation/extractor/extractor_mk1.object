@@ -15,40 +15,37 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "extractor.png:default",
+      "image" : "extractor.png:active.<frame>",
       "direction" : "left",
       "flipImages" : true,
 
-      "imagePosition" : [-8, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "imagePosition" : [-16, 0],
+      "frames" : 8,
+      "animationCycle" : 0.8,
 
       "spaceScan" : 0.1,
       "anchors" : [ "bottom" ],
       "collision" : "platform"
     },
     {
-      "image" : "extractor.png:default",
+      "image" : "extractor.png:active.<frame>",
       "direction" : "right",
 
-      "imagePosition" : [-8, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "imagePosition" : [-24, 0],
+      "frames" : 8,
+      "animationCycle" : 0.8,
 
       "spaceScan" : 0.1,
       "anchors" : [ "bottom" ],
       "collision" : "platform"
     }
   ],
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:extractor" },
+
   "outputNodes" : [ [0, 0] ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/output.png"
-  }],
-  "matterStreamOutput" : [
-    [
-      { "name" : "ironore", "count" : 1}
-    ]
-  ]
-
+  }]
 }

@@ -2,7 +2,7 @@
 	"style" : "window", // window (has titlebar), panel (just a frame) etc.
 	"size" : [320, 256], // *internal* size (not including chrome)
 	"resizable" : true,
-	"minSize" : [320, 256],
+	"minSize" : [320, 128],
 
 	"title" : "Assembler",
 	"icon" : "/objects/wr/automation/assembler/icon.png",

@@ -10,17 +10,17 @@ function init()
         if compare(recipe, newRecipe) then return false end
         recipe = newRecipe
         object.setConfigParameter("recipe", newRecipe)
-        refreshOutput(true)
+        setOutput(true)
         return true
     end)
     inputs = config.getParameter("matterStreamInput")
     message.setHandler("refreshInputs", function (_,_)
-        refreshOutput()
+        setOutput()
     end)
 end
 
 
-function refreshOutput(force)
+function setOutput(force)
     if (not recipe) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
         object.setOutputNodeLevel(0, false)
         object.setConfigParameter("matterStreamOutput", nil)
@@ -76,8 +76,8 @@ function refreshOutput(force)
 
 end
 function onInputNodeChange()
-    refreshOutput()
+    setOutput()
 end
 function onNodeConnectionChange()
-    refreshOutput()
+    setOutput()
 end

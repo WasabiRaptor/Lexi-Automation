@@ -4,20 +4,21 @@
 	"resizable" : true,
 	"minSize" : [160, 128],
 
-	"title" : "Splitter",
-	"icon" : "/objects/wr/automation/splitter/icon.png",
+	"title" : "Extractor",
+	"icon" : "/objects/wr/automation/extractor/icon.png",
 	"uniqueBy" : "path",
-	"scripts" : [ "splitter.lua" ],
+	"scripts" : [ "extractor.lua" ],
 	"children" : [
         {"mode" : "v"},
       	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
             {"mode" : "v"},
             {"type":"panel","style":"concave","expandMode":[1,1],"children":[
                 {"mode" : "v"},
-                { "type" : "scrollArea", "id" : "splitterScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+                { "type" : "scrollArea", "id" : "extractorScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
                 ]}
-            ]}
+            ]},
+			{"type":"button", "color" : "FF0000", "id" : "resetOutput", "caption" : "Reset", "toolTip" : "Reset resource extraction rates.\nOnly use this if a mod has added or removed resources from this planet's biomes."}
         ]}
     ]
 }

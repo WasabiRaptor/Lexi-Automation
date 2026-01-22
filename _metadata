@@ -9,7 +9,8 @@
 		"StardustLib", "Stardust Core", "QuickbarMini", "Stardust Core Lite"
 	],
 	"scripts" : {
-		"onLoad" : []
+		"onLoad" : [],
+		"postLoad" : ["/scripts/wr/automation/postload.lua"]
 	}
 
 }
