@@ -1,5 +1,7 @@
 [ // in file: /metagui/registry.json.patch
 	{ "op" : "add", "path" : "/panes/wr_automation", "value" : {
-		"assembler" : "/interface/wr/automation/assembler/build.lua"
+		"assembler" : "/interface/wr/automation/assembler/build.lua",
+		"splitter" : "/interface/wr/automation/splitter/build.lua"
+
 	}}
 ]

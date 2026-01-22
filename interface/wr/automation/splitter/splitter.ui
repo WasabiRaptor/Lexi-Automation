@@ -1,0 +1,23 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [160, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [160, 256],
+
+	"title" : "Splitter",
+	"icon" : "/objects/wr/automation/splitter/icon.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "splitter.lua" ],
+	"children" : [
+        {"mode" : "v"},
+      	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
+            {"mode" : "v"},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "splitterScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+        ]}
+    ]
+}

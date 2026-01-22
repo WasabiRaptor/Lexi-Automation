@@ -31,7 +31,7 @@ function refreshOutput(force)
         newOutputCount = newOutputCount + 1
     end
     local newInputs = wr_automation.countInputs()
-    if (not force) and sb.jsonEqual(newInputs, inputs) and (newOutputCount == outputCount) then return end
+    if (not force) and compare(newInputs, inputs) and (newOutputCount == outputCount) then return end
     object.setConfigParameter("matterStreamInput", newInputs)
     inputs = newInputs
     outputCount = newOutputCount
@@ -39,9 +39,11 @@ function refreshOutput(force)
     -- count the number of entities the output is connected to so it's split evenly between them
     local output = {}
     for _, v in ipairs(inputs) do
-        table.insert(output, sb.jsonMerge(v, {count = v.count / outputCount}))
+        local outputItem = copy(v)
+        outputItem.count = outputItem.count / math.max(1, outputCount)
+        table.insert(output, outputItem)
     end
-    if sb.jsonEqual(config.getParameter("matterStreamOutput"), {output}) then return end
+    if compare(config.getParameter("matterStreamOutput"), {output}) then return end
 
     object.setOutputNodeLevel(0, true)
     object.setConfigParameter("matterStreamOutput", {output})

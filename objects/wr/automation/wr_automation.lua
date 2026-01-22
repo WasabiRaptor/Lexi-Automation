@@ -1,7 +1,8 @@
+require("/interface/games/util.lua")
 wr_automation = {}
-function wr_automation.countInputs(recipe)
+function wr_automation.countInputs(nodeIndex, recipe)
     local recipe = recipe or {matchInputParameters = true, input = {}}
-    local inputNodes = object.getInputNodeIds(0)
+    local inputNodes = object.getInputNodeIds(nodeIndex or 0)
     local inputs = {}
     for eid, index in pairs(inputNodes) do
         if world.entityExists(eid) then

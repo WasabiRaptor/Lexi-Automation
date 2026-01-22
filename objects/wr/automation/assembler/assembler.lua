@@ -7,7 +7,7 @@ function init()
     script.setUpdateDelta(0)
     recipe = config.getParameter("recipe")
     message.setHandler("setRecipe", function(_, _, newRecipe)
-        if sb.jsonEqual(recipe, newRecipe) then return false end
+        if compare(recipe, newRecipe) then return false end
         recipe = newRecipe
         object.setConfigParameter("recipe", newRecipe)
         refreshOutput(true)
@@ -33,8 +33,8 @@ function refreshOutput(force)
     for _, _ in pairs(outputNodes) do
         newOutputCount = newOutputCount + 1
     end
-    local newInputs = wr_automation.countInputs(recipe)
-    if (not force) and sb.jsonEqual(newInputs, inputs) and (newOutputCount == outputCount) then return end
+    local newInputs = wr_automation.countInputs(0, recipe)
+    if (not force) and compare(newInputs, inputs) and (newOutputCount == outputCount) then return end
     object.setConfigParameter("matterStreamInput", newInputs)
     inputs = newInputs
     outputCount = newOutputCount
@@ -55,16 +55,17 @@ function refreshOutput(force)
             end
         end
     end
-    local producing = productionRate * (recipe.output.count or 1)
+    local outputItem = copy(recipe.output)
+    outputItem.count = productionRate * (outputItem.count or 1)
+    object.setConfigParameter("producing", outputItem)
     if productionRate > 0 then
         -- count the number of entities the output is connected to so it's split evenly between them
-        local output = {
-            {sb.jsonMerge(recipe.output, {count = producing / outputCount})}
-        }
-        if sb.jsonEqual(config.getParameter("matterStreamOutput"), output) then return end
+        outputItem.count = outputItem.count / math.max(1, outputCount)
+
+        if compare(config.getParameter("matterStreamOutput"), {{outputItem}}) then return end
 
         object.setOutputNodeLevel(0, true)
-        object.setConfigParameter("matterStreamOutput", output)
+        object.setConfigParameter("matterStreamOutput", {{outputItem}})
         for eid, _ in pairs(outputNodes) do
             world.sendEntityMessage(eid, "refreshInputs")
         end

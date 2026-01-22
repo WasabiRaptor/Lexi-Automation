@@ -69,7 +69,7 @@ function refreshOutput(force)
         return
     end
     local newInputs = wr_automation.countInputs()
-    if sb.jsonEqual(newInputs, inputs) then return end
+    if compare(newInputs, inputs) then return end
     object.setConfigParameter("matterStreamInput", newInputs)
     inputs = newInputs
     local mode = config.getParameter("insertMode")

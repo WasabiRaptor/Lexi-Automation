@@ -86,7 +86,9 @@
 		"interface",
 		"preservedStorage",
 		"copyArray",
-		"chat"
+		"chat",
+		"copy",
+		"compare"
 	],
 	"Lua.diagnostics.disable": [
 		"lowercase-global",
