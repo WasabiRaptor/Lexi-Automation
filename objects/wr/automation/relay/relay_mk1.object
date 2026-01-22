@@ -43,12 +43,12 @@
     }
   ],
 
-  "inputNodes" : [ [0, 1] ],
+  "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/input.png"
   }],
-  "outputNodes" : [ [0, 0] ],
+  "outputNodes" : [ [0, 1] ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/output.png"
