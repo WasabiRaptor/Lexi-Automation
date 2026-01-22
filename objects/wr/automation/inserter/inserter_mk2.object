@@ -1,13 +1,13 @@
 {
-  "objectName" : "wr/inserter_mk1",
+  "objectName" : "wr/inserter_mk2",
   "colonyTags" : [],
   "printable" : false,
   "rarity" : "Common",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Inserts items from a matter stream into inventories it is attached to.\nInserts at the rate of it's slowest input.",
-  "shortdescription" : "Matter Inserter MK1",
+  "description" : "Inserts items from a matter stream into inventories it is attached to.\nInserts at the rate of it's fastest input.",
+  "shortdescription" : "Matter Inserter MK2",
   "race" : "generic",
   "health" : 1.5,
 
@@ -42,6 +42,7 @@
       ]
     }
   ],
+  "insertMode" : "fast",
 
   "inputNodes" : [ [0, 1] ],
   "inputNodesConfig" : [{
