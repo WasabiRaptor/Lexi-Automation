@@ -1,0 +1,53 @@
+{
+  "itemName" : "wr/ore_scanner",
+  "price" : 2500,
+  "maxStack" : 1,
+  "rarity" : "rare",
+  "description" : "Emits pulses to find resource veins for Matter Extractors.\n^green;Shift Click^reset; to search for a specific vein.",
+  "shortdescription" : "Resource Vein Scanner",
+  "twoHanded" : false,
+  "category" : "Tool",
+  "itemTags" : ["tool"],
+
+  "inventoryIcon" : "icon.png",
+  "animation" : "ore_scanner.animation",
+  "animationParts" : {
+    "detector" : "ore_scanner.png",
+    "detectorfullbright" : "ore_scanner_fullbright.png"
+  },
+  "animationCustom" : {},
+
+  "animationScripts" : ["ore_scanner_animation.lua"],
+  "animationDelta" : 5,
+
+  "scripts" : ["ore_scanner.lua"],
+  "scriptDelta" : 1,
+
+  "pingDetectConfig" : {
+    "image" : "/items/wr/automation/ore_scanner/detectnoise.png:<variant>",
+    "variants" : 4,
+    "edge" : 3,
+    "colors" : {
+      "coal" : [0, 0, 0, 255],
+      "corefragment" : [217, 46, 0, 255],
+
+      "copper" : [80, 80, 40, 255],
+      "silver" : [200, 200, 230, 255],
+      "gold" : [200, 180, 30, 255],
+      "iron" : [160, 160, 160, 255],
+      "tungsten" : [120, 120, 120, 255],
+      "titanium" : [255, 255, 255, 255],
+      "durasteel" : [90, 90, 200, 255],
+      "aegisalt" : [200, 255, 50, 255],
+      "violium" : [200, 70, 255, 255],
+      "ferozium" : [50, 230, 230, 255],
+      "solarium" : [255, 255, 0, 255],
+      "diamond" : [0, 0, 255, 255],
+      "erchius" : [235, 178, 247, 255],
+      "none" : [120, 160, 120, 50]
+    }
+  },
+
+  "pingRange" : 30,
+  "pingSpeed" : 12
+}

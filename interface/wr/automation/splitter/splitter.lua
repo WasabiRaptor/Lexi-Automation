@@ -17,7 +17,7 @@ end
 
 function displayInputs()
     _ENV.splitterScrollArea:clearChildren()
-
+    local rand = sb.makeRandomSource()
     for _, input in ipairs(inputs) do
         local leftTarget
         local rightTarget
@@ -45,6 +45,7 @@ function displayInputs()
         end
 
         local itemConfig = root.itemConfig(input)
+        local hash = rand:randu32()
         local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
         _ENV.splitterScrollArea:addChild({
             type = "panel",
@@ -73,19 +74,19 @@ function displayInputs()
                             {{ type = "image", file = "/interface/wr/automation/output.png?hueshift=20" }},
                         },
                         {
-                            { type = "textBox", align = "center", id = "leftTextBox" },
+                            { type = "textBox", align = "center", id = "leftTextBox"..hash },
                             { type = "label",   align = "center", text = "-", inline = true },
-                            { type = "label",   align = "center", text = tostring(math.max(0, input.count - leftTarget.count - rightTarget.count)), id = "centerCountLabel" },
+                            { type = "label",   align = "center", text = tostring(math.max(0, input.count - leftTarget.count - rightTarget.count)), id = "centerCountLabel"..hash },
                             { type = "label",   align = "center", text = "-", inline = true },
-                            { type = "textBox", align = "center", id = "rightTextBox" },
+                            { type = "textBox", align = "center", id = "rightTextBox"..hash },
                         },
                     }
                 }
             },
         })
-        local leftTextBox = _ENV.leftTextBox
-        local rightTextBox = _ENV.rightTextBox
-        local centerCountLabel = _ENV.centerCountLabel
+        local leftTextBox = _ENV["leftTextBox"..hash]
+        local rightTextBox = _ENV["rightTextBox"..hash]
+        local centerCountLabel = _ENV["centerCountLabel"..hash]
         function leftTextBox:onTextChanged()
             local number = tonumber(self.text)
             if number and (number >= 0) then

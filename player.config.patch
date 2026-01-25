@@ -1,0 +1,5 @@
+[
+    [
+        {"op":"add", "path":"/genericScriptContexts/wr_automation", "value" : "/scripts/wr/automation/player.lua"}
+    ]
+]

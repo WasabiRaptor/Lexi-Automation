@@ -6,6 +6,7 @@
 	"name" : "wr_automation",
 	"friendlyName" : "Lexi's Automation Mod",
 	"includes" : [
+		"base",
 		"StardustLib", "Stardust Core", "QuickbarMini", "Stardust Core Lite"
 	],
 	"scripts" : {
