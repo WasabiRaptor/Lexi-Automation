@@ -1,24 +1,24 @@
 {
-  "objectName" : "wr/extractor_mk1",
+  "objectName" : "wr/burner_mining_drill",
   "colonyTags" : [],
   "printable" : false,
-  "rarity" : "rare",
+  "rarity" : "Common",
+  "objectType" : "container",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Extracts a constant matter stream of raw resources from a planet.",
-  "shortdescription" : "Matter Extractor MK1",
+  "description" : "An ineffecient mining drill that burns coal to operate.",
+  "shortdescription" : "Burner Mining Drill",
   "race" : "generic",
   "health" : 1.5,
 
-  "scripts" : ["extractor.lua"],
+  "scripts" : ["burner_mining_drill.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
       "imageLayers" : [
         {"image":"animationParts/frame/back.png:default"},
         {"image":"animationParts/big_manipulator.png:default"},
-        {"image":"animationParts/beam.png:default", "fullbright":true},
         {"image":"animationParts/frame/front.png:default"}
       ],
       "direction" : "left",
@@ -35,7 +35,6 @@
       "imageLayers" : [
         {"image":"animationParts/frame/back.png:default"},
         {"image":"animationParts/big_manipulator.png:default"},
-        {"image":"animationParts/beam.png:default", "fullbright":true},
         {"image":"animationParts/frame/front.png:default"}
       ],
       "direction" : "right",
@@ -48,23 +47,33 @@
       "collision" : "platform"
     }
   ],
-  "animation" : "extractor.animation",
+  "animation" : "burner_mining_drill.animation",
   "animationParts" : {
     "back" : "animationParts/frame/back.png",
     "extractor" : "animationParts/big_manipulator.png",
-    "beam" : "animationParts/beam.png",
     "front" : "animationParts/frame/front.png"
   },
 
-  "interactAction" : "ScriptPane",
-  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:extractor" },
+  "fuelvalues" : {
+    "coalore" : 10,
+    "corefragmentore" : 100
+  },
 
-  "multiplier" : 1, // for ores mined at the position it's placed at
+  "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
+  "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
+  "slotCount" : 24,
+  "frameCooldown" : 5,
+  "autoCloseCooldown" : 3600,
+
+  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:burner_mining_drill",
+
+  "maxFuel" : 3600,
+
+  "multiplier" : 0.75, // for ores mined at the position it's placed at
   "columnMultiplier": 0.01, // for all ores in the column beneath it
 
-  "outputNodes" : [ [0, 0] ],
+  "outputNodes" : [ [0, 1] ],
   "outputNodesConfig" : [{
-    "color" : "#1c8eff",
-    "icon" : "/interface/wr/automation/output.png"
   }]
+
 }

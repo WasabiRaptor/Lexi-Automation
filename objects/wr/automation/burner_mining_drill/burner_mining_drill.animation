@@ -1,0 +1,52 @@
+{
+  "animatedParts" : {
+    "stateTypes" : {
+      "extractor" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 0.8,"mode" : "loop"}
+        }
+      }
+    },
+
+    "parts" : {
+      "back" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 0
+        },
+        "partStates" : {
+          "extractor" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "extractor" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1
+        },
+        "partStates" : {
+          "extractor" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "front" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 3
+        },
+        "partStates" : {
+          "extractor" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      }
+    }
+  }
+}

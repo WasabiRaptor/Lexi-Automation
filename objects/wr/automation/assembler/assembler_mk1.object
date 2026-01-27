@@ -6,7 +6,7 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "",
+  "description" : "A universal matter assembler. Can be programmed with any compatible crafting station and output.",
   "shortdescription" : "Matter Assembler MK1",
   "race" : "generic",
   "health" : 1.5,

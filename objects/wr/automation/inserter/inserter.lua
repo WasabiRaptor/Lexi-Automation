@@ -1,7 +1,6 @@
 require("/objects/wr/automation/wr_automation.lua")
 
 local inputs
-local leftovers = {}
 local outputEntity
 function init()
 	inputs = config.getParameter("matterStreamInput")
@@ -9,13 +8,15 @@ function init()
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
 	end)
+	storage.leftovers = storage.leftovers or {}
 	if not inputs then
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
-	else
-		local timePassed = world.time() - (storage.uninitTime or 0)
+	elseif inputs and storage.uninitTime then
+        local timePassed = world.time() - storage.uninitTime
+		sb.logInfo(timePassed)
 		for i, input in ipairs(inputs) do
-			leftovers[i] = (input.count * timePassed)
+			storage.leftovers[i] = (storage.leftovers[i] or 0) + (input.count * timePassed)
 		end
 	end
 end
@@ -38,28 +39,31 @@ function update(dt)
 		return
 	end
 
-	local insertedAny = false
+    local insertedAny = false
+	local attemptedInsert = false
 	for i, input in ipairs(inputs) do
-		local total = (input.count * dt) + leftovers[i]
-		local outputCount = math.floor(total)
-		leftovers[i] = total - outputCount
-		if outputCount > 0 then
+		local output = copy(input)
+		local total = (input.count * dt) + (storage.leftovers[i] or 0)
+		output.count = math.floor(total)
+		storage.leftovers[i] = total - output.count
+		if output.count > 0 then
+			attemptedInsert = true
 			-- containerAddItems returns leftovers it couldn't add to the container
-			insertedAny = (not world.containerAddItems(outputEntity, sb.jsonMerge(input, { count = outputCount }))) or insertedAny
+			insertedAny = (not world.containerAddItems(outputEntity, output)) or insertedAny
 		end
 	end
 
-	animator.setAnimationState("input", insertedAny and "insert" or "on")
-
-	-- set the wire node output if the inserter inserted any items on this tick
-	object.setOutputNodeLevel(0, insertedAny)
-	if (not insertedAny) and (not wasFull) then
-		wasFull = true
-		script.setUpdateDelta(math.max(3600, config.getParameter("scriptDelta") or 60))
-	elseif insertedAny and wasFull then
-		wasFull = false
-		script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
-	elseif insertedAny then
+	if attemptedInsert then
+		animator.setAnimationState("input", (insertedAny and "insert") or "on")
+		-- set the wire node output if the inserter inserted any items on this tick
+		object.setOutputNodeLevel(0, insertedAny)
+		if (not insertedAny) and (not wasFull) then
+			wasFull = true
+			script.setUpdateDelta(math.max(3600, config.getParameter("scriptDelta") or 60))
+		elseif insertedAny and wasFull then
+			wasFull = false
+			script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
+		end
 	end
 end
 
@@ -84,7 +88,7 @@ function refreshOutput(force)
 		-- find the fastest input to use it as our tick rate and reset leftover amounts from previous ticks
 		best = 0
 		for i, input in ipairs(inputs) do
-			leftovers[i] = 0
+			storage.leftovers[i] = 0
 			if input.count > best then
 				best = input.count
 			end
@@ -93,7 +97,7 @@ function refreshOutput(force)
 		-- find the slowest input to use it as our tick rate and reset leftover amounts from previous ticks
 		best = math.huge
 		for i, input in ipairs(inputs) do
-			leftovers[i] = 0
+			storage.leftovers[i] = 0
 			if input.count < best then
 				best = input.count
 			end
