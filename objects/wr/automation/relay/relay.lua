@@ -26,6 +26,7 @@ function refreshOutput(force)
         object.setConfigParameter("matterStreamOutput", nil)
         inputs = nil
         object.setConfigParameter("matterStreamInput", nil)
+        animator.setAnimationState("input", "off")
         return
     end
     animator.setAnimationState("input", "on", true)
