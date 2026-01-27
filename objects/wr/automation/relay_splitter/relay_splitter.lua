@@ -6,9 +6,13 @@ local defaultOutputCount
 local inputs
 local leftTargetOutput
 local rightTargetOutput
+local outputs
+local leftState
+local rightState
 function init()
     script.setUpdateDelta(0)
     inputs = config.getParameter("matterStreamInput")
+    outputs = config.getParameter("matterStreamOutput")
     leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()
     rightTargetOutput = config.getParameter("rightTargetOutput") or jarray()
     message.setHandler("refreshInputs", function (_,_)
@@ -28,6 +32,16 @@ function init()
         end
         refreshOutput(forceRefresh)
     end)
+    leftState = (object.direction() == 1) and "left" or "right"
+    rightState = (object.direction() == 1) and "right" or "left"
+    if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
+        animator.setAnimationState("input", "on", true)
+        if outputs then
+            animator.setAnimationState("center", (#outputs[1] > 0) and "on" or "off", true)
+            animator.setAnimationState(leftState, (#outputs[2] > 0) and "on" or "off", true)
+            animator.setAnimationState(rightState, (#outputs[3] > 0) and "on" or "off", true)
+        end
+    end
 end
 
 function update(dt)
@@ -45,8 +59,14 @@ function refreshOutput(force)
         object.setConfigParameter("matterStreamOutput", nil)
         inputs = nil
         object.setConfigParameter("matterStreamInput", nil)
+        animator.setAnimationState("input", "off")
+        animator.setAnimationState("center", "off")
+        animator.setAnimationState("left", "off")
+        animator.setAnimationState("right", "off")
         return
     end
+    animator.setAnimationState("input", "on", true)
+
     local leftOutputNodes = object.getOutputNodeIds(1)
     local newLeftOutputCount = 0
     for _, _ in pairs(leftOutputNodes) do
@@ -126,11 +146,15 @@ function refreshOutput(force)
             table.insert(finalOutput, outputItem)
         end
     end
-    if compare(config.getParameter("matterStreamOutput"), {finalOutput, leftOutput, rightOutput}) then return end
-
+    if compare(outputs, {finalOutput, leftOutput, rightOutput}) then return end
+    outputs = {finalOutput, leftOutput, rightOutput}
     object.setOutputNodeLevel(0, #finalOutput > 0)
     object.setOutputNodeLevel(1, #leftOutput > 0)
     object.setOutputNodeLevel(2, #rightOutput > 0)
+    animator.setAnimationState("center", (#finalOutput > 0) and "on" or "off")
+    animator.setAnimationState(leftState, (#leftOutput > 0) and "on" or "off")
+    animator.setAnimationState(rightState, (#rightOutput > 0) and "on" or "off")
+
     object.setConfigParameter("matterStreamOutput", {finalOutput, leftOutput, rightOutput})
     for eid, _ in pairs(leftOutputNodes) do
         world.sendEntityMessage(eid, "refreshInputs")

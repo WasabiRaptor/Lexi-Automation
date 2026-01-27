@@ -1,0 +1,101 @@
+{
+  "animatedParts" : {
+    "stateTypes" : {
+      "input" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 1,"mode" : "loop"}
+        }
+      },
+      "center" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 1,"mode" : "loop"}
+        }
+      },
+      "left" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 1,"mode" : "loop"}
+        }
+      },
+      "right" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 1,"mode" : "loop"}
+        }
+      }
+    },
+
+    "parts" : {
+      "back" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 0
+        },
+        "partStates" : {
+          "input" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "input" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 1
+        },
+        "partStates" : {
+          "input" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "center" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 2
+        },
+        "partStates" : {
+          "center" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "left" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 2
+        },
+        "partStates" : {
+          "left" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "right" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 2
+        },
+        "partStates" : {
+          "right" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      }
+    }
+  }
+}

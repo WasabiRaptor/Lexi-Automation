@@ -4,12 +4,12 @@
     "size" : [48, 32],
     "dimensions" : [9, 1],
     "names" : [
-      [ "inactive.1", "active.1", "active.2", "active.3", "active.4", "active.5", "active.6", "active.7", "active.8" ]
+      [ "off.1", "on.1", "on.2", "on.3", "on.4", "on.5", "on.6", "on.7", "on.8" ]
     ]
   },
   "aliases" : {
-    "default" : "inactive.1",
-    "active.0" : "active.8",
-    "active.default" : "default"
+    "default" : "off.1",
+    "on.0" : "on.8",
+    "on.default" : "default"
   }
 }

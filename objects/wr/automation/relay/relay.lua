@@ -8,6 +8,9 @@ function init()
     message.setHandler("refreshInputs", function (_,_)
         refreshOutput()
     end)
+    if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
+        animator.setAnimationState("input", "on", true)
+    end
 end
 
 function update(dt)
@@ -25,6 +28,7 @@ function refreshOutput(force)
         object.setConfigParameter("matterStreamInput", nil)
         return
     end
+    animator.setAnimationState("input", "on", true)
     local outputNodes = object.getOutputNodeIds(0)
     local newOutputCount = 0
     for _, _ in pairs(outputNodes) do

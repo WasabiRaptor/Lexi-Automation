@@ -15,7 +15,7 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "extractor.png:active.<frame>",
+      "image" : "extractor.png:on.<frame>",
       "direction" : "left",
       "flipImages" : true,
 
@@ -28,7 +28,7 @@
       "collision" : "platform"
     },
     {
-      "image" : "extractor.png:active.<frame>",
+      "image" : "extractor.png:on.<frame>",
       "direction" : "right",
 
       "imagePosition" : [-24, 0],
