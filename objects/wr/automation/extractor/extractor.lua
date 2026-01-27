@@ -10,6 +10,10 @@ function init()
         object.setConfigParameter("producing", producing)
         setOutput(true)
     end)
+
+    if producing then
+        animator.setAnimationState("extractor", "on")
+    end
 end
 
 
@@ -18,6 +22,7 @@ function setOutput(force)
         object.setOutputNodeLevel(0, false)
         return
     end
+    animator.setAnimationState("extractor", "on")
 
     local outputNodes = object.getOutputNodeIds(0)
     local newOutputCount = 0
