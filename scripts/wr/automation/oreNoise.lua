@@ -28,7 +28,7 @@ function setupPlanetParameters(visitableParameters)
     undergroundThickness = surfaceLayer - coreLayer
 end
 
-function getOreCount(position, noise)
+function getOreCount(position, noise, multiplier)
     local depthMultipler = 1
     if position[2] > sufaceLayerTop then
         depthMultipler = 0
@@ -39,6 +39,6 @@ function getOreCount(position, noise)
     else
         depthMultipler = 2 + (coreLayer-position[2]) / coreLayer
     end
-    local amount = (math.ceil(noise:get(position[1], position[2]) * depthMultipler * 1000) - 500) / 1000
+    local amount = (math.ceil(noise:get(position[1], position[2]) * depthMultipler * (multiplier or 1) * 1000) - 500) / 1000
     return math.max(0, amount)
 end

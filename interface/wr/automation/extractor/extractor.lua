@@ -19,17 +19,29 @@ function setOutput()
     if not world.terrestrial() then return end
     local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
     if not isCelestial then return end
-    setupPlanetParameters(celestial.visitableParameters(celestialCoords))
+    local visitableParameters = celestial.visitableParameters(celestialCoords)
+    setupPlanetParameters(visitableParameters)
+
+    local sufaceLayerTop = visitableParameters.surfaceLayer.layerBaseHeight
 
     local position = world.entityPosition(pane.sourceEntity())
 
+    local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier")
     producing = jarray()
     for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
         local modConfig = root.modConfig(v)
         if modConfig.config.itemDrop then
             local noise = oreNoise(modConfig.config.itemDrop, celestial.planetSeed(celestialCoords))
+            -- get count at current position
+            local count = getOreCount(position, noise, multiplier)
+            -- get trace amounts of ores below in the column
+            local traceCount = 0
+            for i = math.min(position[2] - 1, sufaceLayerTop), 0, -1 do
+                traceCount = traceCount + getOreCount({ position[1], i }, noise, 1)
+            end
+            traceCount = (math.ceil(traceCount * world.getObjectParameter(pane.sourceEntity(), "columnMultiplier") * 1000)-500)/1000
             table.insert(producing, {
-                name = modConfig.config.itemDrop, count = getOreCount(position, noise),
+                name = modConfig.config.itemDrop, count = count + traceCount,
             })
         end
     end
@@ -37,20 +49,18 @@ function setOutput()
         local materialConfig = root.materialConfig(materialList[v])
         if materialConfig.config.itemDrop then
             local item =  {
-                name = materialConfig.config.itemDrop, count = 1,
+                name = materialConfig.config.itemDrop, count = (1 * multiplier),
             }
             local found = false
             for _, v in ipairs(producing) do
                 if root.itemDescriptorsMatch(v, item, true) then
-                    v.count = v.count + 1
+                    v.count = v.count + (1 * multiplier)
                     found = true
                     break
                 end
             end
             if not found then
-                table.insert(producing, {
-                    name = materialConfig.config.itemDrop, count = 1,
-                })
+                table.insert(producing, item)
             end
         end
     end
