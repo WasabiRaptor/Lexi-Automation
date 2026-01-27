@@ -1,0 +1,14 @@
+{
+  "input" : [
+    { "item" : "ironbar", "count" : 10 },
+    { "item" : "corefragmentore", "count" : 5 },
+    { "item" : "craftingfurnace", "count" : 1 },
+    { "item" : "copperpickaxe", "count" : 3 }
+  ],
+  "output" : {
+    "item" : "wr/burner_mining_drill",
+    "count" : 1
+  },
+  "duration" : 5,
+  "groups" : [ "inventorstable", "all" ]
+}

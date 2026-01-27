@@ -1,0 +1,13 @@
+{
+  "input" : [
+    { "item" : "copperbar", "count" : 6 },
+    { "item" : "silverbar", "count" : 1 },
+    { "item" : "corefragementore", "count" : 1 }
+  ],
+  "output" : {
+    "item" : "wr/relay_mk1",
+    "count" : 9
+  },
+  "duration" : 5,
+  "groups" : [ "inventorstable2", "all" ]
+}

@@ -1,0 +1,14 @@
+{
+  "input" : [
+    { "item" : "copperbar", "count" : 6 },
+    { "item" : "silverbar", "count" : 1 },
+    { "item" : "corefragementore", "count" : 1 },
+    { "item" : "stickofram", "count" : 2 }
+  ],
+  "output" : {
+    "item" : "wr/relay_splitter_mk1",
+    "count" : 3
+  },
+  "duration" : 5,
+  "groups" : [ "inventorstable2", "all" ]
+}

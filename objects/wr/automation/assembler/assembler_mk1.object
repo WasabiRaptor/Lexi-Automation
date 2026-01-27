@@ -42,7 +42,7 @@
   ],
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
-  "filter" : ["craftinganvil"],
+  "filter" : ["inventorstable", "emptyhands"],
 
   "minimumDuration" : 1, // the minimum duration to craft a recipe
   "craftingSpeed" : 1, // the amount of times it crafts a recipe per cycle

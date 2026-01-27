@@ -1,5 +1,15 @@
 [
     [
         {"op":"add", "path":"/genericScriptContexts/wr_automation", "value" : "/scripts/wr/automation/player.lua"}
+    ],
+    [
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/assembler_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/extractor_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/relay_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/relay_splitter_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/inserter_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/inserter_mk2"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/burner_mining_drill"}}
+
     ]
 ]
