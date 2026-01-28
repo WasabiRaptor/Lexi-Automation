@@ -10,7 +10,7 @@ function init()
 	materialList = root.assetJson("/interface/wr/automation/extractor/materialList.config")
 	producing = world.getObjectParameter(pane.sourceEntity(), "producing")
 	if not producing then
-		producing = setOutput()
+		setOutput()
 	end
 	displayOutputs()
 end
@@ -75,7 +75,6 @@ function setOutput()
 	end)
 
 	world.sendEntityMessage(pane.sourceEntity(), "setOutput", producing)
-	displayOutputs()
 end
 
 
