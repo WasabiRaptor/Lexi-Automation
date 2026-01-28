@@ -13,8 +13,7 @@ function init()
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
 	elseif inputs and storage.uninitTime then
-        local timePassed = world.time() - storage.uninitTime
-		sb.logInfo(timePassed)
+		local timePassed = world.time() - storage.uninitTime
 		for i, input in ipairs(inputs) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (input.count * timePassed)
 		end
@@ -39,7 +38,7 @@ function update(dt)
 		return
 	end
 
-    local insertedAny = false
+	local insertedAny = false
 	local attemptedInsert = false
 	for i, input in ipairs(inputs) do
 		local output = copy(input)

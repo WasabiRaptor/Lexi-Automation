@@ -46,23 +46,26 @@ function setOutput()
 		end
 	end
 	for _, v in ipairs(world.biomeBlocksAt(position)) do
-		-- local materialConfig
-		-- if materialConfig.config.itemDrop then
-		--     local item =  {
-		--         name = materialConfig.config.itemDrop, count = (1 * multiplier),
-		--     }
-		--     local found = false
-		--     for _, v in ipairs(producing) do
-		--         if root.itemDescriptorsMatch(v, item, true) then
-		--             v.count = v.count + (1 * multiplier)
-		--             found = true
-		--             break
-		--         end
-		--     end
-		--     if not found then
-		--         table.insert(producing, item)
-		--     end
-		-- end
+		local success, materialConfig = pcall(root.materialConfig, v) -- this will accept the ID if OSB is installed
+		if not success then
+			success, materialConfig = pcall(root.materialConfig, materialList[v]) -- if OSB isn't installed, then we try putting it into this map of materials
+		end
+		if success and materialConfig.config.itemDrop then
+			local item =  {
+				name = materialConfig.config.itemDrop, count = (1 * multiplier),
+			}
+			local found = false
+			for _, v in ipairs(producing) do
+				if root.itemDescriptorsMatch(v, item, true) then
+					v.count = v.count + (1 * multiplier)
+					found = true
+					break
+				end
+			end
+			if not found then
+				table.insert(producing, item)
+			end
+		end
 	end
 	producing = util.filter(producing, function (v)
 		return v.count > 0
@@ -72,6 +75,7 @@ function setOutput()
 	end)
 
 	world.sendEntityMessage(pane.sourceEntity(), "setOutput", producing)
+	displayOutputs()
 end
 
 
