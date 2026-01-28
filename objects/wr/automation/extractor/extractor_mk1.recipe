@@ -2,7 +2,7 @@
   "input" : [
     { "item" : "manipulatormodule", "count" : 8 },
     { "item" : "copperbar", "count" : 20 },
-    { "item" : "corefragementore", "count" : 20 },
+    { "item" : "corefragmentore", "count" : 20 },
     { "item" : "goldbar", "count" : 5 },
     { "item" : "stickofram", "count" : 1 },
     { "item" : "battery", "count" : 1 }

@@ -2,7 +2,7 @@
   "input" : [
     { "item" : "copperbar", "count" : 3 },
     { "item" : "silverbar", "count" : 1 },
-    { "item" : "corefragementore", "count" : 1 },
+    { "item" : "corefragmentore", "count" : 1 },
     { "item" : "stickofram", "count" : 1 }
   ],
   "output" : {
