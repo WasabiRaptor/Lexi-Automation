@@ -10,9 +10,29 @@ local fuelRPC
 
 function init()
     fuelValues = world.getObjectParameter(pane.sourceEntity(), "fuelValues")
+    local fuelValueList = {}
+    for k, v in pairs(fuelValues) do
+        itemConfig = root.itemConfig(k)
+        if itemConfig then
+            table.insert(fuelValueList, { itemConfig.config.shortdescription, v })
+        end
+    end
+    table.sort(fuelValueList, function(a, b)
+        if a[2] == b[2] then
+            return a[1] < b[1]
+        end
+        return a[2] < b[2]
+    end)
+    local fuelValueTooltip = {}
+    for _, v in ipairs(fuelValueList) do
+        table.insert(fuelValueTooltip, ("%s^reset;: %s Seconds^reset;"):format(table.unpack(v)))
+    end
+    _ENV.fuelSlot.toolTip = fuelValueTooltip
+
+    fuelRPC = world.sendEntityMessage(pane.sourceEntity(), "addFuel", 0)
     refreshStatus()
 end
-function _ENV.addFuel:onClick()
+function _ENV.addFuelButton:onClick()
     if fuelRPC then return end
     local item = _ENV.fuelSlot:item()
     if item then
@@ -45,10 +65,14 @@ function refreshStatus()
     end
 end
 
+local maxFuelValue = 1
+local totalFuel = 0
 function update()
     if fuelRPC and fuelRPC:finished() then
+        local consumedFuelValue
+        consumedFuelValue, totalFuel = table.unpack(fuelRPC:result())
         if item then
-            local consumed = math.ceil(fuelRPC:result() / fuelValues[(item.item or item.name)])
+            local consumed = math.ceil(consumedFuelValue / fuelValues[(item.item or item.name)])
             local item = _ENV.fuelSlot:item()
             item.count = item.count - consumed
             if item.count <= 0 then
@@ -57,7 +81,10 @@ function update()
                 _ENV.fuelSlot:setItem(item)
             end
         end
+        maxFuelValue = world.getObjectParameter(pane.sourceEntity(), "maxFuel")
         fuelRPC = nil
     end
+    _ENV.fuelPercentageLabel:setText(("%d%%"):format(math.ceil((totalFuel / maxFuelValue) * 100)))
+    totalFuel = math.max(0, totalFuel - script.updateDt())
     refreshStatus()
 end

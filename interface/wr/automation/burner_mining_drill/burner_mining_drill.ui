@@ -15,14 +15,12 @@
 			[
 				[
 					{"expandMode":[0,2]},
-					[
-						{"expandMode":[0,2]},
-						{"type":"itemSlot", "glyph":"fuel.png", "id":"fuelSlot", "autoInteract":true, "toolTip" : "Coal: 10s\nCore Fragment: 100s"}
-					]
+					{"type":"itemSlot", "glyph":"fuel.png", "id":"fuelSlot", "autoInteract":true},
+					{"type":"label", "text":"0%", "id":"fuelPercentageLabel", "align" : "center"}
 				],
 				[
 					{"type":"label", "text":"Inactive", "id":"statusLabel", "align":"center"},
-					{"type":"button", "color" : "00FF00", "id" : "addFuel", "caption" : "Add Fuel"}
+					{"type":"button", "color" : "00FF00", "id" : "addFuelButton", "caption" : "Add Fuel"}
 				]
 			],
 			{"type":"panel","style":"concave","expandMode":[1,0],"children":[

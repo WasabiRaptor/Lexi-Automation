@@ -54,9 +54,10 @@
     "front" : "animationParts/frame/front.png"
   },
 
-  "fuelvalues" : {
+  "fuelValues" : {
     "coalore" : 10,
-    "corefragmentore" : 100
+    "corefragmentore" : 100,
+    "logblock" : 2
   },
 
   "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],

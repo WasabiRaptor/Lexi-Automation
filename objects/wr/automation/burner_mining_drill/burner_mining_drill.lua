@@ -4,21 +4,6 @@ local producing
 local initTick = false
 local wasFull
 local active
-local function addFuel(fuel)
-	local maxFuel = config.getParameter("maxFuel")
-	local consume = maxFuel - storage.fuel
-	if fuel >= consume then
-		storage.fuel = maxFuel
-	else
-		storage.fuel = storage.fuel + fuel
-		consume = fuel
-	end
-	if not active and (storage.fuel > 0) then
-		object.setConfigParameter("status", "warming")
-		script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
-	end
-	return consume
-end
 
 function init()
 	producing = config.getParameter("producing")
@@ -26,7 +11,7 @@ function init()
 		setOutput(newOutput)
 	end)
 	message.setHandler("addFuel", function(_, _, fuelAmount)
-		return addFuel(fuelAmount)
+		return {addFuel(fuelAmount)}
 	end)
 
 	storage.leftovers = storage.leftovers or {}
@@ -122,4 +107,20 @@ end
 
 function onNodeConnectionChange()
 	setOutput()
+end
+
+function addFuel(fuel)
+	local maxFuel = config.getParameter("maxFuel")
+	local consume = maxFuel - storage.fuel
+	if fuel >= consume then
+		storage.fuel = maxFuel
+	else
+		storage.fuel = storage.fuel + fuel
+		consume = fuel
+	end
+	if not active and (storage.fuel > 0) then
+		object.setConfigParameter("status", "warming")
+		script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
+	end
+	return consume, storage.fuel
 end
