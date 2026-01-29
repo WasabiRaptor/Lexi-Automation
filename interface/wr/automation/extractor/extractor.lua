@@ -39,7 +39,7 @@ function setOutput()
 			for i = math.min(position[2] - 1, sufaceLayerTop), 0, -1 do
 				traceCount = traceCount + getOreCount({ position[1], i }, noise, 1)
 			end
-			traceCount = (math.ceil(traceCount * world.getObjectParameter(pane.sourceEntity(), "columnMultiplier") * 1000)-500)/1000
+			traceCount = math.max(0,(math.ceil(traceCount * world.getObjectParameter(pane.sourceEntity(), "columnMultiplier") * 1000)-500)/1000)
 			table.insert(producing, {
 				name = modConfig.config.itemDrop, count = count + traceCount,
 			})
