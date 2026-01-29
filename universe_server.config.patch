@@ -1,0 +1,3 @@
+{
+	"scriptContexts" : { "wr_automation" : ["/scripts/wr/automation/universe.lua"]}
+}

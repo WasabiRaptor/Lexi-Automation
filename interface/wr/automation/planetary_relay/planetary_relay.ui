@@ -4,7 +4,7 @@
 	"resizable" : true,
 	"minSize" : [128, 30],
 
-	"title" : "Planetary Transfer Node",
+	"title" : "Planetary Relay",
 	"icon" : "/objects/wr/automation/planetary_relay/icon.png",
 	"uniqueBy" : "path",
 	"scripts" : [ "planetary_relay.lua" ],

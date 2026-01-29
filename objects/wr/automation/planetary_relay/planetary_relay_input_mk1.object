@@ -2,11 +2,11 @@
   "objectName" : "wr/planetary_relay_input_mk1",
   "colonyTags" : [],
   "printable" : false,
-  "rarity" : "Common",
+  "rarity" : "Rare",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Transfers a matter stream to the output of the same channel on this planet.",
+  "description" : "Transfers a matter stream to the output of the same channel on the planet.",
   "shortdescription" : "Planetary Matter Relay Input",
   "race" : "generic",
   "health" : 1.5,

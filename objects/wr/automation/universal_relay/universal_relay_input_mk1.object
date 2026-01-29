@@ -1,17 +1,18 @@
 {
-  "objectName" : "wr/planetary_relay_output_mk1",
+  "objectName" : "wr/universal_relay_input_mk1",
   "colonyTags" : [],
   "printable" : false,
-  "rarity" : "Rare",
+  "rarity" : "Legendary",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Recieves a matter stream from the input of the same channel on the planet.",
-  "shortdescription" : "Planetary Matter Relay Ouput",
+  "description" : "Transfers a matter stream to the output of the same channel in the universe.",
+  "shortdescription" : "Universal Matter Relay Input",
   "race" : "generic",
   "health" : 1.5,
+  "unbreakable" : true,
 
-  "scripts" : ["output.lua"],
+  "scripts" : ["input.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
@@ -40,19 +41,16 @@
       ]
     }
   ],
-  "animation" : "planetary_relay.animation",
+  "animation" : "universal_relay.animation",
   "animationParts" : {
     "back" : "animationParts/back.png",
     "input" : "animationParts/input.png"
   },
 
-  "interactAction" : "ScriptPane",
-  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:planetary_relay", "data":{"channelProperty":"wr_matterStreamOutputUUID."} },
-
-  "outputNodes" : [ [0, 1] ],
-  "outputNodesConfig" : [{
+  "inputNodes" : [ [0, 0] ],
+  "inputNodesConfig" : [{
     "color" : "#1c8eff",
-    "icon" : "/interface/wr/automation/output.png"
+    "icon" : "/interface/wr/automation/input.png"
   }]
 
 }
