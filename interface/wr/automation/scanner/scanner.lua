@@ -99,7 +99,7 @@ function update()
 			-- world.debugLine(last, searchPosition, { 255, 0, 0 })
 			traversed = traversed + 1
 			if blocksScanned >= totalValidBlocks then
-				_ENV.searchingLabel:setText(("Entire underground scanned.\nSearch Failed.\n %d Blocks Scanned."):format(blocksScanned))
+				_ENV.searchingLabel:setText(("Search Failed.\n All %d Blocks Scanned."):format(blocksScanned))
 				searching = false
 				return
 			elseif searchPosition[2] > surfaceLayerTop then

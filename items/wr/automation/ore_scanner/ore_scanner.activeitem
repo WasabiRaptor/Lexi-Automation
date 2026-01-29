@@ -27,23 +27,14 @@
     "image" : "/items/wr/automation/ore_scanner/detectnoise.png:<variant>",
     "variants" : 4,
     "edge" : 3,
+
+    // colors are inherited from /items/active/unsorted/oredetector/oredetector.activeitem:pingDetectConfig.colors
+    // the inheritence will override values defined here if they exist there
+    // ores that do not have colors defined here will have colors be randomly generated
     "colors" : {
       "coal" : [0, 0, 0, 255],
       "corefragment" : [217, 46, 0, 255],
 
-      "copper" : [80, 80, 40, 255],
-      "silver" : [200, 200, 230, 255],
-      "gold" : [200, 180, 30, 255],
-      "iron" : [160, 160, 160, 255],
-      "tungsten" : [120, 120, 120, 255],
-      "titanium" : [255, 255, 255, 255],
-      "durasteel" : [90, 90, 200, 255],
-      "aegisalt" : [200, 255, 50, 255],
-      "violium" : [200, 70, 255, 255],
-      "ferozium" : [50, 230, 230, 255],
-      "solarium" : [255, 255, 0, 255],
-      "diamond" : [0, 0, 255, 255],
-      "erchius" : [235, 178, 247, 255],
       "none" : [120, 160, 120, 50]
     }
   },

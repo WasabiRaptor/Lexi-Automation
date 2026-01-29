@@ -10,8 +10,9 @@ function init()
 	pingSpeed = config.getParameter("pingSpeed")
 
 	local detectConfig = config.getParameter("pingDetectConfig")
+	detectConfig.colors = sb.jsonMerge(detectConfig.colors, root.assetJson("/items/active/unsorted/oredetector/oredetector.activeitem:pingDetectConfig.colors"))
 	detectConfig.maxRange = pingRange
-	activeItem.setScriptedAnimationParameter("pingDetectConfig", sb.jsonMerge(root.assetJson("/items/active/unsorted/oredetector/oredetector.activeitem:pingDetectConfig"), detectConfig))
+	activeItem.setScriptedAnimationParameter("pingDetectConfig", detectConfig)
 	activeItem.setScriptedAnimationParameter("pingLocation", nil)
 
 end

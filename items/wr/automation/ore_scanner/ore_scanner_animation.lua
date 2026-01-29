@@ -19,13 +19,13 @@ function update()
 
 	if not planetData then
 		planetData = animationConfig.animationParameter("planetData")
-        if planetData and planetData.planetOres and planetData.planetSeed and planetData.visitableParameters then
+		if planetData and planetData.planetOres and planetData.planetSeed and planetData.visitableParameters then
 			setupPlanetParameters(planetData.visitableParameters)
 			for _, v in ipairs(planetData.planetOres) do
 				local modConfig = root.modConfig(v)
 				if modConfig.config.itemDrop then
 					local itemConfig = root.itemConfig(modConfig.config.itemDrop)
-                    math.randomseed(sb.staticRandomI32(modConfig.config.itemDrop))
+					math.randomseed(sb.staticRandomI32(modConfig.config.itemDrop))
 					if not detectConfig.colors[v] then
 						sb.logWarn("[wr_automation] Resource '%s' does not have color defined for scanning.")
 					end

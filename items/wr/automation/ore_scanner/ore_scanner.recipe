@@ -1,0 +1,11 @@
+{
+  "input" : [
+    { "item" : "goldbar", "count" : 5 },
+    { "item" : "silverbar", "count" : 5 },
+    { "item" : "corefragmentore", "count" : 5 },
+    { "item" : "wire", "count" : 6 },
+    { "item" : "smallbattery", "count" : 4 }
+  ],
+  "output" : { "item" : "wr/ore_scanner", "count" : 1 },
+  "groups" : [ "craftingfarm", "survival" ]
+}
