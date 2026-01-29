@@ -1,6 +1,7 @@
 [
     [
-        {"op":"add", "path":"/genericScriptContexts/wr_automation", "value" : "/scripts/wr/automation/player.lua"}
+        {"op":"add", "path":"/genericScriptContexts/wr_automation", "value" : "/scripts/wr/automation/player.lua"},
+        {"op":"add", "path":"/deploymentConfig/scripts/-", "value" : "/scripts/wr/automation/deployment.lua"}
     ],
     [
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/assembler_mk1"}},

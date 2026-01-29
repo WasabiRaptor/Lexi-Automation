@@ -59,6 +59,8 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:extractor" },
 
+  "isExtractor" : true,
+
   "multiplier" : 1, // for ores mined at the position it's placed at
   "columnMultiplier": 0.01, // for all ores in the column beneath it
 

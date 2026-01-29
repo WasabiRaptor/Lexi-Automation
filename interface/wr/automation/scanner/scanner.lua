@@ -19,6 +19,7 @@ function init()
 
 	local visitableParameters = celestial.visitableParameters(celestialCoords)
 	setupPlanetParameters(visitableParameters)
+
 	surfaceLayerTop = visitableParameters.surfaceLayer.layerBaseHeight
 	totalValidBlocks = world.size()[1] * surfaceLayerTop
 	planetOres = {}
@@ -90,6 +91,7 @@ function update()
 				:format(searchPosition[1],
 					searchPosition[2], blocksScanned))
 				searching = false
+				world.sendEntityMessage(player.id(), "wr_setBeaconPosition", searchPosition, "resource")
 				return
 			end
 			-- local last = copy(searchPosition)
@@ -172,7 +174,7 @@ function displayOres()
 			local number = tonumber(self.text)
 			if number and (number >= 0) then
 				oreData.amount = number
-				self:setColor("FFFFFF")
+				self:setColor(nil)
 			else
 				self:setColor("FF0000")
 			end

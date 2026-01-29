@@ -68,6 +68,8 @@
 
   "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:burner_mining_drill",
 
+  "isExtractor" : true,
+
   "maxFuel" : 3600,
 
   "multiplier" : 0.75, // for ores mined at the position it's placed at
