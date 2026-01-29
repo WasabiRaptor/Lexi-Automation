@@ -19,9 +19,9 @@
                 [
                     {"type": "label", "id" : "outputLabel", "text" : ""},
                     [
-                        {"type": "label", "text": "0", "color" : "FF0000", "id" : "productionRate", "inline" : true},
+                        {"type": "label", "text": "0", "color" : "FF0000", "id" : "productionRateLabel", "inline" : true},
                         {"type": "label", "text": "/", "inline" : true},
-                        {"type": "label", "text": "0", "id" : "maxProductionRate", "inline" : true},
+                        {"type": "label", "text": "0", "id" : "maxProductionRateLabel", "inline" : true},
                         {"type": "label", "text":"Per Second", "inline" : true}
                     ]
                 ]

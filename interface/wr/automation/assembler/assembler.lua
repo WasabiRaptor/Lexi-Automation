@@ -198,14 +198,31 @@ function displayRecipe(recipe)
     end)
 
     local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
-    local productionRate = craftingSpeed / math.max(
+    local maxProductionRate = craftingSpeed / math.max(
         0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
         (world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
         (recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
     )
-    local maxProductionRate = productionRate
-
-    _ENV.maxProductionRate:setText(tostring(maxProductionRate))
+    local productionRate
+    local balanced = true
+    for _, input in ipairs(inputs) do
+        if input.used then
+            for _, recipeItem in ipairs(recipe.input) do
+                if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
+                    local rate = (input.count / (recipeItem.count or 1)) * craftingSpeed
+                    if not productionRate then
+                        balanced = rate <= maxProductionRate
+                        productionRate = math.min(maxProductionRate, rate)
+                    else
+                        balanced = balanced and (rate == productionRate)
+                        productionRate = math.min(productionRate, rate)
+                    end
+                    break
+                end
+            end
+        end
+    end
+    _ENV.maxProductionRateLabel:setText(tostring(maxProductionRate))
 
     _ENV.recipeInputsScrollArea:clearChildren()
     for _, input in ipairs(inputs) do
@@ -218,15 +235,16 @@ function displayRecipe(recipe)
             for _, recipeItem in ipairs(recipe.input) do
                 if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
                     productionTarget = (recipeItem.count or 1) * craftingSpeed
-                    productionRate = math.min(productionRate, (input.count / (recipeItem.count or 1)) * craftingSpeed)
                     break
                 end
             end
             local color
             if production <= 0 then
                 color = "FF0000"
-            elseif production >= productionTarget then
+            elseif (production == productionTarget) or balanced then
                 color = "00FF00"
+            elseif production > productionTarget then
+                color = "00FFFF"
             elseif production < productionTarget then
                 color = "FFFF00"
             end
@@ -264,14 +282,13 @@ function displayRecipe(recipe)
     local color
     if productionRate <= 0 then
         color = "FF0000"
-    elseif productionRate >= maxProductionRate then
+    elseif (productionRate >= maxProductionRate) or balanced then
         color = "00FF00"
     elseif productionRate < maxProductionRate then
         color = "FFFF00"
     end
-    _ENV.productionRate.color = (color)
-    _ENV.productionRate:setText(tostring(productionRate))
-
+    _ENV.productionRateLabel.color = (color)
+    _ENV.productionRateLabel:setText(tostring(productionRate or 0))
 end
 function _ENV.craftingItemSlot:onItemModified()
     refreshCurrentRecipes()
