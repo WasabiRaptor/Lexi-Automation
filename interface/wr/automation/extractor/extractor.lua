@@ -18,7 +18,7 @@ end
 function setOutput()
 	if not world.terrestrial() then return end
 	local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
-	if not isCelestial then return end
+	if not (isCelestial > 0) then return end
 	local visitableParameters = celestial.visitableParameters(celestialCoords)
 	setupPlanetParameters(visitableParameters)
 
