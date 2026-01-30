@@ -89,7 +89,7 @@ function setProducts(newOutput)
 	if compare(products, newOutput) then return end
 	products = newOutput
 	object.setConfigParameter("products", products)
-
+	if (not products) or (not products[1]) then return end
 	-- find the fastest product to use it as our tick rate and reset leftover amounts from previous ticks
 	best = 0
 	for i, product in ipairs(products[1]) do
