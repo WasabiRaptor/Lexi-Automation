@@ -1,7 +1,7 @@
 {
   "animatedParts" : {
     "stateTypes" : {
-      "extractor" : {
+      "producing" : {
         "default" : "off",
         "states" : {
           "off" : {"frames" : 1},
@@ -17,7 +17,7 @@
           "zLevel" : 0
         },
         "partStates" : {
-          "extractor" : {
+          "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
           }
@@ -29,7 +29,7 @@
           "zLevel" : 1
         },
         "partStates" : {
-          "extractor" : {
+          "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
           }
@@ -41,7 +41,7 @@
           "zLevel" : 3
         },
         "partStates" : {
-          "extractor" : {
+          "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
           }

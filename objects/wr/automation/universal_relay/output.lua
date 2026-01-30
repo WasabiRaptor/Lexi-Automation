@@ -66,11 +66,11 @@ end
 
 function refreshOutput(force, newInputs)
 	if (not inputTarget) or (not newInputs) or (channel == "") then
-		object.setOutputNodeLevel(0, false)
 		object.setConfigParameter("matterStreamOutput", nil)
-		inputs = nil
 		object.setConfigParameter("matterStreamInput", nil)
+		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("input", "off")
+		inputs = nil
 		return
 	end
 
@@ -86,21 +86,7 @@ function refreshOutput(force, newInputs)
 	object.setConfigParameter("matterStreamInput", newInputs)
 	inputs = newInputs
 	outputCount = newOutputCount
-
-	-- count the number of entities the output is connected to so it's split evenly between them
-	local output = {}
-	for _, v in ipairs(inputs) do
-		local outputItem = copy(v)
-		outputItem.count = outputItem.count / math.max(1, outputCount)
-		table.insert(output, outputItem)
-	end
-	if compare(config.getParameter("matterStreamOutput"), {output}) then return end
-
-	object.setOutputNodeLevel(0, true)
-	object.setConfigParameter("matterStreamOutput", {output})
-	for eid, _ in pairs(outputNodes) do
-		world.sendEntityMessage(eid, "refreshInputs")
-	end
+	wr_automation.setOutputs({inputs})
 end
 
 function onInputNodeChange()

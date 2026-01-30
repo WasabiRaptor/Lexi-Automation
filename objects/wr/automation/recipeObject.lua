@@ -1,0 +1,67 @@
+require("/objects/wr/automation/wr_automation.lua")
+
+local recipe
+local outputCount
+local inputs
+function init()
+	script.setUpdateDelta(0)
+	recipe = config.getParameter("recipe")
+	message.setHandler("setRecipe", function(_, _, newRecipe)
+		if compare(recipe, newRecipe) then return end
+		recipe = newRecipe
+		object.setConfigParameter("recipe", newRecipe)
+		refreshOutput(true)
+	end)
+	inputs = config.getParameter("matterStreamInput")
+	message.setHandler("refreshInputs", function (_,_)
+		refreshOutput()
+	end)
+end
+
+
+function refreshOutput(force)
+	if (not recipe) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		object.setConfigParameter("matterStreamOutput", nil)
+		object.setConfigParameter("matterStreamInput", nil)
+		object.setOutputNodeLevel(0, false)
+		inputs = nil
+		return
+	end
+	local outputNodes = object.getOutputNodeIds(0)
+	local newOutputCount = 0
+	for _, _ in pairs(outputNodes) do
+		newOutputCount = newOutputCount + 1
+	end
+	local newInputs = wr_automation.countInputs(0, recipe)
+	if (not force) and compare(newInputs, inputs) and (newOutputCount == outputCount) then return end
+	object.setConfigParameter("matterStreamInput", newInputs)
+	inputs = newInputs
+	outputCount = newOutputCount
+
+	local craftingSpeed = config.getParameter("craftingSpeed") or 1
+	local productionRate = craftingSpeed / math.max(
+		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
+		(config.getParameter("minimumDuration") or 0),
+		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
+	)
+
+	for _, recipeItem in ipairs(recipe.input) do
+		for _, inputItem in ipairs(inputs) do
+			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
+				recieved = true
+				productionRate = math.min(productionRate, (inputItem.count / (recipeItem.count or 1)) * craftingSpeed)
+				break
+			end
+		end
+	end
+	local outputItem = copy(recipe.output)
+	outputItem.count = productionRate * (outputItem.count or 1)
+	object.setConfigParameter("products", {{outputItem}})
+	wr_automation.setOutputs({{outputItem}})
+end
+function onInputNodeChange()
+	refreshOutput()
+end
+function onNodeConnectionChange()
+	refreshOutput()
+end

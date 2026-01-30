@@ -1,14 +1,14 @@
 require("/interface/games/util.lua")
 
-local producing
+local products
 local initTick = false
 local wasFull
 local active
 
 function init()
-	producing = config.getParameter("producing")
-	message.setHandler("setOutput", function(_, _, newOutput)
-		setOutput(newOutput)
+	products = config.getParameter("products")
+	message.setHandler("setProducts", function(_, _, newOutput)
+		setProducts(newOutput)
 	end)
 	message.setHandler("addFuel", function(_, _, fuelAmount)
 		return {addFuel(fuelAmount)}
@@ -17,14 +17,14 @@ function init()
 	storage.leftovers = storage.leftovers or {}
 	storage.fuel = storage.fuel or 0
 
-	if producing and storage.uninitTime then
+	if products and products[1] and storage.uninitTime then
 		if storage.fuel > 0 then
 			animator.setAnimationState("extractor", "on")
 			initTick = true
 		end
 		local timePassed = math.min(world.time() - storage.uninitTime, storage.fuel)
 		storage.fuel = math.max(0, storage.fuel - timePassed)
-		for i, product in ipairs(producing) do
+		for i, product in ipairs(products[1]) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (product.count * timePassed)
 		end
 	end
@@ -35,8 +35,8 @@ end
 
 function update(dt)
 	if not world.entityExists(entity.id()) then return end
-	if (not producing) or ((storage.fuel <= 0) and not initTick) then
-		if producing then
+	if (not products) or (not products[1]) or ((storage.fuel <= 0) and not initTick) then
+		if products then
 			object.setConfigParameter("status", "noFuel")
 		else
 			object.setConfigParameter("status", "invalid")
@@ -51,7 +51,7 @@ function update(dt)
 
 	local insertedAny = false
 	local attemptedInsert = false
-	for i, product in ipairs(producing) do
+	for i, product in ipairs(products[1]) do
 		local output = copy(product)
 		local total = (product.count * dt) + (storage.leftovers[i] or 0)
 		output.count = math.floor(total)
@@ -85,14 +85,14 @@ function update(dt)
 end
 
 
-function setOutput(newOutput)
-	if compare(producing, newOutput) then return end
-	producing = newOutput
-	object.setConfigParameter("producing", producing)
+function setProducts(newOutput)
+	if compare(products, newOutput) then return end
+	products = newOutput
+	object.setConfigParameter("products", products)
 
 	-- find the fastest product to use it as our tick rate and reset leftover amounts from previous ticks
 	best = 0
-	for i, product in ipairs(producing) do
+	for i, product in ipairs(products[1]) do
 		storage.leftovers[i] = 0
 		if product.count > best then
 			best = product.count
@@ -104,10 +104,6 @@ function setOutput(newOutput)
 	object.setConfigParameter("scriptDelta", delta)
 end
 
-
-function onNodeConnectionChange()
-	setOutput()
-end
 
 function addFuel(fuel)
 	local maxFuel = config.getParameter("maxFuel")

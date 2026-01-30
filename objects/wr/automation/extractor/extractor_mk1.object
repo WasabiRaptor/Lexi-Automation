@@ -11,7 +11,7 @@
   "race" : "generic",
   "health" : 1.5,
 
-  "scripts" : ["extractor.lua"],
+  "scripts" : ["/objects/wr/automation/productionObject.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {

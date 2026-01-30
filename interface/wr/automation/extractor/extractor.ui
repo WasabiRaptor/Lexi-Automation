@@ -14,11 +14,11 @@
             {"mode" : "v"},
             {"type":"panel","style":"concave","expandMode":[1,1],"children":[
                 {"mode" : "v"},
-                { "type" : "scrollArea", "id" : "extractorScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+                { "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
                 ]}
             ]}
-			// {"type":"button", "color" : "FF0000", "id" : "resetOutput", "caption" : "Reset", "toolTip" : "Reset resource extraction rates.\nOnly use this if a mod has added or removed resources from this planet's biomes."}
+			// {"type":"button", "color" : "FF0000", "id" : "resetProducts", "caption" : "Reset", "toolTip" : "Reset resource extraction rates.\nOnly use this if a mod has added or removed resources from this planet's biomes."}
         ]}
     ]
 }

@@ -1,21 +1,22 @@
 require("/scripts/util.lua")
 require("/interface/games/util.lua")
 require("/scripts/wr/automation/oreNoise.lua")
+require("/interface/wr/automation/displayProducts.lua")
 function uninit()
 end
 
 local materialList
-local producing
+local products
 function init()
 	materialList = root.assetJson("/interface/wr/automation/extractor/materialList.config")
-	producing = world.getObjectParameter(pane.sourceEntity(), "producing")
-	if not producing then
-		setOutput()
+	products = world.getObjectParameter(pane.sourceEntity(), "products")
+	if not products then
+		setProducts()
 	end
-	displayOutputs()
+	displayProducts(products)
 end
 
-function setOutput()
+function setProducts()
 	if not world.terrestrial() then return end
 	local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
 	if not (isCelestial > 0) then return end
@@ -27,7 +28,8 @@ function setOutput()
 	local position = world.entityPosition(pane.sourceEntity())
 
 	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier")
-	producing = jarray()
+    products = jarray()
+	products[1] = jarray()
 	for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
 		local modConfig = root.modConfig(v)
 		if modConfig.config.itemDrop then
@@ -40,7 +42,7 @@ function setOutput()
 				traceCount = traceCount + getOreCount({ position[1], i }, noise, 1)
 			end
 			traceCount = math.max(0,(math.ceil(traceCount * world.getObjectParameter(pane.sourceEntity(), "columnMultiplier") * 1000)-500)/1000)
-			table.insert(producing, {
+			table.insert(products[1], {
 				name = modConfig.config.itemDrop, count = count + traceCount,
 			})
 		end
@@ -55,7 +57,7 @@ function setOutput()
 				name = materialConfig.config.itemDrop, count = (1 * multiplier),
 			}
 			local found = false
-			for _, v in ipairs(producing) do
+			for _, v in ipairs(products[1]) do
 				if root.itemDescriptorsMatch(v, item, true) then
 					v.count = v.count + (1 * multiplier)
 					found = true
@@ -63,53 +65,23 @@ function setOutput()
 				end
 			end
 			if not found then
-				table.insert(producing, item)
+				table.insert(products[1], item)
 			end
 		end
 	end
-	producing = util.filter(producing, function (v)
+	products[1] = util.filter(products[1], function (v)
 		return v.count > 0
 	end)
-	table.sort(producing, function (a, b)
+	table.sort(products[1], function (a, b)
 		return a.count > b.count
 	end)
 
-	world.sendEntityMessage(pane.sourceEntity(), "setOutput", producing)
+	world.sendEntityMessage(pane.sourceEntity(), "setProducts", products)
 end
 
 
-function displayOutputs()
-	_ENV.extractorScrollArea:clearChildren()
-	if producing then
-		for _, product in ipairs(producing) do
-			local itemConfig = root.itemConfig(product)
-			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-			_ENV.extractorScrollArea:addChild({
-				type = "panel",
-				style = "convex",
-				expandMode = { 1, 0 },
-				children = {
-					{ mode = "v" },
-					{
-						{ type = "itemSlot", item = sb.jsonMerge(product, { count = 1 }) },
-						{
-							{ type = "label", text = merged.shortdescription },
-							{
-								{ type = "label", text = tostring(product.count), inline = true },
-								{ type = "label", text = "Per Second",            inline = true }
-							},
 
-						}
-					}
-				},
-			})
-		end
-	else
-		_ENV.extractorScrollArea:addChild({type = "label", color = "FF0000", text = "Resource veins can only be found on terrestrial worlds with valid celestial coordinates."})
-	end
-end
-
--- function _ENV.resetOutput:onClick()
---     setOutput()
---     displayOutputs()
+-- function _ENV.resetProducts:onClick()
+--     setProducts()
+--     displayProducts()
 -- end

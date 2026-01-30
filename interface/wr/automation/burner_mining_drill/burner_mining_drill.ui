@@ -28,7 +28,7 @@
 			]},
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
 				{"mode" : "v"},
-				{ "type" : "scrollArea", "id" : "extractorScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
 				]}
 			]}

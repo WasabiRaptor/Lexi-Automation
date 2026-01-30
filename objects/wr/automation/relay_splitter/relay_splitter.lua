@@ -53,16 +53,16 @@ function uninit()
 end
 function refreshOutput(force)
     if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+        object.setConfigParameter("matterStreamOutput", nil)
+        object.setConfigParameter("matterStreamInput", nil)
         object.setOutputNodeLevel(0, false)
         object.setOutputNodeLevel(1, false)
         object.setOutputNodeLevel(2, false)
-        object.setConfigParameter("matterStreamOutput", nil)
-        inputs = nil
-        object.setConfigParameter("matterStreamInput", nil)
         animator.setAnimationState("input", "off")
         animator.setAnimationState("center", "off")
         animator.setAnimationState("left", "off")
         animator.setAnimationState("right", "off")
+        inputs = nil
         return
     end
     animator.setAnimationState("input", "on", true)
@@ -110,7 +110,6 @@ function refreshOutput(force)
                 else
                     defaultOutputItem.count = defaultOutputItem.count - targetOutput.count
                 end
-                outputItem.count = outputItem.count / math.max(1, leftOutputCount)
                 if outputItem.count > 0 then
                     table.insert(leftOutput, outputItem)
                 end
@@ -129,7 +128,6 @@ function refreshOutput(force)
                 else
                     defaultOutputItem.count = defaultOutputItem.count - targetOutput.count
                 end
-                outputItem.count = outputItem.count / math.max(1, leftOutputCount)
                 if outputItem.count > 0 then
                     table.insert(rightOutput, outputItem)
                 end
@@ -138,34 +136,10 @@ function refreshOutput(force)
         end
     end
 
-    local finalOutput = jarray()
-    -- split our remaining outputs in the default stream evenly
-    for _, outputItem in ipairs(defaultOutput) do
-        outputItem.count = outputItem.count / math.max(1, defaultOutputCount)
-        if outputItem.count > 0 then
-            table.insert(finalOutput, outputItem)
-        end
-    end
-    if compare(outputs, {finalOutput, leftOutput, rightOutput}) then return end
-    outputs = {finalOutput, leftOutput, rightOutput}
-    object.setOutputNodeLevel(0, #finalOutput > 0)
-    object.setOutputNodeLevel(1, #leftOutput > 0)
-    object.setOutputNodeLevel(2, #rightOutput > 0)
-    animator.setAnimationState("center", (#finalOutput > 0) and "on" or "off")
-    animator.setAnimationState(leftState, (#leftOutput > 0) and "on" or "off")
-    animator.setAnimationState(rightState, (#rightOutput > 0) and "on" or "off")
-
-    object.setConfigParameter("matterStreamOutput", {finalOutput, leftOutput, rightOutput})
-    for eid, _ in pairs(leftOutputNodes) do
-        world.sendEntityMessage(eid, "refreshInputs")
-    end
-    for eid, _ in pairs(rightOutputNodes) do
-        world.sendEntityMessage(eid, "refreshInputs")
-    end
-    for eid, _ in pairs(defaultOutputNodes) do
-        world.sendEntityMessage(eid, "refreshInputs")
-    end
-
+    outputs = wr_automation.setOutputs({defaultOutput, leftOutput, rightOutput})
+    animator.setAnimationState("center", (#outputs[1] > 0) and "on" or "off")
+    animator.setAnimationState(leftState, (#outputs[2] > 0) and "on" or "off")
+    animator.setAnimationState(rightState, (#outputs[3] > 0) and "on" or "off")
 end
 
 function onInputNodeChange()

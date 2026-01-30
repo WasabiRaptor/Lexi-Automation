@@ -15,19 +15,41 @@ function uninit()
 	if craftingAddon then player.giveItem(craftingAddon) end
 end
 
+local filter
+local uniqueRecipes = {}
 function init()
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
+	filter = world.getObjectParameter(pane.sourceEntity(), "filter")
+
+	if world.getObjectParameter(pane.sourceEntity(), "lockRecipes") then
+		_ENV.craftingStationSlot:setVisible(false)
+		_ENV.craftingAddonSlot:setVisible(false)
+	end
+	uniqueRecipes = world.getObjectParameter(pane.sourceEntity(), "uniqueRecipes") or {}
+	if type(uniqueRecipes) == "string" then
+		uniqueRecipes = root.assetJson(uniqueRecipes)
+	end
+	if type(uniqueRecipes[1]) == "string" then
+		local recipeConfigList = uniqueRecipes
+		uniqueRecipes = jarray()
+		for _, path in ipairs(recipeConfigList) do
+			for _, recipe in ipairs(root.assetJson(path)) do
+				table.insert(uniqueRecipes, recipe)
+			end
+		end
+	end
+
 	refreshCurrentRecipes()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
 function refreshCurrentRecipes()
-	currentRecipes = {}
+	currentRecipes = copy(uniqueRecipes)
 	_ENV.craftingAddonSlot:setVisible(_ENV.craftingAddonSlot:item() ~= nil)
 
 	local craftingItem = _ENV.craftingItemSlot:item()
 	local craftingStation = _ENV.craftingStationSlot:item()
 
-	local filter = world.getObjectParameter(pane.sourceEntity(), "filter")
+	local filter = filter
 	if craftingStation then
 		local itemConfig = root.itemConfig(craftingStation)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
@@ -69,7 +91,7 @@ function refreshCurrentRecipes()
 		if interactData then
 			filter = interactData.filter
 			if interactData.recipes then
-				for _, v in ipairs(filterRecipes(filter, interactData.recipes)) do
+				for _, v in ipairs(interactData.recipes) do
 					table.insert(currentRecipes, v)
 				end
 			end
@@ -121,6 +143,33 @@ function searchRecipes()
 end
 function refreshDisplayedRecipes()
 	_ENV.recipeSearchScrollArea:clearChildren()
+	if #currentRecipes == 0 then
+		local craftingItem = _ENV.craftingItemSlot:item()
+		if not craftingItem then
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label",
+				text = "Insert an item to list its recipes."
+			})
+		else
+			if _ENV.craftingStationSlot.visible then
+				_ENV.recipeSearchScrollArea:addChild({
+					type = "label",
+					text = ("No recipes found.\nInsert a crafting station with a recipe for the desired item.")
+				})
+			else
+				_ENV.recipeSearchScrollArea:addChild({
+					type = "label",
+					text = ("No recipes found.")
+				})
+			end
+
+		end
+	elseif #searchedRecipes == 0 then
+		_ENV.recipeSearchScrollArea:addChild({
+			type = "label",
+			text = ("No search results.")
+		})
+	end
 	if #searchedRecipes > recipesPerPage then
 		_ENV.recipeSearchScrollArea:addChild({
 			type = "panel",
