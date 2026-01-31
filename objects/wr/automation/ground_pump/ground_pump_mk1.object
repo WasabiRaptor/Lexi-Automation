@@ -1,0 +1,69 @@
+{
+  "objectName" : "wr/ground_pump_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "rare",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "Collects liquids from a planet to output as a constant matter stream.",
+  "shortdescription" : "Ground Pump MK1",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["/objects/wr/automation/productionObject.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "imageLayers" : [
+        {"image":"animationParts/frame/back.png:default"},
+        {"image":"animationParts/big_manipulator.png:default"},
+        {"image":"animationParts/beam.png:default", "fullbright":true},
+        {"image":"animationParts/frame/front.png:default"}
+      ],
+      "direction" : "left",
+      "flipImages" : true,
+
+      "imagePosition" : [-16, 0],
+      "animationPosition" : [-16, 0],
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    },
+    {
+      "imageLayers" : [
+        {"image":"animationParts/frame/back.png:default"},
+        {"image":"animationParts/big_manipulator.png:default"},
+        {"image":"animationParts/beam.png:default", "fullbright":true},
+        {"image":"animationParts/frame/front.png:default"}
+      ],
+      "direction" : "right",
+
+      "imagePosition" : [-24, 0],
+      "animationPosition" : [-24, 0],
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    }
+  ],
+  "animation" : "ground_pump.animation",
+  "animationParts" : {
+    "back" : "animationParts/frame/back.png",
+    "extractor" : "animationParts/big_manipulator.png",
+    "beam" : "animationParts/beam.png",
+    "front" : "animationParts/frame/front.png"
+  },
+
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:ground_pump" },
+
+  "multiplier" : 1,
+
+  "outputNodes" : [ [0, 0] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+}

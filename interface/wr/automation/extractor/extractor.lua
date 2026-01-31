@@ -13,7 +13,17 @@ function init()
 	if not products then
 		setProducts()
 	end
-	displayProducts(products)
+	displayProducts(products, {
+		type = "label",
+		color = "FF0000",
+		text = "Resource veins can only be found on terrestrial worlds with valid celestial coordinates.",
+	}, {
+		{
+			type = "label",
+			color = "FF0000",
+			text = "No resources found at this position.",
+		}
+	})
 end
 
 function setProducts()
@@ -28,7 +38,7 @@ function setProducts()
 	local position = world.entityPosition(pane.sourceEntity())
 
 	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier")
-    products = jarray()
+	products = jarray()
 	products[1] = jarray()
 	for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
 		local modConfig = root.modConfig(v)
@@ -78,10 +88,3 @@ function setProducts()
 
 	world.sendEntityMessage(pane.sourceEntity(), "setProducts", products)
 end
-
-
-
--- function _ENV.resetProducts:onClick()
---     setProducts()
---     displayProducts()
--- end

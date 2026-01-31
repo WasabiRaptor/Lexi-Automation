@@ -4,10 +4,10 @@
 	"resizable" : true,
 	"minSize" : [160, 128],
 
-	"title" : "Extractor",
-	"icon" : "/objects/wr/automation/extractor/icon.png",
+	"title" : "Ground Pump",
+	"icon" : "/objects/wr/automation/ground_pump/icon.png",
 	"uniqueBy" : "path",
-	"scripts" : [ "extractor.lua" ],
+	"scripts" : [ "ground_pump.lua" ],
 	"children" : [
         {"mode" : "v"},
       	{"type":"panel","style":"convex","expandMode":[1,2],"children":[

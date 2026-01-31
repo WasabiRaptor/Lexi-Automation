@@ -1,0 +1,65 @@
+{
+  "animatedParts" : {
+    "stateTypes" : {
+      "producing" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 8,"cycle" : 0.8,"mode" : "loop"}
+        }
+      }
+    },
+
+    "parts" : {
+      "back" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 0
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "extractor" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "beam" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 2
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "front" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 3
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      }
+    }
+  }
+}
