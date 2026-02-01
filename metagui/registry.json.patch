@@ -6,6 +6,7 @@
 		"scanner" : "/interface/wr/automation/scanner/build.lua",
 		"burner_mining_drill" : "/interface/wr/automation/burner_mining_drill/build.lua",
 		"planetary_relay" : "/interface/wr/automation/planetary_relay/build.lua",
-		"universal_relay" : "/interface/wr/automation/universal_relay/build.lua"
+		"universal_relay" : "/interface/wr/automation/universal_relay/build.lua",
+		"ground_pump" : "/interface/wr/automation/ground_pump/build.lua"
 	}}
 ]

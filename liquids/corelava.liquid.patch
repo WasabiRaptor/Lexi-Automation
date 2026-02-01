@@ -1,0 +1,5 @@
+[
+	[
+		{"op":"add", "path":"/wr_groundPumpItems", "value" : [{"item":"liquidlava", "count":1}]}
+	]
+]

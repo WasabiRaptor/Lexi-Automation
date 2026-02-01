@@ -37,9 +37,23 @@ function setProducts()
 
 	local position = world.entityPosition(pane.sourceEntity())
 
-	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier")
+	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier") or 1
 	products = jarray()
 	products[1] = jarray()
+	local function addProduct(nodeProducts, item)
+		local found = false
+		for _, v in ipairs(nodeProducts) do
+			if root.itemDescriptorsMatch(v, item, true) then
+				v.count = v.count + item.count
+				found = true
+				break
+			end
+		end
+		if not found then
+			table.insert(nodeProducts, item)
+		end
+	end
+
 	for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
 		local modConfig = root.modConfig(v)
 		if modConfig.config.itemDrop then
@@ -52,7 +66,7 @@ function setProducts()
 				traceCount = traceCount + getOreCount({ position[1], i }, noise, 1)
 			end
 			traceCount = math.max(0,(math.ceil(traceCount * world.getObjectParameter(pane.sourceEntity(), "columnMultiplier") * 1000)-500)/1000)
-			table.insert(products[1], {
+			addProduct(products[1], {
 				name = modConfig.config.itemDrop, count = count + traceCount,
 			})
 		end
@@ -63,20 +77,9 @@ function setProducts()
 			success, materialConfig = pcall(root.materialConfig, materialList[v]) -- if OSB isn't installed, then we try putting it into this map of materials
 		end
 		if success and materialConfig.config.itemDrop then
-			local item =  {
-				name = materialConfig.config.itemDrop, count = (1 * multiplier),
-			}
-			local found = false
-			for _, v in ipairs(products[1]) do
-				if root.itemDescriptorsMatch(v, item, true) then
-					v.count = v.count + (1 * multiplier)
-					found = true
-					break
-				end
-			end
-			if not found then
-				table.insert(products[1], item)
-			end
+			addProduct(products[1], {
+				name = materialConfig.config.itemDrop, count = (multiplier),
+			})
 		end
 	end
 	products[1] = util.filter(products[1], function (v)
