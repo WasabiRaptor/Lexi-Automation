@@ -17,6 +17,7 @@ end
 
 local filter
 local uniqueRecipes = {}
+local recipeRPC
 function init()
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
 	filter = world.getObjectParameter(pane.sourceEntity(), "filter")
@@ -42,6 +43,13 @@ function init()
 	refreshCurrentRecipes()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
+function update()
+	if recipeRPC and recipeRPC:finished() then
+		recipeRPC = nil
+		displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+	end
+end
+
 function refreshCurrentRecipes()
 	currentRecipes = copy(uniqueRecipes)
 	_ENV.craftingAddonSlot:setVisible(_ENV.craftingAddonSlot:item() ~= nil)
@@ -99,6 +107,11 @@ function refreshCurrentRecipes()
 	end
 	if craftingItem then
 		currentRecipes = util.filter(currentRecipes, function(v)
+			if v.output[1] then
+				for _, item in ipairs(v.output) do
+					if (item.item or item.name) == (craftingItem.name or craftingItem.item) then return true end
+				end
+			end
 			return (v.output.item or v.output.name) == (craftingItem.name or craftingItem.item)
 		end)
 		for _, v in ipairs(filterRecipes(filter, root.recipesForItem(craftingItem.name or craftingItem.item))) do
@@ -111,6 +124,13 @@ function refreshCurrentRecipes()
 	end
 
 	table.sort(currentRecipes, function(a, b)
+		if a.output[1] and b.output[1] then
+			return a.recipeName < b.recipeName
+		elseif a.output[1] then
+			return true
+		elseif b.output[1] then
+			return false
+		end
 		local a_config = root.itemConfig(a.output)
 		local a_merged = sb.jsonMerge(a_config.config, a_config.parameters)
 		local a_rarity = rarityMap[(a_merged.rarity or "common"):lower()] or 0
@@ -133,11 +153,22 @@ end
 function searchRecipes()
 	recipePage = 0
 	local searchText = _ENV.searchBox.text:lower()
-	searchedRecipes = util.filter(currentRecipes, function(v)
-		local id = (v.output.item or v.output.name)
-		local itemConfig = root.itemConfig(v.output)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		return (searchText == "") or id:find(searchText) or merged.shortdescription:lower():find(searchText)
+	searchedRecipes = util.filter(currentRecipes, function(recipe)
+		if searchText == "" then return true end
+		if recipe.output[1] then
+			if recipe.recipeName:lower():find(searchText) then return true end
+			for _, item in ipairs(recipe.output) do
+				local id = (item.item or item.name)
+				local itemConfig = root.itemConfig(item)
+				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+				if id:lower():find(searchText) or merged.shortdescription:lower():find(searchText) then return true end
+			end
+		else
+			local id = (recipe.output.item or recipe.output.name)
+			local itemConfig = root.itemConfig(recipe.output)
+			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+			return id:lower():find(searchText) or merged.shortdescription:lower():find(searchText)
+		end
 	end)
 	recipePages = math.ceil(#searchedRecipes/recipesPerPage)
 end
@@ -199,10 +230,8 @@ function refreshDisplayedRecipes()
 	for i = 1, recipesPerPage do
 		local recipe = searchedRecipes[i + recipePage * recipesPerPage]
 		if recipe then
-			local itemConfig = root.itemConfig(recipe.output)
-			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 			local ingredientSlots = {
-				{mode = "h", scissoring = false}
+				{mode = "h", scissoring = false, expandMode = {1,0}}
 			}
 			for _, input in ipairs(recipe.input) do
 				table.insert(ingredientSlots, {
@@ -210,26 +239,66 @@ function refreshDisplayedRecipes()
 					item = input
 				})
 			end
+			local outputLayout
+			if recipe.output[1] then
+				local outputSlots = {
+					{mode = "h", scissoring = false, expandMode = {1,0}}
+				}
+				for _, output in ipairs(recipe.output) do
+					table.insert(outputSlots, {
+						type = "itemSlot",
+						item = output
+					})
+				end
+				outputLayout = {
+					{ mode = "v", expandMode = { 1, 0 } },
+					{ type = "label", text = recipe.recipeName },
+					{
+						type = "panel",
+						style = "flat",
+						children = {
+							{ mode = "v", expandMode = {1,0} },
+							{ type = "label", text = "Products"},
+							outputSlots
+						},
+					}
+				}
+			else
+				local itemConfig = root.itemConfig(recipe.output)
+				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+				outputLayout = {
+					{ mode = "h", scissoring = false },
+					{ type = "itemSlot", item = recipe.output },
+					{ type = "label", text = merged.shortdescription}
+				}
+			end
 			local listItem = _ENV.recipeSearchScrollArea:addChild({
 				type = "listItem",
 				selectionGroup = "recipeSelect",
 				value = recipe,
 				expandMode = {1,0},
 				children = {
-					{type = "panel", style = "convex", children = {
-							{ mode = "v"},
+					{
+						type = "panel",
+						style = "convex",
+						children = {
+							{ mode = "v", expandMode = {1,0} },
+							outputLayout,
 							{
-								{ type = "itemSlot", item = recipe.output },
-								{ type = "label", text = merged.shortdescription}
-							},
-							{type = "panel", style = "flat", children = ingredientSlots}
+								type = "panel",
+								style = "flat",
+								children = {
+									{ mode = "v", expandMode = {1,0} },
+									{ type = "label", text = "Ingredients"},
+									ingredientSlots
+								},
+							}
 						}
 					}
 				}
 			})
 			function listItem:onClick()
-				displayRecipe(recipe)
-				world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
+				recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
 			end
 		else
 			break
@@ -276,10 +345,6 @@ end
 
 function displayRecipe(recipe)
 	if not recipe then return end
-	_ENV.outputSlot:setItem(recipe.output)
-	local itemConfig = root.itemConfig(recipe.output)
-	local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-	_ENV.outputLabel:setText(merged.shortdescription)
 
 	local inputs = world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {}
 	for _, newInput in ipairs(inputs) do
@@ -345,7 +410,6 @@ function displayRecipe(recipe)
 			end
 		end
 	end
-	_ENV.maxProductionRateLabel:setText(tostring(maxProductionRate))
 
 	_ENV.recipeInputsScrollArea:clearChildren()
 	for _, input in ipairs(inputs) do
@@ -410,8 +474,59 @@ function displayRecipe(recipe)
 	elseif productionRate < maxProductionRate then
 		color = "FFFF00"
 	end
-	_ENV.productionRateLabel.color = (color)
-	_ENV.productionRateLabel:setText(tostring(productionRate or 0))
+
+	_ENV.outputPanel:clearChildren()
+	if recipe.output[1] then
+		local outputSlots = {
+			{mode = "h", scissoring = false, expandMode = {1,0}}
+		}
+		for _, output in ipairs(recipe.output) do
+			table.insert(outputSlots, {
+				type = "itemSlot",
+				item = output
+			})
+		end
+		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
+			{ type = "label", text = recipe.recipeName },
+			{
+				{type= "label", text= tostring(productionRate or 0), color= color, inline= true},
+				{type= "label", text= "/", inline= true},
+				{type= "label", text= tostring(maxProductionRate), inline= true},
+				{type= "label", text="Per Second", inline= true}
+			},
+			{
+				type = "panel",
+				style = "flat",
+				children = {
+					{ mode = "v", expandMode = {1,0} },
+					{ type = "label", text = "Products"},
+					outputSlots
+				},
+			}
+		}})
+
+	else
+		local itemConfig = root.itemConfig(recipe.output)
+		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+
+		_ENV.outputPanel:addChild({
+			type = "layout",
+			mode = "h",
+			scissoring = false,
+			children = {
+				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = recipe.output},
+				{
+					{type= "label", text= merged.shortdescription},
+					{
+						{type= "label", text= tostring(productionRate or 0), color= color, inline= true},
+						{type= "label", text= "/", inline= true},
+						{type= "label", text= tostring(maxProductionRate), inline= true},
+						{type= "label", text="Per Second", inline= true}
+					}
+				}
+			},
+		})
+	end
 end
 function _ENV.craftingItemSlot:onItemModified()
 	refreshCurrentRecipes()

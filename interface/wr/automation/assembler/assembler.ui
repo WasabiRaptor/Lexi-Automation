@@ -13,19 +13,7 @@
       	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
             {"mode" : "v"},
             {"type":"label","text":"Current Recipe", "align" : "center"},
-            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
-                {"mode" : "h"},
-                {"type": "itemSlot", "id" : "outputSlot", "autoInteract" : false, "glyph" : "output.png"},
-                [
-                    {"type": "label", "id" : "outputLabel", "text" : ""},
-                    [
-                        {"type": "label", "text": "0", "color" : "FF0000", "id" : "productionRateLabel", "inline" : true},
-                        {"type": "label", "text": "/", "inline" : true},
-                        {"type": "label", "text": "0", "id" : "maxProductionRateLabel", "inline" : true},
-                        {"type": "label", "text":"Per Second", "inline" : true}
-                    ]
-                ]
-            ]},
+            {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
             {"type":"label","text":"Ingredients", "align" : "center"},
             {"type":"panel","style":"concave","expandMode":[1,1],"children":[
                 {"mode" : "v"},

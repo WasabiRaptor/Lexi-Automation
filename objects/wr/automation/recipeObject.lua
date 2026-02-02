@@ -54,10 +54,19 @@ function refreshOutput(force)
 			end
 		end
 	end
-	local outputItem = copy(recipe.output)
-	outputItem.count = productionRate * (outputItem.count or 1)
-	object.setConfigParameter("products", {{outputItem}})
-	wr_automation.setOutputs({{outputItem}})
+	if recipe.output[1] then
+		local products = copy(recipe.output)
+		for _, product in ipairs(products) do
+			product.count = productionRate * (product.count or 1)
+		end
+		object.setConfigParameter("products", {products})
+		wr_automation.setOutputs({products})
+	else
+		local product = copy(recipe.output)
+		product.count = productionRate * (product.count or 1)
+		object.setConfigParameter("products", {{product}})
+		wr_automation.setOutputs({{product}})
+	end
 end
 function onInputNodeChange()
 	refreshOutput()
