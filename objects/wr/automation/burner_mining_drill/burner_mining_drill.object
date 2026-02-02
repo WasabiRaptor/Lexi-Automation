@@ -65,7 +65,6 @@
   "slotCount" : 24,
   "frameCooldown" : 5,
   "autoCloseCooldown" : 3600,
-
   "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:burner_mining_drill",
 
   "isExtractor" : true,

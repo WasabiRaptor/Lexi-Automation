@@ -1,10 +1,15 @@
 require("/objects/wr/automation/wr_automation.lua")
+local old = {
+	init = init or function() end,
+	onNodeConnectionChange = onNodeConnectionChange or function() end,
+	onInputNodeChange = onInputNodeChange or function() end
+}
 
 local recipe
 local outputCount
 local inputs
 function init()
-	script.setUpdateDelta(0)
+	old.init()
 	recipe = config.getParameter("recipe")
 	message.setHandler("setRecipe", function(_, _, newRecipe)
 		if compare(recipe, newRecipe) then return end
@@ -39,12 +44,12 @@ function refreshOutput(force)
 	outputCount = newOutputCount
 
 	local craftingSpeed = config.getParameter("craftingSpeed") or 1
-	local productionRate = craftingSpeed / math.max(
+	local maxProductionRate = craftingSpeed / math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(config.getParameter("minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
-
+	local productionRate = maxProductionRate
 	for _, recipeItem in ipairs(recipe.input) do
 		for _, inputItem in ipairs(inputs) do
 			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
@@ -68,9 +73,11 @@ function refreshOutput(force)
 		wr_automation.setOutputs({{product}})
 	end
 end
-function onInputNodeChange()
+function onInputNodeChange(...)
+	old.onInputNodeChange(...)
 	refreshOutput()
 end
-function onNodeConnectionChange()
+function onNodeConnectionChange(...)
+	old.onNodeConnectionChange(...)
 	refreshOutput()
 end

@@ -1,0 +1,44 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [160, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [160, 128],
+
+	"title" : "Simulation Chamber",
+	"icon" : "/objects/wr/automation/simulation_chamber/icon.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "simulation_chamber.lua" ],
+	"children" : [
+		{"mode" : "v"},
+		{"type":"panel","style":"convex","expandMode":[1,2],"children":[
+			{"mode" : "v"},
+			[
+				[
+					{"mode" : "v","expandMode":[2,1]},
+					[
+						{"type":"itemSlot", "glyph":"capturePod.png", "id":"capturePodSlot", "containerSlot":1},
+						{"type":"label", "text":"", "id":"creatureNameLabel"}
+					],
+					{"type":"label", "text":"This machine requires OSB to function.", "id":"creatureDescLabel"}
+
+				],
+				{"type":"panel","style":"convex","expandMode":[0,0],"children":[
+					{"type":"canvas", "size":[50,50], "id":"creaturePortraitCanvas"}
+				]}
+			],
+			[
+				{"type":"itemSlot", "item": {"item":"money", "count":1, "autoInteract":false}},
+				{"type":"label", "text" : "0", "inline":true, "id": "pixelInputLabel"},
+				{"type":"label", "text" : "/", "inline":true},
+				{"type":"label", "text" : "0", "inline":true, "id": "pixelMaxInputLabel"},
+				{"type":"label", "text" : "Per Second"}
+			],
+			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
+				{"mode" : "v"},
+				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+				]}
+			]}
+		]}
+	]
+}

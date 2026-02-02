@@ -1,22 +1,23 @@
 {
-  "objectName" : "wr/assembler_mk1",
+  "objectName" : "wr/simulation_chamber_mk1",
   "colonyTags" : [],
   "printable" : false,
   "rarity" : "Common",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "A universal matter assembler. Can be programmed with any compatible crafting station and output.",
-  "shortdescription" : "Matter Assembler MK1",
+  "description" : "Simulates a captured life-form using pixels to generate a matter stream.",
+  "shortdescription" : "Simulation Chamber MK1",
   "race" : "generic",
   "health" : 1.5,
+  "objectType" : "container",
 
   "scriptDelta":0,
   "scripts" : ["/objects/wr/automation/recipeObject.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "assembler.png:default",
+      "image" : "simulation_chamber.png:default",
       "direction" : "left",
       "flipImages" : true,
 
@@ -29,7 +30,7 @@
       "collision" : "platform"
     },
     {
-      "image" : "assembler.png:default",
+      "image" : "simulation_chamber.png:default",
       "direction" : "right",
 
       "imagePosition" : [-8, 0],
@@ -41,12 +42,14 @@
       "collision" : "platform"
     }
   ],
-  "interactAction" : "ScriptPane",
-  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
-  "filter" : ["craftinganvil", "emptyhands"],
+  "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
+  "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
+  "slotCount" : 1,
+  "frameCooldown" : 5,
+  "autoCloseCooldown" : 3600,
+  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:simulation_chamber",
 
-  "minimumDuration" : 1, // the minimum duration to craft a recipe
-  "craftingSpeed" : 1, // the amount of times it crafts a recipe per cycle
+  "multiplier" : 1,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

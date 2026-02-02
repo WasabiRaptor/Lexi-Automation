@@ -1,9 +1,13 @@
 require("/objects/wr/automation/wr_automation.lua")
+local old = {
+	init = init or function() end,
+	onNodeConnectionChange = onNodeConnectionChange or function() end
+}
 
 local outputCount
 local products
 function init()
-	script.setUpdateDelta(0)
+	old.init()
 	products = config.getParameter("products")
 	message.setHandler("setProducts", function(_, _, newProducts)
 		if compare(products, newProducts) then return end
@@ -37,6 +41,7 @@ function refreshOutput(force)
 	wr_automation.setOutputs(products)
 end
 
-function onNodeConnectionChange()
+function onNodeConnectionChange(...)
+	old.onNodeConnectionChange(...)
 	refreshOutput()
 end
