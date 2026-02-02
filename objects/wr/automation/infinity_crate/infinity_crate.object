@@ -1,0 +1,59 @@
+{
+  "objectName" : "wr/infinity_crate",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "Produces an infinite amount of its contents as a matter stream.",
+  "shortdescription" : "Infinity Cate",
+  "race" : "generic",
+  "health" : 1.5,
+  "objectType" : "container",
+
+  "scriptDelta":0,
+  "scripts" : ["infinity_crate.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "crate.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    },
+    {
+      "image" : "crate.png:default",
+      "direction" : "right",
+
+      "imagePosition" : [-8, 0],
+      "frames" : 1,
+      "animationCycle" : 0.5,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ],
+      "collision" : "platform"
+    }
+  ],
+
+  "openSounds" : [ "/sfx/objects/woodenbox_open.ogg" ],
+  "closeSounds" : [ "/sfx/objects/woodenbox_close.ogg" ],
+  "slotCount" : 16,
+  "uiConfig" : "/interface/chests/chest<slots>.config",
+  "frameCooldown" : 5,
+  "autoCloseCooldown" : 3600,
+
+  "outputNodes" : [ [1, 0] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+
+}
