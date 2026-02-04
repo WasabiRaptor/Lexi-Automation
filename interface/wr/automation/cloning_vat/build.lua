@@ -1,4 +1,4 @@
-cfg = root.assetJson("/interface/wr/automation/simulation_chamber/simulation_chamber.ui")
+cfg = root.assetJson("/interface/wr/automation/cloning_vat/cloning_vat.ui")
 cfg.title = world.getObjectParameter(pane.sourceEntity(), "shortdescription")
 cfg.icon = world.getObjectParameter(pane.sourceEntity(), "inventoryIcon")
 if not (cfg.icon:sub(1,1) == "/") then

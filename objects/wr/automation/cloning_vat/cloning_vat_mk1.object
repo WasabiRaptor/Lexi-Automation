@@ -1,13 +1,13 @@
 {
-  "objectName" : "wr/simulation_chamber_mk1",
+  "objectName" : "wr/cloning_vat_mk1",
   "colonyTags" : [],
   "printable" : false,
   "rarity" : "Common",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Simulates a captured life-form to clone materials with by using nutrient paste.",
-  "shortdescription" : "Simulation Chamber MK1",
+  "description" : "Clones materials from a captures life-form using nutrient paste.",
+  "shortdescription" : "Cloning Vat MK1",
   "race" : "generic",
   "health" : 1.5,
   "objectType" : "container",
@@ -17,7 +17,7 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "simulation_chamber.png:default",
+      "image" : "cloning_vat.png:default",
       "direction" : "left",
       "flipImages" : true,
 
@@ -30,7 +30,7 @@
       "collision" : "platform"
     },
     {
-      "image" : "simulation_chamber.png:default",
+      "image" : "cloning_vat.png:default",
       "direction" : "right",
 
       "imagePosition" : [-8, 0],
@@ -47,7 +47,7 @@
   "slotCount" : 1,
   "frameCooldown" : 5,
   "autoCloseCooldown" : 3600,
-  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:simulation_chamber",
+  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:cloning_vat",
 
   "minimumDuration" : 1, // the minimum duration to craft a recipe
   "craftingSpeed" : 1, // the amount of times it crafts a recipe per cycle

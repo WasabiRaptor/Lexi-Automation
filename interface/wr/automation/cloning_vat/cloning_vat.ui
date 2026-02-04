@@ -4,10 +4,10 @@
 	"resizable" : true,
 	"minSize" : [160, 128],
 
-	"title" : "Simulation Chamber",
-	"icon" : "/objects/wr/automation/simulation_chamber/icon.png",
+	"title" : "Cloning Vat",
+	"icon" : "/objects/wr/automation/cloning_vat/icon.png",
 	"uniqueBy" : "path",
-	"scripts" : [ "simulation_chamber.lua" ],
+	"scripts" : [ "cloning_vat.lua" ],
 	"children" : [
 		{"mode" : "v"},
 		{"type":"panel","style":"convex","expandMode":[1,2],"children":[

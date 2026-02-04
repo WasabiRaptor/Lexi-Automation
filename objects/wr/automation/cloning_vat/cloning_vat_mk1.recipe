@@ -5,7 +5,7 @@
     { "item" : "stickofram", "count" : 5 }
   ],
   "output" : {
-    "item" : "wr/assembler_mk1",
+    "item" : "wr/cloning_vat_mk1",
     "count" : 1
   },
   "duration" : 5,
