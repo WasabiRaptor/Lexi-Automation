@@ -54,7 +54,7 @@ function refreshOutput(force)
 		for _, inputItem in ipairs(inputs) do
 			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
 				recieved = true
-				productionRate = math.min(productionRate, (inputItem.count / (recipeItem.count or 1)) * craftingSpeed)
+				productionRate = math.min(productionRate, (inputItem.count / ((recipeItem.count or 1) * maxProductionRate)))
 				break
 			end
 		end

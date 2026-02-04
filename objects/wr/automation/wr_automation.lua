@@ -69,7 +69,7 @@ function wr_automation.setOutputs(products)
 		local output = jarray()
 		for _, v in ipairs(nodeProducts) do
 			local outputItem = copy(v)
-			totalItems = totalItems + output.count
+			totalItems = totalItems + outputItem.count
 			outputItem.count = outputItem.count / math.max(1, outputCount)
 			if outputItem.count > 0 then
 				table.insert(output, outputItem)

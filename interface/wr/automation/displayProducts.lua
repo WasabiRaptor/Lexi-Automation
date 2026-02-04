@@ -1,3 +1,4 @@
+require("/interface/wr/automation/labels.lua")
 local outputNodesConfig
 function displayProducts(products, noProducts, noNodeProducts)
 	if not outputNodesConfig then
@@ -10,6 +11,7 @@ function displayProducts(products, noProducts, noNodeProducts)
 				for _, product in ipairs(nodeProducts) do
 					local itemConfig = root.itemConfig(product)
 					local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+					local timeMultiplier, timeLabel = timeScale(product.count)
 					_ENV.productsScrollArea:addChild({
 						type = "panel",
 						style = "convex",
@@ -22,8 +24,8 @@ function displayProducts(products, noProducts, noNodeProducts)
 									{ type = "label", text = merged.shortdescription },
 									{
 										{ type = "image", file = outputNodesConfig[nodeIndex].icon },
-										{ type = "label", text = tostring(product.count), inline = true },
-										{ type = "label", text = "Per Second",            inline = true }
+										{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)), inline = true },
+										{ type = "label", text = timeLabel,            inline = true }
 									},
 
 								}

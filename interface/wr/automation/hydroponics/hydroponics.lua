@@ -10,9 +10,7 @@ end
 local initial = true
 function update()
 	if initial and _ENV.inputItemSlot:item() then
-		local item = _ENV.inputItemSlot:item()
 		initial = false
-		displayMonster(item.parameters.pets[1].portrait, item.parameters.pets[1].description, item.parameters.tooltipFields.subtitle)
 		refreshDisplayedProducts()
 	end
 	if recipeRPC and recipeRPC:finished() then
@@ -22,6 +20,14 @@ function update()
 end
 
 function refreshDisplayedProducts()
+	local item = _ENV.inputItemSlot:item()
+	if item then
+		local itemConfig = root.itemConfig(item)
+		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+		_ENV.inputItemLabel:setText(merged.shortdescription or "")
+	else
+		_ENV.inputItemLabel:setText("")
+	end
 	local products
 	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
 	if recipe then
@@ -36,15 +42,15 @@ function refreshDisplayedProducts()
 		local maxAmount = recipe.input[1].count * maxProductionRate
 		local timeMultiplier, timeLabel = timeScale(productionRate)
 
-		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "wr/nutrient_paste") then
+		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "liquidwater") then
 			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount))
 			_ENV.inputAmountLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
-			_ENV.inputAmountLabel:setText(clipAtThousandth(inputs[1].count * timeMultiplier))
+			_ENV.inputAmountLabel:setText(clipAtThousandth((inputs[1].count * timeMultiplier)))
 		else
 			_ENV.inputAmountLabel.color = "FF0000"
 			_ENV.inputAmountLabel:setText("0")
 		end
-		_ENV.inputMaxAmountLabel:setText(clipAtThousandth(maxAmount * timeMultiplier))
+		_ENV.inputMaxAmountLabel:setText(clipAtThousandth((maxAmount * timeMultiplier)))
 		_ENV.inputTimeScaleLabel:setText(timeLabel)
 
 		products = jarray()
@@ -60,38 +66,35 @@ function refreshDisplayedProducts()
 
 	displayProducts(products, {
 		type = "label",
-		text = "Insert a capture pod.",
+		text = "Insert a harvestable plant.",
 	}, {
 		{
 			type = "label",
 			color = "FF0000",
-			text = "This life-form does not produce any resources.",
+			text = "This plant does not produce any resources.",
 		}
 	})
 end
 
 local treasureRolls = 100
-function setProducts(item)
+function setProducts()
+	local item = _ENV.inputItemSlot:item()
+
 	if not item then
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
 		return
 	end
-	local monsterParameters = sb.jsonMerge(root.monsterParameters(item.parameters.pets[1].config.type, item.parameters.pets[1].config.parameters.seed), item.parameters.pets[1].config.parameters)
-	local monsterConfig = root.monsterConfig(item.parameters.pets[1].config.type)
-	local seed = item.parameters.pets[1].config.parameters.seed
-	local level = item.parameters.pets[1].config.parameters.level
-	local health = item.parameters.pets[1].status.stats.maxHealth
-	local dropPools = sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools)
+	local position = world.entityPosition(pane.sourceEntity())
+	local itemConfig = root.itemConfig(item)
+	local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 
-	if not dropPools then
-		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
-		return
-	end
-
-	local recipeCost = 0
+	local seed = sb.staticRandomI32((item.name or item.item)) + sb.staticRandomI32(sb.printJson(position))
 	local itemCount = 0
 	local products = jarray()
 	local rand = sb.makeRandomSource(seed)
+
+	local duration = 0
+
 
 	local function addProduct(nodeProducts, item)
 		local found = false
@@ -110,27 +113,37 @@ function setProducts(item)
 	local function addTreasurePool(pool)
 		if not root.isTreasurePool(pool) then return end
 		for i = 1, treasureRolls do
-			for _, treasure in ipairs(root.createTreasure(pool, level, rand:randu32())) do
+			for _, treasure in ipairs(root.createTreasure(pool, world.threatLevel(), rand:randu32())) do
 				treasure.count = treasure.count / treasureRolls
 				addProduct(products, treasure)
 			end
 		end
 	end
-
-	if type(dropPools) == "table" and dropPools[1] then
-		dropPools = dropPools[rand:randf(1, #dropPools)]
-	end
-	if type(dropPools) == "table" then
-		for k, v in pairs(dropPools) do
-			addTreasurePool(v)
+	for i = 1, #merged.stages do
+		-- we're getting the best duration for harvesting at each stage
+		local harvestDuration = 0
+		for j = 1, i do
+			local stage = merged.stages[j]
+			if stage.harvestPool and j == i then
+				addTreasurePool(stage.harvestPool)
+				if stage.resetToStage then
+					harvestDuration = 0
+					for j = stage.resetToStage + 1, i - 1 do
+						local stage = merged.stages[j]
+						if stage.duration then
+							harvestDuration = harvestDuration + rand:randf(stage.duration[1], stage.duration[2])
+						end
+					end
+				end
+				duration = duration + harvestDuration
+			elseif stage.duration then
+				harvestDuration = harvestDuration + rand:randf(stage.duration[1], stage.duration[2])
+			end
 		end
-	elseif type(dropPools) == "string" then
-		addTreasurePool(dropPools)
 	end
+	duration = math.floor(duration)
+
 	for _, v in ipairs(products) do
-		local itemConfig = root.itemConfig(v)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		recipeCost = recipeCost + ((merged.price or 0) * v.count)
 		itemCount = itemCount + v.count
 	end
 
@@ -143,39 +156,23 @@ function setProducts(item)
 
 	local recipe = {
 		input = {
-			{ item = "wr/nutrient_paste", count = math.max(recipeCost,0) + (itemCount * 10) }
+			{ item = "liquidwater", count = (itemCount + #merged.stages) * duration }
 		},
 		output = products,
-		duration = health
+		duration = duration
 	}
+	sb.logInfo(duration)
 
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
 	world.sendEntityMessage(pane.sourceEntity(), "setCapturePod", _ENV.inputItemSlot:item())
 end
-function displayMonster(portrait, description, name)
-	local canvas = widget.bindCanvas(_ENV.creaturePortraitCanvas.backingWidget)
-	canvas:clear()
-
-	if portrait then
-		canvas:drawJsonDrawables(portrait, {25,25})
-	end
-	_ENV.inputItemLabel:setText(name or "")
-	_ENV.creatureDescLabel:setText(description or "")
-end
 
 function _ENV.inputItemSlot:onItemModified()
 	initial = false
-	local item = self:item()
-	if item then
-		setProducts(item)
-		displayMonster(item.parameters.pets[1].portrait, item.parameters.pets[1].description, item.parameters.tooltipFields.subtitle)
-	else
-		setProducts()
-		displayMonster()
-	end
+	setProducts()
 end
 
 function _ENV.inputItemSlot:acceptsItem(item)
-	if not root.monsterConfig then return false end
-	return item and item.parameters and item.parameters.pets and item.parameters.pets[1] ~= nil
+	local itemConfig = root.itemConfig(item)
+	return itemConfig.config.objectType == "farmable"
 end

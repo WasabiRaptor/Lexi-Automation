@@ -1,4 +1,6 @@
 require("/scripts/util.lua")
+require("/interface/wr/automation/labels.lua")
+
 local rarityMap = {}
 local currentRecipes = {}
 local recipePage = 0
@@ -397,7 +399,7 @@ function displayRecipe(recipe)
 		if input.used then
 			for _, recipeItem in ipairs(recipe.input) do
 				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
-					local rate = (input.count / (recipeItem.count or 1)) * craftingSpeed
+					local rate = (input.count / ((recipeItem.count or 1) * maxProductionRate))
 					if not productionRate then
 						balanced = rate <= maxProductionRate
 						productionRate = math.min(maxProductionRate, rate)
@@ -435,17 +437,18 @@ function displayRecipe(recipe)
 			elseif production < productionTarget then
 				color = "FFFF00"
 			end
-
+			local timeMultiplier, timeLabel = timeScale(production)
 			productionLabels = {
-				{ type = "label", text = tostring(production),       color = color, inline = true },
+				{ type = "label", text = clipAtThousandth((timeMultiplier * production)),       color = color, inline = true },
 				{ type = "label", text = "/",                        inline = true },
-				{ type = "label", text = tostring(productionTarget), inline = true },
-				{ type = "label", text = "Per Second",               inline = true }
+				{ type = "label", text = clipAtThousandth((timeMultiplier * productionTarget)), inline = true },
+				{ type = "label", text = timeLabel,               inline = true }
 			}
 		else
+			local timeMultiplier, timeLabel = timeScale(input.count)
 			productionLabels = {
-				{ type = "label", text = tostring(input.count), color = "FF00FF", inline = true },
-				{ type = "label", text = "Per Second",          inline = true }
+				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)), color = "FF00FF", inline = true },
+				{ type = "label", text = timeLabel,          inline = true }
 			}
 		end
 		if input.used or (input.count > 0) then
@@ -486,13 +489,15 @@ function displayRecipe(recipe)
 				item = output
 			})
 		end
+		local timeMultiplier, timeLabel = timeScale(productionRate)
+
 		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
 			{ type = "label", text = recipe.recipeName },
 			{
-				{type= "label", text= tostring(productionRate or 0), color= color, inline= true},
+				{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
 				{type= "label", text= "/", inline= true},
-				{type= "label", text= tostring(maxProductionRate), inline= true},
-				{type= "label", text="Per Second", inline= true}
+				{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
+				{type= "label", text=timeLabel, inline= true}
 			},
 			{
 				type = "panel",
@@ -509,6 +514,8 @@ function displayRecipe(recipe)
 		local itemConfig = root.itemConfig(recipe.output)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 
+		local timeMultiplier, timeLabel = timeScale(productionRate)
+
 		_ENV.outputPanel:addChild({
 			type = "layout",
 			mode = "h",
@@ -518,10 +525,10 @@ function displayRecipe(recipe)
 				{
 					{type= "label", text= merged.shortdescription},
 					{
-						{type= "label", text= tostring(productionRate or 0), color= color, inline= true},
+						{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
 						{type= "label", text= "/", inline= true},
-						{type= "label", text= tostring(maxProductionRate), inline= true},
-						{type= "label", text="Per Second", inline= true}
+						{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
+						{type= "label", text=timeLabel, inline= true}
 					}
 				}
 			},

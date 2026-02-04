@@ -4,34 +4,24 @@
 	"resizable" : true,
 	"minSize" : [160, 128],
 
-	"title" : "Simulation Chamber",
-	"icon" : "/objects/wr/automation/simulation_chamber/icon.png",
+	"title" : "Growth Chamber",
+	"icon" : "/objects/wr/automation/hydroponics/icon.png",
 	"uniqueBy" : "path",
-	"scripts" : [ "simulation_chamber.lua" ],
+	"scripts" : [ "hydroponics.lua" ],
 	"children" : [
 		{"mode" : "v"},
 		{"type":"panel","style":"convex","expandMode":[1,2],"children":[
 			{"mode" : "v"},
 			[
-				[
-					{"mode" : "v","expandMode":[2,1]},
-					[
-						{"type":"itemSlot", "glyph":"capturePod.png", "id":"inputItemSlot", "containerSlot":1},
-						{"type":"label", "text":"", "id":"inputItemLabel"}
-					],
-					{"type":"label", "text":"This machine requires OSB to function.", "id":"creatureDescLabel"}
-
-				],
-				{"type":"panel","style":"convex","expandMode":[0,0],"children":[
-					{"type":"canvas", "size":[50,50], "id":"creaturePortraitCanvas"}
-				]}
+				{"type":"itemSlot", "glyph":"harvestable.png", "id":"inputItemSlot", "containerSlot":1},
+				{"type":"label", "text":"", "id":"inputItemLabel"}
 			],
 			[
-				{"type":"itemSlot", "item": {"item":"wr/nutrient_paste", "count":1, "autoInteract":false}},
+				{"type":"itemSlot", "item": {"item":"liquidwater", "count":1, "autoInteract":false}},
 				{"type":"label", "text" : "0", "inline":true, "id": "inputAmountLabel"},
 				{"type":"label", "text" : "/", "inline":true},
 				{"type":"label", "text" : "0", "inline":true, "id": "inputMaxAmountLabel"},
-				{"type":"label", "text" : "", "id" : "inputTimeScaleLabel"}
+				{"type":"label", "text" : "", "id":"inputTimeScaleLabel"}
 			],
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
 				{"mode" : "v"},

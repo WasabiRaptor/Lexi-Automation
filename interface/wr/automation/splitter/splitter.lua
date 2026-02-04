@@ -1,6 +1,6 @@
 require("/scripts/util.lua")
 require("/interface/games/util.lua")
-
+require("/interface/wr/automation/labels.lua")
 local leftTargetOutput
 local rightTargetOutput
 local inputs
@@ -43,6 +43,7 @@ function displayInputs()
             rightTarget.count = 0
             table.insert(rightTargetOutput, rightTarget)
         end
+		local timeMultiplier, timeLabel = timeScale(input.count)
 
         local itemConfig = root.itemConfig(input)
         local hash = rand:randu32()
@@ -58,8 +59,8 @@ function displayInputs()
                     {
                         { type = "label",   text = merged.shortdescription },
                         {
-                            { type = "label", text = tostring(input.count), inline = true },
-                            { type = "label", text = "Per Second",          inline = true }
+                            { type = "label", text = clipAtThousandth((timeMultiplier * input.count)), inline = true },
+                            { type = "label", text = timeLabel,          inline = true }
                         },
 
                     }
@@ -76,7 +77,7 @@ function displayInputs()
                         {
                             { type = "textBox", align = "center", id = "leftTextBox"..hash },
                             { type = "label",   align = "center", text = "-", inline = true },
-                            { type = "label",   align = "center", text = tostring(math.max(0, input.count - leftTarget.count - rightTarget.count)), id = "centerCountLabel"..hash },
+                            { type = "label",   align = "center", text = clipAtThousandth(( timeMultiplier * math.max(0, input.count - leftTarget.count - rightTarget.count))), id = "centerCountLabel"..hash },
                             { type = "label",   align = "center", text = "-", inline = true },
                             { type = "textBox", align = "center", id = "rightTextBox"..hash },
                         },
@@ -90,6 +91,7 @@ function displayInputs()
         function leftTextBox:onTextChanged()
             local number = tonumber(self.text)
             if number and (number >= 0) then
+                number = number * timeMultiplier
                 leftTarget.count = number
                 if leftTarget.count <= input.count then
                     self:setColor("00FF00")
@@ -106,6 +108,7 @@ function displayInputs()
         function rightTextBox:onTextChanged(doNot)
             local number = tonumber(self.text)
             if number and (number >= 0) then
+                number = number * timeMultiplier
                 rightTarget.count = number
                 if (rightTarget.count == 0) or rightTarget.count <= (input.count - leftTarget.count) then
                     self:setColor("00FF00")
@@ -115,12 +118,12 @@ function displayInputs()
             else
                 self:setColor("FF0000")
             end
-            centerCountLabel:setText(tostring(math.max(0, input.count - leftTarget.count - rightTarget.count)))
+            centerCountLabel:setText(clipAtThousandth((timeMultiplier * math.max(0, input.count - leftTarget.count - rightTarget.count))))
             setTargetOutputs()
         end
 
-        leftTextBox:setText(tostring(leftTarget.count))
-        rightTextBox:setText(tostring(rightTarget.count))
+        leftTextBox:setText(tostring(leftTarget.count / timeMultiplier))
+        rightTextBox:setText(tostring(rightTarget.count / timeMultiplier))
     end
 end
 local prevLeft
