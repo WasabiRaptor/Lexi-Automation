@@ -98,8 +98,7 @@ function displayInputs()
 		function leftTextBox:onTextChanged()
 			local number = tonumber(self.text)
 			if number and (number >= 0) then
-				number = number * timeMultiplier
-				leftTarget.count = number
+				leftTarget.count = number / timeMultiplier
 				if leftTarget.count <= input.count then
 					self:setColor("00FF00")
 				else
@@ -115,8 +114,7 @@ function displayInputs()
 		function rightTextBox:onTextChanged(doNot)
 			local number = tonumber(self.text)
 			if number and (number >= 0) then
-				number = number * timeMultiplier
-				rightTarget.count = number
+				rightTarget.count = number / timeMultiplier
 				if (rightTarget.count == 0) or rightTarget.count <= (input.count - leftTarget.count) then
 					self:setColor("00FF00")
 				else
@@ -129,8 +127,8 @@ function displayInputs()
 			setTargetOutputs()
 		end
 
-		leftTextBox:setText(tostring(leftTarget.count / timeMultiplier))
-		rightTextBox:setText(tostring(rightTarget.count / timeMultiplier))
+		leftTextBox:setText(tostring(leftTarget.count * timeMultiplier))
+		rightTextBox:setText(tostring(rightTarget.count * timeMultiplier))
 	end
 end
 local prevLeft

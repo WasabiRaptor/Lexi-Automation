@@ -9,17 +9,17 @@
 	"uniqueBy" : "path",
 	"scripts" : [ "generic_machine.lua" ],
 	"children" : [
-        {"mode" : "v"},
-      	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
-            {"mode" : "v"},
-			{"type" : "label", "text" : "", "id" : "statusLabel"},
-			{"type" : "label", "text" : "", "id" : "machineDescLabel"},
-            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
-                {"mode" : "v"},
-                { "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+		{"mode" : "v"},
+	  	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
+			{"mode" : "v"},
+			{"type" : "label", "text" : "", "id" : "machineDescLabel", "align" : "center"},
+			{"type" : "label", "text" : "", "id" : "statusLabel", "align":"center"},
+			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
+				{"mode" : "v"},
+				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
-                ]}
-            ]}
-        ]}
-    ]
+				]}
+			]}
+		]}
+	]
 }

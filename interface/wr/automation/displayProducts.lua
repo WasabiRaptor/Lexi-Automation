@@ -42,6 +42,6 @@ function displayProducts(products, noProducts, noNodeProducts)
 	elseif noProducts then
 		_ENV.productsScrollArea:addChild(noProducts)
 	else
-		_ENV.productsScrollArea:addChild({type = "label", color = "FF0000", text = "No products are being made."})
+		_ENV.productsScrollArea:addChild({type = "label", color = "FF0000", text = "No products are being made.", align = "center"})
 	end
 end

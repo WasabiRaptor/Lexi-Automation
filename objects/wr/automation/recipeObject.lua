@@ -26,6 +26,7 @@ end
 
 function refreshOutput(force)
 	if (not recipe) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		object.setConfigParameter("products", nil)
 		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		object.setOutputNodeLevel(0, false)

@@ -14,11 +14,13 @@ function init()
 	displayProducts(products, {
 		type = "label",
 		color = "FF0000",
+		align = "center",
 		text = "Liquids only be pumped on terrestrial worlds with valid celestial coordinates.",
 	},{
 		{
 			type = "label",
 			color = "FF0000",
+			align = "center",
 			text = "No liquids found in this planetary layer.",
 		}
 	})

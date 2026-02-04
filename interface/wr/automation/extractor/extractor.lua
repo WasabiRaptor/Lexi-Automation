@@ -16,11 +16,13 @@ function init()
 	displayProducts(products, {
 		type = "label",
 		color = "FF0000",
+		align = "center",
 		text = "Resource veins can only be found on terrestrial worlds with valid celestial coordinates.",
 	}, {
 		{
 			type = "label",
 			color = "FF0000",
+			align = "center",
 			text = "No resources found at this position.",
 		}
 	})

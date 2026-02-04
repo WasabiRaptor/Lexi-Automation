@@ -52,7 +52,7 @@ function wr_automation.countInputs(nodeIndex, recipe)
 		end
 	end)
 
-	return inputs
+	return inputs, totalItems
 end
 
 function wr_automation.setOutputs(products)
