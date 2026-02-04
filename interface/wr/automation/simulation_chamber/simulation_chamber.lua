@@ -35,7 +35,7 @@ function refreshDisplayedProducts()
 		local productionRate = 0
 		local maxAmount = recipe.input[1].count * maxProductionRate
 
-		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "money") then
+		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "wr/nutrient_paste") then
 			productionRate = inputs[1].count / maxAmount
 			_ENV.pixelInputLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
 			_ENV.pixelInputLabel:setText(tostring(inputs[1].count))
@@ -118,18 +118,13 @@ function setProducts(dropPools, seed, level)
 		if v.count > 0 then
 			local itemConfig = root.itemConfig(v)
 			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-			if merged.currency == "money" then
-				recipeCost = recipeCost - ((merged.value or 0) * v.count)
-			else
-				recipeCost = recipeCost + ((merged.price or 0) * v.count)
-				itemCount = itemCount + v.count
-			end
-
+			recipeCost = recipeCost + ((merged.price or 0) * v.count)
+			itemCount = itemCount + v.count
 		end
 	end
 
 	products = util.filter(products, function(v)
-		return (v.count > 0) and ((v.item or v.name) ~= "money")
+		return (v.count > 0)
 	end)
 	table.sort(products, function(a, b)
 		return a.count > b.count
@@ -137,7 +132,7 @@ function setProducts(dropPools, seed, level)
 
 	local recipe = {
 		input = {
-			{ item = "money", count = math.max(recipeCost,0) + itemCount }
+			{ item = "wr/nutrient_paste", count = (math.max(recipeCost,0) + itemCount) * 10 }
 		},
 		output = products,
 		duration = 1

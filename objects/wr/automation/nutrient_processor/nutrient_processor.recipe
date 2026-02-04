@@ -1,0 +1,13 @@
+{
+  "input" : [
+    { "item" : "copperbar", "count" : 10 },
+    { "item" : "ironbar", "count" : 1 },
+    { "item" : "stickofram", "count" : 5 }
+  ],
+  "output" : {
+    "item" : "wr/nutrient_processor_mk1",
+    "count" : 1
+  },
+  "duration" : 5,
+  "groups" : [ "inventorstable2", "all" ]
+}

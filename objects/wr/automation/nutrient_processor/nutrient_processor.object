@@ -1,23 +1,22 @@
 {
-  "objectName" : "wr/simulation_chamber_mk1",
+  "objectName" : "wr/nutrient_processor_mk1",
   "colonyTags" : [],
   "printable" : false,
   "rarity" : "Common",
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Simulates a captured life-form to clone materials with by using nutrient paste.",
-  "shortdescription" : "Simulation Chamber MK1",
+  "description" : "Processes food into a yummy nutrient paste.\nProcesses 10 per second, can get clogged.",
+  "shortdescription" : "Nutrient Processor",
   "race" : "generic",
   "health" : 1.5,
-  "objectType" : "container",
 
   "scriptDelta":0,
-  "scripts" : ["/objects/wr/automation/recipeObject.lua"],
+  "scripts" : ["nutrient_processor.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "simulation_chamber.png:default",
+      "image" : "nutrient_processor.png:default",
       "direction" : "left",
       "flipImages" : true,
 
@@ -30,7 +29,7 @@
       "collision" : "platform"
     },
     {
-      "image" : "simulation_chamber.png:default",
+      "image" : "nutrient_processor.png:default",
       "direction" : "right",
 
       "imagePosition" : [-8, 0],
@@ -42,14 +41,8 @@
       "collision" : "platform"
     }
   ],
-  "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
-  "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
-  "slotCount" : 1,
-  "frameCooldown" : 5,
-  "autoCloseCooldown" : 3600,
-  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:simulation_chamber",
 
-  "multiplier" : 1,
+  "craftingSpeed" : 10,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

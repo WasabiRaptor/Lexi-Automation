@@ -27,7 +27,7 @@
 				]}
 			],
 			[
-				{"type":"itemSlot", "item": {"item":"money", "count":1, "autoInteract":false}},
+				{"type":"itemSlot", "item": {"item":"wr/nutrient_paste", "count":1, "autoInteract":false}},
 				{"type":"label", "text" : "0", "inline":true, "id": "pixelInputLabel"},
 				{"type":"label", "text" : "/", "inline":true},
 				{"type":"label", "text" : "0", "inline":true, "id": "pixelMaxInputLabel"},

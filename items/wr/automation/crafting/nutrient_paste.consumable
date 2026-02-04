@@ -1,0 +1,16 @@
+{
+  "itemName" : "wr/nutrient_paste",
+  "rarity" : "Common",
+  "category" : "food",
+  "price" : 0,
+  "inventoryIcon" : "nutrient_paste.png",
+  "description" : "Yummy yummy biomass for hungry machines.",
+  "shortdescription" : "Nutrient Paste",
+
+  "foodValue" : 1,
+  "tooltipKind" : "food",
+  "builder" : "/items/buildscripts/buildfood.lua",
+  "blockingEffects" : [
+    "wellfed"
+  ]
+}
