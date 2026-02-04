@@ -2,6 +2,9 @@ function timeScale(time)
 	local timeLabel = "Per Second"
 	local multiplier = 1
 	if time == 0 then
+	elseif (time * multiplier) > 1000 then
+		timeLabel = "Per Millisecond"
+		multiplier = multiplier / 1000
 	elseif (time * multiplier) < 0.1 then
 		timeLabel = "Per Minute"
 		multiplier = multiplier * 60
