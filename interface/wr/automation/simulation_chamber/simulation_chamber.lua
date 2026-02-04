@@ -37,13 +37,13 @@ function refreshDisplayedProducts()
 
 		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "wr/nutrient_paste") then
 			productionRate = inputs[1].count / maxAmount
-			_ENV.pixelInputLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
-			_ENV.pixelInputLabel:setText(tostring(inputs[1].count))
+			_ENV.inputAmountLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
+			_ENV.inputAmountLabel:setText(tostring(inputs[1].count))
 		else
-			_ENV.pixelInputLabel.color = "FF0000"
-			_ENV.pixelInputLabel:setText("0")
+			_ENV.inputAmountLabel.color = "FF0000"
+			_ENV.inputAmountLabel:setText("0")
 		end
-		_ENV.pixelMaxInputLabel:setText(tostring(maxAmount))
+		_ENV.inputMaxAmountLabel:setText(tostring(maxAmount))
 
 		products = jarray()
 		products[1] = copy(recipe.output)
@@ -51,9 +51,9 @@ function refreshDisplayedProducts()
 			product.count = product.count * productionRate
 		end
 	else
-		_ENV.pixelInputLabel.color = "FF0000"
-		_ENV.pixelInputLabel:setText("0")
-		_ENV.pixelMaxInputLabel:setText("0")
+		_ENV.inputAmountLabel.color = "FF0000"
+		_ENV.inputAmountLabel:setText("0")
+		_ENV.inputMaxAmountLabel:setText("0")
 	end
 
 	displayProducts(products, {

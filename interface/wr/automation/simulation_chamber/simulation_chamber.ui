@@ -28,9 +28,9 @@
 			],
 			[
 				{"type":"itemSlot", "item": {"item":"wr/nutrient_paste", "count":1, "autoInteract":false}},
-				{"type":"label", "text" : "0", "inline":true, "id": "pixelInputLabel"},
+				{"type":"label", "text" : "0", "inline":true, "id": "inputAmountLabel"},
 				{"type":"label", "text" : "/", "inline":true},
-				{"type":"label", "text" : "0", "inline":true, "id": "pixelMaxInputLabel"},
+				{"type":"label", "text" : "0", "inline":true, "id": "inputMaxAmountLabel"},
 				{"type":"label", "text" : "Per Second"}
 			],
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
