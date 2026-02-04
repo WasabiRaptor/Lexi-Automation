@@ -22,6 +22,7 @@ function timeScale(time)
 end
 
 function clipAtThousandth(n)
+	if n == 0 then return "0" end
 	if n < 0.001 then
 		return "< 0.001"
 	end
