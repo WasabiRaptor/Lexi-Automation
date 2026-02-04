@@ -5,7 +5,10 @@ function uninit()
 end
 
 local recipeRPC
+local inputNodesConfig
 function init()
+	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
+	_ENV.inputIconWidget:setFile(inputNodesConfig[1].icon)
 end
 local initial = true
 function update()

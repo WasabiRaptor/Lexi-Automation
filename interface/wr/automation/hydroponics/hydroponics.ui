@@ -18,6 +18,7 @@
 			],
 			[
 				{"type":"itemSlot", "item": {"item":"liquidwater", "count":1, "autoInteract":false}},
+				{"type":"image", "file" : "/interface/wr/automation/input.png", "id": "inputIconWidget"},
 				{"type":"label", "text" : "0", "inline":true, "id": "inputAmountLabel"},
 				{"type":"label", "text" : "/", "inline":true},
 				{"type":"label", "text" : "0", "inline":true, "id": "inputMaxAmountLabel"},

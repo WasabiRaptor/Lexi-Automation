@@ -7,6 +7,8 @@ local recipePage = 0
 local recipesPerPage = 50
 local searchedRecipes = {}
 local recipePages = 1
+local inputNodesConfig
+local outputNodesConfig
 
 function uninit()
 	local craftingItem = _ENV.craftingItemSlot:item()
@@ -21,6 +23,9 @@ local filter
 local uniqueRecipes = {}
 local recipeRPC
 function init()
+	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
+
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
 	filter = world.getObjectParameter(pane.sourceEntity(), "filter")
 
@@ -439,6 +444,7 @@ function displayRecipe(recipe)
 			end
 			local timeMultiplier, timeLabel = timeScale(production)
 			productionLabels = {
+				{ type = "image", file = inputNodesConfig[1].icon },
 				{ type = "label", text = clipAtThousandth((timeMultiplier * production)),       color = color, inline = true },
 				{ type = "label", text = "/",                        inline = true },
 				{ type = "label", text = clipAtThousandth((timeMultiplier * productionTarget)), inline = true },
@@ -447,6 +453,7 @@ function displayRecipe(recipe)
 		else
 			local timeMultiplier, timeLabel = timeScale(input.count)
 			productionLabels = {
+				{ type = "image", file = inputNodesConfig[1].icon },
 				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)), color = "FF00FF", inline = true },
 				{ type = "label", text = timeLabel,          inline = true }
 			}
@@ -494,6 +501,7 @@ function displayRecipe(recipe)
 		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
 			{ type = "label", text = recipe.recipeName },
 			{
+				{type = "image", file = outputNodesConfig[1].icon },
 				{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
 				{type= "label", text= "/", inline= true},
 				{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
@@ -525,6 +533,7 @@ function displayRecipe(recipe)
 				{
 					{type= "label", text= merged.shortdescription},
 					{
+						{type = "image", file = outputNodesConfig[1].icon },
 						{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
 						{type= "label", text= "/", inline= true},
 						{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
