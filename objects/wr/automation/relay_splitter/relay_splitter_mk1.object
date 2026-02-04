@@ -46,18 +46,30 @@
     "input" : "animationParts/input.png",
     "center" : "animationParts/center.png",
     "left" : "animationParts/left.png",
-    "right" : "animationParts/right.png"
+    "right" : "animationParts/right.png",
+    "leftLogic" : "animationParts/logic/left.png",
+    "rightLogic" : "animationParts/logic/right.png"
   },
 
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:splitter" },
 
-  "inputNodes" : [ [0, 0] ],
+  "inputNodes" : [
+    [0, 0], // matter stream input
+    [-1, 0], // logic node to diable left matter output
+    [1, 0] // logic node to diable right matter output
+  ],
   "inputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/input.png"
+  },{
+  },{
   }],
-  "outputNodes" : [ [0, 1],[-1, 1],[1, 1]],
+  "outputNodes" : [
+    [0, 1], // default matter stream passthrough
+    [-1, 1], // default matter stream filter output left
+    [1, 1] // default matter stream filter output right
+  ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/output.png"

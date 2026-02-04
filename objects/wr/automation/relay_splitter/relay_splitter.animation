@@ -28,6 +28,20 @@
           "off" : {"frames" : 1},
           "on" : {"frames" : 8,"cycle" : 1,"mode" : "loop"}
         }
+      },
+      "leftLogic" : {
+        "default" : "on",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 1}
+        }
+      },
+      "rightLogic" : {
+        "default" : "on",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 1}
+        }
       }
     },
 
@@ -39,6 +53,32 @@
         },
         "partStates" : {
           "input" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "leftLogic" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 0.1
+        },
+        "partStates" : {
+          "leftLogic" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+          }
+        }
+      },
+      "rightLogic" : {
+        "properties" : {
+          "centered" : false,
+          "fullbright" : true,
+          "zLevel" : 0.2
+        },
+        "partStates" : {
+          "rightLogic" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
           }
