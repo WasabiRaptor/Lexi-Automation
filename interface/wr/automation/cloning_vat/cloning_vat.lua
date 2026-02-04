@@ -91,7 +91,7 @@ function setProducts(item)
 	local recipeCost = 0
 	local itemCount = 0
 	local products = jarray()
-	local rand = sb.makeRandomSource(seed)
+	local rand = sb.makeRandomSource(sb.staticRandomI32(seed))
 
 	local function addProduct(nodeProducts, item)
 		local found = false
