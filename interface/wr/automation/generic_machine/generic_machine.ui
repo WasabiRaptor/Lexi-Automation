@@ -1,0 +1,25 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [160, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [160, 128],
+
+	"title" : "Machine",
+	"icon" : "/interface/wr/automation/output.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "generic_machine.lua" ],
+	"children" : [
+        {"mode" : "v"},
+      	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
+            {"mode" : "v"},
+			{"type" : "label", "text" : "", "id" : "statusLabel"},
+			{"type" : "label", "text" : "", "id" : "machineDescLabel"},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+        ]}
+    ]
+}

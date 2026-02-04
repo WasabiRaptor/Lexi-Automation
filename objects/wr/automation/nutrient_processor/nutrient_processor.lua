@@ -22,6 +22,7 @@ function refreshOutput(force)
 		object.setConfigParameter("matterStreamInput", nil)
 		object.setOutputNodeLevel(0, false)
 		inputs = nil
+		object.setConfigParameter("status", "missingInput")
 		return
 	end
 	local outputNodes = object.getOutputNodeIds(0)
@@ -39,6 +40,7 @@ function refreshOutput(force)
 
 	if totalItems > craftingSpeed then
 		-- too many items being input clogs the machine
+		object.setConfigParameter("status", "tooMany")
 		object.setConfigParameter("matterStreamOutput", nil)
 		object.setOutputNodeLevel(0, false)
 		return
@@ -47,10 +49,11 @@ function refreshOutput(force)
 	for _, input in ipairs(inputs) do
 		local itemConfig = root.itemConfig(input)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		if merged.foodValue then
-			nutrientValue = nutrientValue + merged.foodValue
+		if merged.foodValue and merged.foodValue > 0 then
+			nutrientValue = nutrientValue + (merged.foodValue * input.count)
 		else
 			-- an item input wasn't food and clogs the machine
+			object.setConfigParameter("status", "badInput")
 			object.setConfigParameter("matterStreamOutput", nil)
 			object.setOutputNodeLevel(0, false)
 			return

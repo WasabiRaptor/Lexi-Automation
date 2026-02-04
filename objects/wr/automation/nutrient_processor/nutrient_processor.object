@@ -42,7 +42,20 @@
     }
   ],
 
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:generic_machine" },
+  "statusLabels" : {
+    "tooMany" : {
+      "color" : "FFFF00",
+      "text" : "Too many items input."
+    },
+    "badInput" : {
+      "color" : "FF0000",
+      "text" : "Invalid item input."
+    }
+  },
   "craftingSpeed" : 10,
+  "machineDescription" : "Accepts any item with a food value.\nNon food items will clog the machine.\nInputting more than 10 items per second will clog the machine.",
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{
