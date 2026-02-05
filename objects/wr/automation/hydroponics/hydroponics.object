@@ -6,7 +6,7 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Uses water to grow harvestable plants.",
+  "description" : "Uses water to grow harvestable plants. Passes unused inputs to it's output.",
   "shortdescription" : "Hydroponics MK1",
   "race" : "generic",
   "health" : 1.5,
@@ -51,6 +51,7 @@
 
   "minimumDuration" : 1, // the minimum duration to craft a recipe
   "craftingSpeed" : 2, // the amount of times it crafts a recipe per cycle
+  "passthrough" : true, // passes unused ingrredients through it's output
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

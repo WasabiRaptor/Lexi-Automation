@@ -44,6 +44,23 @@ function refreshOutput(force)
 	inputs = newInputs
 	outputCount = newOutputCount
 
+	local products = jarray()
+	products[1] = jarray()
+	local function addProduct(nodeProducts, item)
+		local found = false
+		for _, v in ipairs(nodeProducts) do
+			if root.itemDescriptorsMatch(v, item, true) then
+				v.count = v.count + item.count
+				found = true
+				break
+			end
+		end
+		if not found then
+			table.insert(nodeProducts, item)
+		end
+	end
+
+	local passthrough = config.getParameter("passthrough") or false
 	local craftingSpeed = config.getParameter("craftingSpeed") or 1
 	local maxProductionRate = craftingSpeed / math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
@@ -51,28 +68,44 @@ function refreshOutput(force)
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
 	local productionRate = maxProductionRate
+
 	for _, recipeItem in ipairs(recipe.input) do
 		for _, inputItem in ipairs(inputs) do
-			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
-				recieved = true
-				productionRate = math.min(productionRate, (inputItem.count / ((recipeItem.count or 1) * maxProductionRate)))
+			if inputItem.used and root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
+				productionRate = math.min(productionRate,
+					(inputItem.count / ((recipeItem.count or 1) * maxProductionRate)))
 				break
 			end
 		end
 	end
-	if recipe.output[1] then
-		local products = copy(recipe.output)
-		for _, product in ipairs(products) do
-			product.count = productionRate * (product.count or 1)
+	if passthrough then
+		products[1] = copy(inputs)
+		for _, product in ipairs(products[1]) do
+			if product.used then
+				for _, recipeItem in ipairs(recipe.input) do
+					if root.itemDescriptorsMatch(recipeItem, product, recipe.matchInputParameters) then
+						product.count = product.count - (recipeItem.count * productionRate)
+						break
+					end
+				end
+			end
 		end
-		object.setConfigParameter("products", {products})
-		wr_automation.setOutputs({products})
+	end
+
+	if recipe.output[1] then
+		local realProdcuts = copy(recipe.output)
+		for _, product in ipairs(realProdcuts) do
+			product.count = productionRate * (product.count or 1)
+			addProduct(products[1], product)
+		end
+		object.setConfigParameter("products", {realProdcuts})
 	else
 		local product = copy(recipe.output)
 		product.count = productionRate * (product.count or 1)
 		object.setConfigParameter("products", {{product}})
-		wr_automation.setOutputs({{product}})
+		addProduct(products[1], product)
 	end
+	wr_automation.setOutputs(products)
 end
 function onInputNodeChange(...)
 	old.onInputNodeChange(...)
