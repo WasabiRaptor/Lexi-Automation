@@ -129,6 +129,15 @@ function refreshCurrentRecipes()
 			table.insert(currentRecipes, v)
 		end
 	end
+	currentRecipes = util.filter(currentRecipes, function(v)
+		-- filter to make sure all listed recipes result in real items that do exist
+		if v.output[1] then
+			for _, product in ipairs(v.output) do
+				if not root.itemConfig(product) then return false end
+			end
+		elseif not root.itemConfig(v.output) then return false end
+		return v.output ~= nil
+	end)
 
 	table.sort(currentRecipes, function(a, b)
 		if a.output[1] and b.output[1] then
