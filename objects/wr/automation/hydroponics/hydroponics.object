@@ -58,8 +58,8 @@
     // "off" : { "animations" : {"producing": ["off"]}}
   },
 
-  "openSounds" : [ ],
-  "closeSounds" : [ ],
+  "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
+  "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
   "slotCount" : 1,
   "frameCooldown" : 5,
   "autoCloseCooldown" : 3600,
