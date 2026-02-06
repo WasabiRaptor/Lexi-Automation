@@ -1,19 +1,21 @@
 local plantImages
 function init()
+	message.setHandler("setPlantImage", function (_,_,...)
+		setPlantImage(...)
+	end)
 	plantImages = config.getParameter("plantImages")
 	animator.setPartTag("leftPlant", "partImage", storage.plantImage or "")
 	animator.setPartTag("leftPlant", "variant", tostring(storage.leftPlantVariant or 1))
 	animator.setPartTag("rightPlant", "partImage", storage.plantImage or "")
-	animator.setPartTag("rightPlant", "variant", tostring(storage.leftPlantVariant or 1))
+	animator.setPartTag("rightPlant", "variant", tostring(storage.rightPlantVariant or 1))
 end
 
-function containerCallback()
-	local item = world.containerItemAt(1)
-	if item then
-		if plantImages[item.name] then
-			storage.plantImage = plantImages[item.name].image
-			storage.leftPlantVariant = math.random(plantImages[item.name].variants)
-			storage.rightPlantVariant = math.random(plantImages[item.name].variants)
+function setPlantImage(plantName)
+	if plantName then
+		if plantImages[plantName] then
+			storage.plantImage = plantImages[plantName].image
+			storage.leftPlantVariant = math.random(plantImages[plantName].variants)
+			storage.rightPlantVariant = math.random(plantImages[plantName].variants)
 		else
 			storage.plantImage = "animationParts/default.png"
 			storage.leftPlantVariant = math.random(5)
@@ -27,5 +29,5 @@ function containerCallback()
 	animator.setPartTag("leftPlant", "partImage", storage.plantImage or "")
 	animator.setPartTag("leftPlant", "variant", tostring(storage.leftPlantVariant or 1))
 	animator.setPartTag("rightPlant", "partImage", storage.plantImage or "")
-	animator.setPartTag("rightPlant", "variant", tostring(storage.leftPlantVariant or 1))
+	animator.setPartTag("rightPlant", "variant", tostring(storage.rightPlantVariant or 1))
 end

@@ -85,6 +85,7 @@ function setProducts()
 
 	if not item then
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
+		world.sendEntityMessage(pane.sourceEntity(), "setPlantImage", nil)
 		return
 	end
 	local position = world.entityPosition(pane.sourceEntity())
@@ -166,6 +167,7 @@ function setProducts()
 	}
 
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
+	world.sendEntityMessage(pane.sourceEntity(), "setPlantImage", (item.item or item.name))
 	world.sendEntityMessage(pane.sourceEntity(), "setCapturePod", _ENV.inputItemSlot:item())
 end
 

@@ -1,11 +1,11 @@
 {
   "input" : [
-    { "item" : "copperbar", "count" : 10 },
-    { "item" : "goldbar", "count" : 1 },
-    { "item" : "stickofram", "count" : 5 }
+    { "item" : "glass", "count" : 10 },
+    { "item" : "ironbar", "count" : 2 },
+    { "item" : "stickofram", "count" : 1 }
   ],
   "output" : {
-    "item" : "wr/assembler_mk1",
+    "item" : "wr/hydroponics_mk1",
     "count" : 1
   },
   "duration" : 5,

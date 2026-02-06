@@ -35,7 +35,7 @@
       "fluid" : {
         "properties" : {
           "centered" : false,
-          "zLevel" : 1,
+          "zLevel" : 2,
           "image" : "<partImage>:default"
         },
         "partStates" : {
