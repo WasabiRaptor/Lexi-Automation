@@ -5,7 +5,8 @@
         "default" : "off",
         "states" : {
           "off" : {"frames" : 1},
-          "on" : {"frames" : 8,"cycle" : 0.8,"mode" : "loop"}
+          "on" : {"frames" : 8,"cycle" : 0.8,"mode" : "loop"},
+          "on_offset" : {"frames" : 4,"cycle" : 0.4,"mode" : "transition", "transition":"on"}
         }
       }
     },
@@ -18,8 +19,9 @@
         },
         "partStates" : {
           "producing" : {
-            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
           }
         }
       },
@@ -31,7 +33,8 @@
         "partStates" : {
           "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on_offset.<frame>"}}
           }
         }
       },
@@ -44,7 +47,8 @@
         "partStates" : {
           "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on_offset.<frame>"}}
           }
         }
       },
@@ -55,8 +59,9 @@
         },
         "partStates" : {
           "producing" : {
-            "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}}
+            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
           }
         }
       }

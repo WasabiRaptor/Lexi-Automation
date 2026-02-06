@@ -1,0 +1,35 @@
+{
+  "animatedParts" : {
+    "parts" : {
+      "pipe" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 0,
+          "image" : "<partImage>:default"
+        }
+      },
+      "plant1" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1,
+          "image" : "<partImage>:default"
+        }
+      },
+      "plant2" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1,
+          "image" : "<partImage>:default",
+          "offset" : [2,0]
+        }
+      },
+      "fluid" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1,
+          "image" : "<partImage>:default"
+        }
+      }
+    }
+  }
+}

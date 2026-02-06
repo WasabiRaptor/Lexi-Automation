@@ -50,11 +50,17 @@
     }
   ],
   "animation" : "extractor.animation",
+  "forceFinishAnimationsInInit" : false,
   "animationParts" : {
     "back" : "animationParts/frame/back.png",
     "extractor" : "animationParts/big_manipulator.png",
     "beam" : "animationParts/beam.png",
     "front" : "animationParts/frame/front.png"
+  },
+  "stateAnimations" : {
+    "on" : { "animations" : {"producing": ["on"]}},
+    "on_offset" : { "animations" : {"producing": ["on_offset"]}},
+    "off" : { "animations" : {"producing": ["off"]}}
   },
 
   "interactAction" : "ScriptPane",

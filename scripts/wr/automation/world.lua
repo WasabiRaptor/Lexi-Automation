@@ -6,11 +6,9 @@ function init()
     end)
 
     message.setHandler("wr_refreshInputs", function(_, _, uniqueId, ...)
-        sb.logInfo("recieved refresh inputs %s %s", uniqueId, sb.printJson({ ... }))
         world.sendEntityMessage(uniqueId, "refreshInputs", ...)
     end)
     message.setHandler("wr_refreshOutput", function(_, _, uniqueId, ...)
-        sb.logInfo("recieved refresh output %s %s", uniqueId, sb.printJson({ ... }))
         world.sendEntityMessage(uniqueId, "refreshOutput", ...)
     end)
 end

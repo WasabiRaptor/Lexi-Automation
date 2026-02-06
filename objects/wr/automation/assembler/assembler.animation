@@ -5,30 +5,17 @@
         "default" : "off",
         "states" : {
           "off" : {"frames" : 1},
-          "on" : {"frames" : 8,"cycle" : 0.8,"mode" : "loop"},
-          "on_offset" : {"frames" : 4,"cycle" : 0.4,"mode" : "transition", "transition":"on"}
+          "on" : {"frames" : 24,"cycle" : 1.2,"mode" : "loop"},
+          "on_offset" : {"frames" : 12,"cycle" : 0.6,"mode" : "transition", "transition" : "on"}
         }
       }
     },
 
     "parts" : {
-      "back" : {
+      "assembler" : {
         "properties" : {
           "centered" : false,
           "zLevel" : 0
-        },
-        "partStates" : {
-          "producing" : {
-            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
-            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
-          }
-        }
-      },
-      "extractor" : {
-        "properties" : {
-          "centered" : false,
-          "zLevel" : 1
         },
         "partStates" : {
           "producing" : {
@@ -42,26 +29,13 @@
         "properties" : {
           "centered" : false,
           "fullbright" : true,
-          "zLevel" : 2
+          "zLevel" : 1
         },
         "partStates" : {
           "producing" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}},
             "on_offset" : {"properties" : {"image" : "<partImage>:on_offset.<frame>"}}
-          }
-        }
-      },
-      "front" : {
-        "properties" : {
-          "centered" : false,
-          "zLevel" : 3
-        },
-        "partStates" : {
-          "producing" : {
-            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
-            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
-            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
           }
         }
       }

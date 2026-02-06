@@ -5,11 +5,11 @@ local inputs
 local channel
 local inputTarget
 function init()
+	wr_automation.init()
 	if not entity.uniqueId() then
 		object.setUniqueId(sb.makeUuid())
 	end
 	object.setInteractive(true)
-	script.setUpdateDelta(0)
 	inputs = config.getParameter("matterStreamInput")
 	channel = config.getParameter("channel") or ""
 	inputTarget = config.getParameter("inputTarget")

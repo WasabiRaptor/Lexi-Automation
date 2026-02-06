@@ -11,6 +11,7 @@
   "race" : "generic",
   "health" : 1.5,
 
+  "scriptDelta":0,
   "scripts" : ["relay_splitter.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [

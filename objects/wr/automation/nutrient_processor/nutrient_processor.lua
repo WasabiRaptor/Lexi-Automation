@@ -9,6 +9,7 @@ local outputCount
 local inputs
 function init()
 	old.init()
+	wr_automation.init()
 	inputs = config.getParameter("matterStreamInput")
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
@@ -59,6 +60,14 @@ function refreshOutput(force)
 			object.setOutputNodeLevel(0, false)
 			return
 		end
+	end
+	if nutrientValue > 0 then
+		object.setConfigParameter("status", "on")
+	else
+		object.setConfigParameter("status", "missingInput")
+		object.setConfigParameter("matterStreamOutput", nil)
+		object.setOutputNodeLevel(0, false)
+		return
 	end
 	local product = {
 		item = "wr/nutrient_paste",

@@ -7,7 +7,8 @@ local old = {
 local outputCount
 local products
 function init()
-	old.init()
+    old.init()
+	wr_automation.init()
 	products = config.getParameter("products")
 	message.setHandler("setProducts", function(_, _, newProducts)
 		if compare(products, newProducts) then return end
@@ -17,7 +18,8 @@ function init()
 	end)
 
 	if products then
-		animator.setAnimationState("producing", "on")
+		object.setConfigParameter("status", "on")
+		wr_automation.playAnimations("on")
 	end
 end
 
@@ -26,10 +28,12 @@ function refreshOutput(force)
 	if not products then
 		object.setConfigParameter("matterStreamOutput", nil)
 		object.setAllOutputNodes(false)
-		animator.setAnimationState("producing", "off")
+		object.setConfigParameter("status", "off")
+		wr_automation.playAnimations("off")
 		return
 	end
-	animator.setAnimationState("producing", "on")
+    object.setConfigParameter("status", "on")
+	wr_automation.playAnimations("on")
 
 	local outputNodes = object.getOutputNodeIds(0)
 	local newOutputCount = 0

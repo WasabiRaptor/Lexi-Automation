@@ -12,6 +12,7 @@
   "health" : 1.5,
   "unbreakable" : true,
 
+  "scriptDelta":0,
   "scripts" : ["input.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [

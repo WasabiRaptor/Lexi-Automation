@@ -4,11 +4,11 @@ local outputCount
 local inputs
 local channel
 function init()
+	wr_automation.init()
 	if not entity.uniqueId() then
 		object.setUniqueId(sb.makeUuid())
 	end
 
-	script.setUpdateDelta(0)
 	inputs = config.getParameter("matterStreamInput")
 	channel = config.getParameter("channel") or ""
 	message.setHandler("refreshInputs", function (_,_)

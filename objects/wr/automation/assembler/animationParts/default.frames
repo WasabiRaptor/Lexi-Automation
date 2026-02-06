@@ -1,0 +1,51 @@
+{
+
+  "frameGrid" : {
+    "size" : [48, 24],
+    "dimensions" : [1, 25],
+    "names" : [
+      [ "off.1" ],
+      [ "on.1" ],
+      [ "on.2" ],
+      [ "on.3" ],
+      [ "on.4" ],
+      [ "on.5" ],
+      [ "on.6" ],
+      [ "on.7" ],
+      [ "on.8" ],
+      [ "on.9" ],
+      [ "on.10" ],
+      [ "on.11" ],
+      [ "on.12" ],
+      [ "on.13" ],
+      [ "on.14" ],
+      [ "on.15" ],
+      [ "on.16" ],
+      [ "on.17" ],
+      [ "on.18" ],
+      [ "on.19" ],
+      [ "on.20" ],
+      [ "on.21" ],
+      [ "on.22" ],
+      [ "on.23" ],
+      [ "on.24" ]
+    ]
+  },
+  "aliases" : {
+    "default" : "off.1",
+
+    "on_offset.1" : "on.13",
+    "on_offset.2" : "on.14",
+    "on_offset.3" : "on.15",
+    "on_offset.4" : "on.16",
+    "on_offset.5" : "on.17",
+    "on_offset.6" : "on.18",
+    "on_offset.7" : "on.19",
+    "on_offset.8" : "on.20",
+    "on_offset.9" : "on.21",
+    "on_offset.10" : "on.22",
+    "on_offset.11" : "on.23",
+    "on_offset.12" : "on.24"
+
+  }
+}

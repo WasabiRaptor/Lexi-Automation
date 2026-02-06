@@ -13,37 +13,53 @@
   "objectType" : "container",
 
   "scriptDelta":0,
-  "scripts" : ["/objects/wr/automation/recipeObject.lua"],
+  "scripts" : ["hydroponics.lua","/objects/wr/automation/recipeObject.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "hydroponics.png:default",
+      "imageLayers" : [
+        {"image":"animationParts/pipe.png:default"},
+        {"image":"animationParts/examplePlant.png:default"},
+        {"image":"animationParts/empty.png:default"}
+      ],
       "direction" : "left",
       "flipImages" : true,
 
       "imagePosition" : [-8, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "animationPosition" : [-8, 0],
 
       "spaceScan" : 0.1,
-      "anchors" : [ "bottom" ],
-      "collision" : "platform"
+      "bgAnchors" : [ [-1,0],[0,0],[1,0],[2,0] ]
     },
     {
-      "image" : "hydroponics.png:default",
+      "imageLayers" : [
+        {"image":"animationParts/pipe.png:default"},
+        {"image":"animationParts/examplePlant.png:default"},
+        {"image":"animationParts/empty.png:default"}
+      ],
       "direction" : "right",
 
       "imagePosition" : [-8, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "animationPosition" : [-8, 0],
 
       "spaceScan" : 0.1,
-      "anchors" : [ "bottom" ],
-      "collision" : "platform"
+      "bgAnchors" : [ [-1,0],[0,0],[1,0],[2,0] ]
     }
   ],
-  "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
-  "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
+  "animation" : "hydroponics.animation",
+  "forceFinishAnimationsInInit" : false,
+  "animationParts" : {
+    "pipe" : "animationParts/pipe.png",
+    "plant" : "",
+    "fluid" : "animationParts/empty.png"
+  },
+  "stateAnimations" : {
+    // "on" : { "animations" : {"producing": ["on"]}},
+    // "off" : { "animations" : {"producing": ["off"]}}
+  },
+
+  "openSounds" : [ ],
+  "closeSounds" : [ ],
   "slotCount" : 1,
   "frameCooldown" : 5,
   "autoCloseCooldown" : 3600,

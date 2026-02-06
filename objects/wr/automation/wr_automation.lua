@@ -1,5 +1,18 @@
 require("/interface/games/util.lua")
+require("/scripts/poly.lua")
+require("/scripts/rect.lua")
+require("/scripts/vec2.lua")
 wr_automation = {}
+
+local stateAnimations
+local isOffset
+function wr_automation.init()
+	stateAnimations = config.getParameter("stateAnimations") or {}
+	local position = object.position()
+	local size = vec2.add(rect.size(poly.boundBox(object.spaces())), 1)
+	isOffset = (position[2] % (size[2] * 2)) < size[2]
+
+end
 function wr_automation.countInputs(nodeIndex, recipe)
 	local recipe = recipe or {matchInputParameters = true, input = {}}
 	local inputNodes = object.getInputNodeIds(nodeIndex or 0)
@@ -87,4 +100,12 @@ function wr_automation.setOutputs(products)
 		end
 	end
 	return outputs, totalItems
+end
+
+function wr_automation.playAnimations(state)
+	local animationData = isOffset and stateAnimations[state.."_offset"] or stateAnimations[state]
+	if not animationData then return end
+	for k, v in pairs(animationData.animations or {}) do
+		animator.setAnimationState(k, table.unpack(v))
+	end
 end

@@ -8,9 +8,14 @@ local old = {
 local recipe
 local outputCount
 local inputs
+local passthrough
+local stateAnimations
 function init()
 	old.init()
+	wr_automation.init()
 	recipe = config.getParameter("recipe")
+	passthrough = config.getParameter("passthrough")
+	local products = config.getParameter("products")
 	message.setHandler("setRecipe", function(_, _, newRecipe)
 		if compare(recipe, newRecipe) then return end
 		recipe = newRecipe
@@ -21,15 +26,22 @@ function init()
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
 	end)
+
+	if products then
+		object.setConfigParameter("status", "on")
+		wr_automation.playAnimations( "on")
+	end
 end
 
 
 function refreshOutput(force)
-	if (not recipe) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		object.setConfigParameter("products", nil)
 		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		object.setOutputNodeLevel(0, false)
+		object.setConfigParameter("status", ((not recipe) and "noRecipe") or "missingInput")
+		wr_automation.playAnimations(stateAnimations[((not recipe) and "noRecipe") or "missingInput"] or "off")
 		inputs = nil
 		return
 	end
@@ -43,6 +55,12 @@ function refreshOutput(force)
 	object.setConfigParameter("matterStreamInput", newInputs)
 	inputs = newInputs
 	outputCount = newOutputCount
+	if not recipe then
+		wr_automation.setOutputs({inputs})
+		object.setConfigParameter("status", "noRecipe")
+		wr_automation.playAnimations("off")
+		return
+	end
 
 	local products = jarray()
 	products[1] = jarray()
@@ -60,7 +78,6 @@ function refreshOutput(force)
 		end
 	end
 
-	local passthrough = config.getParameter("passthrough") or false
 	local craftingSpeed = config.getParameter("craftingSpeed") or 1
 	local maxProductionRate = craftingSpeed / math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
@@ -91,19 +108,29 @@ function refreshOutput(force)
 			end
 		end
 	end
-
-	if recipe.output[1] then
-		local realProdcuts = copy(recipe.output)
-		for _, product in ipairs(realProdcuts) do
+	if productionRate > 0 then
+		if recipe.output[1] then
+			local realProdcuts = copy(recipe.output)
+			for _, product in ipairs(realProdcuts) do
+				product.count = productionRate * (product.count or 1)
+				addProduct(products[1], product)
+			end
+			object.setConfigParameter("products", { realProdcuts })
+		else
+			local product = copy(recipe.output)
 			product.count = productionRate * (product.count or 1)
+			object.setConfigParameter("products", { { product } })
 			addProduct(products[1], product)
 		end
-		object.setConfigParameter("products", {realProdcuts})
+		object.setConfigParameter("status", "on")
+		wr_automation.playAnimations("on")
 	else
-		local product = copy(recipe.output)
-		product.count = productionRate * (product.count or 1)
-		object.setConfigParameter("products", {{product}})
-		addProduct(products[1], product)
+		object.setConfigParameter("products", nil)
+		object.setConfigParameter("matterStreamOutput", nil)
+		object.setOutputNodeLevel(0, false)
+		object.setConfigParameter("status", "missingInput")
+		wr_automation.playAnimations("off")
+		return
 	end
 	wr_automation.setOutputs(products)
 end

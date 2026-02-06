@@ -16,31 +16,41 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "assembler.png:default",
+      "image" : "animationParts/assembler.png:default",
       "direction" : "left",
       "flipImages" : true,
 
       "imagePosition" : [-16, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "animationPosition" : [-16, 0],
 
       "spaceScan" : 0.1,
       "anchors" : [ "bottom" ],
       "collision" : "platform"
     },
     {
-      "image" : "assembler.png:default",
+      "image" : "animationParts/assembler.png:default",
       "direction" : "right",
 
       "imagePosition" : [-16, 0],
-      "frames" : 1,
-      "animationCycle" : 0.5,
+      "animationPosition" : [-16, 0],
 
       "spaceScan" : 0.1,
       "anchors" : [ "bottom" ],
       "collision" : "platform"
     }
   ],
+  "animation" : "assembler.animation",
+  "forceFinishAnimationsInInit" : false,
+  "animationParts" : {
+    "assembler" : "animationParts/assembler.png",
+    "beam" : "animationParts/beam.png"
+  },
+  "stateAnimations" : {
+    "on" : { "animations" : {"producing": ["on"]}},
+    "on_offset" : { "animations" : {"producing": ["on_offset"]}},
+    "off" : { "animations" : {"producing": ["off"]}}
+  },
+
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
   "filter" : ["craftinganvil", "emptyhands"],

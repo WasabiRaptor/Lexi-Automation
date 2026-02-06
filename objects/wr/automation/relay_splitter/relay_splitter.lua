@@ -12,7 +12,7 @@ local rightState
 local prevLeftNodeValue
 local prevRightNodeValue
 function init()
-	script.setUpdateDelta(0)
+	wr_automation.init()
 	inputs = config.getParameter("matterStreamInput")
 	outputs = config.getParameter("matterStreamOutput")
 	leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()

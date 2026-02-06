@@ -3,6 +3,7 @@ require("/objects/wr/automation/wr_automation.lua")
 local inputs
 local outputEntity
 function init()
+	wr_automation.init()
 	inputs = config.getParameter("matterStreamInput")
 
 	message.setHandler("refreshInputs", function (_,_)

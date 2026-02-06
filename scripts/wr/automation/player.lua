@@ -10,7 +10,6 @@ function init()
             scannerData.planetParameters = celestial.planetParameters(celestialCoords)
             scannerData.visitableParameters = celestial.visitableParameters(celestialCoords)
         end
-        -- sb.logInfo(sb.printJson(scannerData,2))
         return scannerData
     end)
 end

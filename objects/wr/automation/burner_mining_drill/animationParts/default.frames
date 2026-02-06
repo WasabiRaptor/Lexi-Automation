@@ -8,6 +8,10 @@
     ]
   },
   "aliases" : {
-    "default" : "off.1"
+    "default" : "off.1",
+    "on_offset.1" : "on.5",
+    "on_offset.2" : "on.6",
+    "on_offset.3" : "on.7",
+    "on_offset.4" : "on.8"
   }
 }
