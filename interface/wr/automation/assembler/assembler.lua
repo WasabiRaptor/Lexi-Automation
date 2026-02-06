@@ -3,6 +3,7 @@ require("/interface/wr/automation/labels.lua")
 
 local rarityMap = {}
 local currentRecipes = {}
+local recipeOutputCache = {}
 local recipePage = 0
 local recipesPerPage = 50
 local searchedRecipes = {}
@@ -21,7 +22,15 @@ end
 
 local filter
 local uniqueRecipes = {}
+local itemRecipes = {}
+local stationRecipes = {}
+local allRecipes = {}
 local recipeRPC
+local loadingCoroutine
+local searchCoroutine
+
+local currentlySorting
+local currentlySearching
 function init()
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
 	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
@@ -51,6 +60,39 @@ function init()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
 function update()
+	if loadingCoroutine and coroutine.status(loadingCoroutine) == "suspended" then
+		local success, error = coroutine.resume(loadingCoroutine, 2000)
+		if not success then
+			local itemPrintout = sb.printJson(currentlySorting, 2)
+			sb.logError("[wr_automation] Error while loading recipes.\n%s\n%s", itemPrintout, error)
+			_ENV.recipeSearchScrollArea:clearChildren()
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = "Error While Loading Recipes", align = "center", color = "FF0000"
+			})
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = itemPrintout, color = "FF7F00"
+			})
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
+			})
+		end
+	elseif searchCoroutine and coroutine.status(searchCoroutine) == "suspended" then
+		local success, error = coroutine.resume(searchCoroutine, 2000)
+		if not success then
+			local itemPrintout = sb.printJson(currentlySearching, 2)
+			sb.logError("[wr_automation] Error while searching recipes.\n%s\n%s", itemPrintout, error)
+			_ENV.recipeSearchScrollArea:clearChildren()
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = "Error While Searching Recipes.", align = "center", color = "FF0000"
+			})
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = itemPrintout, color = "FF7F00"
+			})
+			_ENV.recipeSearchScrollArea:addChild({
+				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
+			})
+		end
+	end
 	if recipeRPC and recipeRPC:finished() then
 		recipeRPC = nil
 		displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
@@ -60,6 +102,10 @@ end
 function refreshCurrentRecipes()
 	currentRecipes = copy(uniqueRecipes)
 	_ENV.craftingAddonSlot:setVisible(_ENV.craftingAddonSlot:item() ~= nil)
+	_ENV.recipeSearchScrollArea:clearChildren()
+	_ENV.recipeSearchScrollArea:addChild({
+		type = "label", text = "Loading Recipes...", align = "center"
+	})
 
 	local craftingItem = _ENV.craftingItemSlot:item()
 	local craftingStation = _ENV.craftingStationSlot:item()
@@ -93,7 +139,7 @@ function refreshCurrentRecipes()
 			interactData = merged.interactData
 		elseif merged.upgradeStages then
 			local upgradeData = merged.upgradeStages
-			[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
+				[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
 			interactData = upgradeData.interactData
 			if upgradeData.addonConfig and upgradeData.addonConfig.usesAddons then
 				doAddons(upgradeData.addonConfig.usesAddons)
@@ -106,87 +152,194 @@ function refreshCurrentRecipes()
 		if interactData then
 			filter = interactData.filter
 			if interactData.recipes then
-				for _, v in ipairs(interactData.recipes) do
-					table.insert(currentRecipes, v)
-				end
+				stationRecipes = interactData.recipes
 			end
 		end
 	end
 	if craftingItem then
-		currentRecipes = util.filter(currentRecipes, function(v)
-			if v.output[1] then
-				for _, item in ipairs(v.output) do
-					if (item.item or item.name) == (craftingItem.name or craftingItem.item) then return true end
-				end
-			end
-			return (v.output.item or v.output.name) == (craftingItem.name or craftingItem.item)
-		end)
-		for _, v in ipairs(filterRecipes(filter, root.recipesForItem(craftingItem.name or craftingItem.item))) do
-			table.insert(currentRecipes, v)
-		end
+		itemRecipes = root.recipesForItem(craftingItem.name or craftingItem.item)
+		allRecipes = {}
 	elseif filter and (root.allRecipes ~= nil) then
-		for _, v in ipairs(root.allRecipes(filter)) do
-			table.insert(currentRecipes, v)
-		end
+		itemRecipes = {}
+		allRecipes = root.allRecipes(filter)
+	else
+		itemRecipes = {}
+		allRecipes = {}
 	end
-	currentRecipes = util.filter(currentRecipes, function(v)
-		-- filter to make sure all listed recipes result in real items that do exist
-		if v.output[1] then
-			for _, product in ipairs(v.output) do
-				if not root.itemConfig(product) then return false end
-			end
-		elseif not root.itemConfig(v.output) then return false end
-		return v.output ~= nil
-	end)
-
-	table.sort(currentRecipes, function(a, b)
+	loadingCoroutine = coroutine.create(loadRecipes)
+end
+function loadRecipes(amount)
+	local item = _ENV.craftingItemSlot:item()
+	local function compareRecipes(a, a_cache, b, b_cache)
 		if a.output[1] and b.output[1] then
 			return a.recipeName < b.recipeName
 		elseif a.output[1] then
 			return true
 		elseif b.output[1] then
 			return false
+		elseif a_cache.rarity == b_cache.rarity then
+			return a_cache.name < b_cache.name
+		else
+			return a_cache.rarity > b_cache.rarity
 		end
-		local a_config = root.itemConfig(a.output)
-		local a_merged = sb.jsonMerge(a_config.config, a_config.parameters)
-		local a_rarity = rarityMap[(a_merged.rarity or "common"):lower()] or 0
-		local b_config = root.itemConfig(b.output)
-		local b_merged = sb.jsonMerge(b_config.config, b_config.parameters)
-		local b_rarity = rarityMap[(b_merged.rarity or "common"):lower()] or 0
-		if a_rarity == b_rarity then
-			if sb.stripEscapeCodes ~= nil then
-				return sb.stripEscapeCodes(a_merged.shortdescription) < sb.stripEscapeCodes(b_merged.shortdescription)
-			else
-				return a_merged.shortdescription:gsub("%b^;") < b_merged.shortdescription:gsub("%b^;")
+	end
+	local function insertRecipe(recipe)
+		currentlySorting = recipe
+		amount = amount - 1
+		if amount == 0 then coroutine.yield() end
+		local cache = {}
+		if recipe.output[1] then
+			for _, product in ipairs(recipe.output) do
+				cache[1] = {}
+				cache[1].itemConfig = root.itemConfig(recipe.output)
+				cache[1].mergedConfig = sb.jsonMerge(cache[1].itemConfig.config, cache[1].itemConfig.parameters)
+				if sb.stripEscapeCodes ~= nil then
+					cache[1].name = sb.stripEscapeCodes(cache[1].mergedConfig.shortdescription)
+				else
+					cache[1].name = cache[1].mergedConfig.shortdescription:gsub("%b^;")
+				end
+				cache[1].rarity = rarityMap[(cache[1].mergedConfig.rarity or "common"):lower()] or 0
 			end
 		else
-			return a_rarity > b_rarity
+			cache.itemConfig = root.itemConfig(recipe.output)
+			cache.mergedConfig = sb.jsonMerge(cache.itemConfig.config, cache.itemConfig.parameters)
+			if sb.stripEscapeCodes ~= nil then
+				cache.name = sb.stripEscapeCodes(cache.mergedConfig.shortdescription)
+			else
+				cache.name = cache.mergedConfig.shortdescription:gsub("%b^;")
+			end
+			cache.rarity = rarityMap[(cache.mergedConfig.rarity or "common"):lower()] or 0
 		end
-	end)
-	searchRecipes()
-	refreshDisplayedRecipes()
+		if #currentRecipes == 0 then
+			table.insert(currentRecipes, recipe)
+			table.insert(recipeOutputCache, cache)
+			return
+		end
+		local upperBounds = #currentRecipes
+		local lowerBounds = 1
+		while true do
+			if (upperBounds == lowerBounds) then
+				table.insert(currentRecipes, upperBounds, recipe)
+				table.insert(recipeOutputCache, upperBounds, cache)
+				return
+			end
+			local index = math.floor((upperBounds - lowerBounds) / 2) + lowerBounds
+			local b = currentRecipes[index]
+			local b_cache = recipeOutputCache[index]
+			if compareRecipes(recipe, cache, b, b_cache) then
+				upperBounds = index
+			else
+				lowerBounds = index + 1
+			end
+			amount = amount - 1
+			if amount == 0 then coroutine.yield() end
+		end
+	end
+	if item then
+		for _, recipe in ipairs(uniqueRecipes) do
+			if recipe.output[1] then -- this is the only case where we have multiple
+				local valid = true
+				local isItemRecipe = false
+				for _, product in ipairs(recipe.output) do
+					isItemRecipe = isItemRecipe or ((product.name or product.item) == item.name)
+					valid = valid and root.itemConfig(product)
+					if not valid then break end
+				end
+				if valid and isItemRecipe then
+					insertRecipe(recipe)
+				end
+			elseif (recipe.output.name or recipe.output.item) == item.name then
+				insertRecipe(recipe)
+			end
+		end
+		for _, recipe in ipairs(stationRecipes) do
+			if (recipe.output.name or recipe.output.item) == item.name then
+				insertRecipe(recipe)
+			end
+		end
+		for _, recipe in ipairs(itemRecipes) do
+			if filter then
+				for _, group in ipairs(filter) do
+					local matched = true
+					for _, recipeGroup in ipairs(recipe.groups) do
+						if group == recipeGroup then
+							insertRecipe(recipe)
+							matched = true
+							break
+						end
+					end
+					if matched then break end
+				end
+			else
+				insertRecipe(recipe)
+			end
+		end
+	else
+		for _, recipe in ipairs(uniqueRecipes) do
+			if recipe.output[1] then -- this is the only case where we have multiple
+				local valid = true
+				for _, product in ipairs(recipe.output) do
+					valid = valid and root.itemConfig(product)
+					if not valid then break end
+				end
+				if valid then
+					insertRecipe(recipe)
+				end
+			elseif root.itemConfig(recipe.output) then
+				insertRecipe(recipe)
+			end
+		end
+		for _, recipe in ipairs(stationRecipes) do
+			if root.itemConfig(recipe.output) then
+				insertRecipe(recipe)
+			end
+		end
+		for _, recipe in ipairs(allRecipes) do
+			if root.itemConfig(recipe.output) then
+				insertRecipe(recipe)
+			end
+		end
+	end
+	searchCoroutine = coroutine.create(searchRecipes)
+	return true
 end
-function searchRecipes()
+function searchRecipes(amount)
 	recipePage = 0
 	local searchText = _ENV.searchBox.text:lower()
-	searchedRecipes = util.filter(currentRecipes, function(recipe)
-		if searchText == "" then return true end
-		if recipe.output[1] then
-			if recipe.recipeName:lower():find(searchText) then return true end
-			for _, item in ipairs(recipe.output) do
-				local id = (item.item or item.name)
-				local itemConfig = root.itemConfig(item)
-				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-				if id:lower():find(searchText) or merged.shortdescription:lower():find(searchText) then return true end
+	if searchText == "" then
+		searchedRecipes = currentRecipes
+	else
+		searchedRecipes = {}
+		for i, recipe in ipairs(currentRecipes) do
+			currentlySearching = recipe
+			local cache = recipeOutputCache[i]
+			amount = amount - 1
+			if amount == 0 then coroutine.yield() end
+			if recipe.output[1] then
+				if recipe.recipeName:lower():find(searchText) then
+					return table.insert(searchedRecipes, recipe)
+				end
+				for j, item in ipairs(recipe.output) do
+					local id = (item.item or item.name)
+					local cache = cache[j]
+					if id:lower():find(searchText) or cache.name:lower():find(searchText) then
+						return table.insert(searchedRecipes, recipe)
+					end
+				end
+			else
+				local id = (recipe.output.item or recipe.output.name)
+				if id:lower():find(searchText) or cache.name:lower():find(searchText) then
+					return table.insert(searchedRecipes, recipe)
+				end
 			end
-		else
-			local id = (recipe.output.item or recipe.output.name)
-			local itemConfig = root.itemConfig(recipe.output)
-			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-			return id:lower():find(searchText) or merged.shortdescription:lower():find(searchText)
 		end
-	end)
-	recipePages = math.ceil(#searchedRecipes/recipesPerPage)
+		searchedRecipes = util.filter(currentRecipes, function(recipe)
+		end)
+	end
+	recipePages = math.ceil(#searchedRecipes / recipesPerPage)
+	coroutine.yield()
+	refreshDisplayedRecipes()
+	return true
 end
 function refreshDisplayedRecipes()
 	_ENV.recipeSearchScrollArea:clearChildren()
@@ -229,17 +382,11 @@ function refreshDisplayedRecipes()
 			}
 		})
 		function _ENV.recipePageBackTopButton:onClick()
-			recipePage = recipePage - 1
-			if recipePage < 0 then
-				recipePage = recipePages
-			end
+			recipePage = (recipePage - 1) % recipePages
 			refreshDisplayedRecipes()
 		end
 		function _ENV.recipePageNextTopButton:onClick()
-			recipePage = recipePage + 1
-			if recipePage > recipePages then
-				recipePage = 0
-			end
+			recipePage = (recipePage + 1) % recipePages
 			refreshDisplayedRecipes()
 		end
 	end
@@ -332,31 +479,14 @@ function refreshDisplayedRecipes()
 			}
 		})
 		function _ENV.recipePageBackBottomButton:onClick()
-			recipePage = recipePage - 1
-			if recipePage < 0 then
-				recipePage = recipePages
-			end
+			recipePage = (recipePage - 1) % recipePages
 			refreshDisplayedRecipes()
 		end
 		function _ENV.recipePageNextBottomButton:onClick()
-			recipePage = recipePage + 1
-			if recipePage > recipePages then
-				recipePage = 0
-			end
+			recipePage = (recipePage + 1) % recipePages
 			refreshDisplayedRecipes()
 		end
 	end
-
-end
-function filterRecipes(filter, recipes)
-	return util.filter(recipes, function (v)
-		if not filter then return true end
-		for _, filterGroup in ipairs(filter) do
-			for _, recipeGroup in ipairs(v.groups or {}) do
-				if recipeGroup == filterGroup then return true end
-			end
-		end
-	end)
 end
 
 function displayRecipe(recipe)
@@ -566,6 +696,5 @@ function _ENV.craftingAddonSlot:onItemModified()
 end
 
 function _ENV.searchBox:onTextChanged()
-	searchRecipes()
-	refreshDisplayedRecipes()
+	searchCoroutine = coroutine.create(searchRecipes)
 end
