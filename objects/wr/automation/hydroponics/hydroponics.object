@@ -59,7 +59,16 @@
     "pearlpeaseed" : {
       "image" : "animationParts/plants/pearlpeaseed.png",
       "variants" : 5
+    },
+    "automatoseed" : {
+      "image" : "animationParts/plants/automatoseed.png",
+      "variants" : 5
+    },
+    "avesmingoseed" : {
+      "image" : "animationParts/plants/avesmingoseed.png",
+      "variants" : 5
     }
+
   },
 
   "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
