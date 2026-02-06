@@ -49,13 +49,17 @@
   "animation" : "hydroponics.animation",
   "forceFinishAnimationsInInit" : false,
   "animationParts" : {
-    "pipe" : "animationParts/pipe.png",
-    "plant" : "",
-    "fluid" : "animationParts/empty.png"
+    "pipe" : "animationParts/pipe.png"
   },
   "stateAnimations" : {
-    // "on" : { "animations" : {"producing": ["on"]}},
-    // "off" : { "animations" : {"producing": ["off"]}}
+    "on" : { "animations" : {"producing": ["on"]}},
+    "off" : { "animations" : {"producing": ["off"]}}
+  },
+  "plantImages" : {
+    "pearlpeaseed" : {
+      "image" : "animationParts/plants/pearlpeaseed.png",
+      "variants" : 5
+    }
   },
 
   "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],

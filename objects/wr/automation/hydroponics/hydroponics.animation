@@ -1,5 +1,14 @@
 {
   "animatedParts" : {
+    "stateTypes" : {
+      "producing" : {
+        "default" : "off",
+        "states" : {
+          "off" : {"frames" : 1},
+          "on" : {"frames" : 1}
+        }
+      }
+    },
     "parts" : {
       "pipe" : {
         "properties" : {
@@ -8,18 +17,18 @@
           "image" : "<partImage>:default"
         }
       },
-      "plant1" : {
+      "leftPlant" : {
         "properties" : {
           "centered" : false,
           "zLevel" : 1,
-          "image" : "<partImage>:default"
+          "image" : "<partImage>:0.<variant>"
         }
       },
-      "plant2" : {
+      "rightPlant" : {
         "properties" : {
           "centered" : false,
           "zLevel" : 1,
-          "image" : "<partImage>:default",
+          "image" : "<partImage>:0.<variant>",
           "offset" : [2,0]
         }
       },
@@ -28,6 +37,12 @@
           "centered" : false,
           "zLevel" : 1,
           "image" : "<partImage>:default"
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "animationParts/empty.png:default"}},
+            "on" : {"properties" : {"image" : "animationParts/water.png:default"}}
+          }
         }
       }
     }
