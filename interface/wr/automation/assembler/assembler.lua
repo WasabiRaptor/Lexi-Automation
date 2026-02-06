@@ -408,6 +408,7 @@ function displayRecipe(recipe)
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
 	local productionRate
+	local minimumProductionRate = world.getObjectParameter(pane.sourceEntity(), "minimumProductionRate") or 0
 	local balanced = true
 	for _, input in ipairs(inputs) do
 		if input.used then
@@ -433,30 +434,31 @@ function displayRecipe(recipe)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 		local productionLabels
 		if input.used then
-			local production = input.count * craftingSpeed
-			local productionTarget
+			local inputRate = 0
+			local inputTarget = 0
 			for _, recipeItem in ipairs(recipe.input) do
 				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
-					productionTarget = (recipeItem.count or 1) * craftingSpeed
+					inputTarget = ((recipeItem.count or 1) * maxProductionRate)
+					inputRate = (input.count / inputTarget)
 					break
 				end
 			end
 			local color
-			if production <= 0 then
+			if not (inputRate > minimumProductionRate) then
 				color = "FF0000"
-			elseif (production == productionTarget) or balanced then
+			elseif (inputRate == maxProductionRate) or balanced then
 				color = "00FF00"
-			elseif production > productionTarget then
+			elseif inputRate > maxProductionRate then
 				color = "00FFFF"
-			elseif production < productionTarget then
+			elseif inputRate < maxProductionRate then
 				color = "FFFF00"
 			end
-			local timeMultiplier, timeLabel = timeScale(production)
+			local timeMultiplier, timeLabel = timeScale(input.count)
 			productionLabels = {
 				{ type = "image", file = inputNodesConfig[1].icon },
-				{ type = "label", text = clipAtThousandth((timeMultiplier * production)),       color = color, inline = true },
+				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)),       color = color, inline = true },
 				{ type = "label", text = "/",                        inline = true },
-				{ type = "label", text = clipAtThousandth((timeMultiplier * productionTarget)), inline = true },
+				{ type = "label", text = clipAtThousandth((timeMultiplier * inputTarget)), inline = true },
 				{ type = "label", text = timeLabel,               inline = true }
 			}
 		else
@@ -486,7 +488,7 @@ function displayRecipe(recipe)
 		end
 	end
 	local color
-	if productionRate <= 0 then
+	if not (productionRate > minimumProductionRate) then
 		color = "FF0000"
 	elseif (productionRate >= maxProductionRate) or balanced then
 		color = "00FF00"

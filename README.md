@@ -76,7 +76,7 @@ Input rates will display as different colors depending on different factors.
 
 Green: All input rates are balanced for the recipe, or input is exactly meeting the maxium rate of the machine.
 Yellow: Items are being input, but they are not balanced.
-Red: No items are being input.
+Red: Input rate does not meet the minimum production rate of the machine.
 Cyan: More items are being input than the machine can consume.
 Magenta: Items not included in the recipe are being input.
 

@@ -7,7 +7,7 @@ local old = {
 local outputCount
 local products
 function init()
-    old.init()
+	old.init()
 	wr_automation.init()
 	products = config.getParameter("products")
 	message.setHandler("setProducts", function(_, _, newProducts)
@@ -15,7 +15,7 @@ function init()
 		products = newProducts
 		object.setConfigParameter("products", products)
 		refreshOutput(true)
-	end)
+    end)
 
 	if products then
 		object.setConfigParameter("status", "on")
@@ -32,7 +32,7 @@ function refreshOutput(force)
 		wr_automation.playAnimations("off")
 		return
 	end
-    object.setConfigParameter("status", "on")
+	object.setConfigParameter("status", "on")
 	wr_automation.playAnimations("on")
 
 	local outputNodes = object.getOutputNodeIds(0)

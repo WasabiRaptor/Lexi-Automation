@@ -9,7 +9,6 @@ local recipe
 local outputCount
 local inputs
 local passthrough
-local stateAnimations
 function init()
 	old.init()
 	wr_automation.init()
@@ -41,7 +40,7 @@ function refreshOutput(force)
 		object.setConfigParameter("matterStreamInput", nil)
 		object.setOutputNodeLevel(0, false)
 		object.setConfigParameter("status", ((not recipe) and "noRecipe") or "missingInput")
-		wr_automation.playAnimations(stateAnimations[((not recipe) and "noRecipe") or "missingInput"] or "off")
+		wr_automation.playAnimations("off")
 		inputs = nil
 		return
 	end
@@ -85,6 +84,7 @@ function refreshOutput(force)
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
 	local productionRate = maxProductionRate
+	local minimumProductionRate = config.getParameter("minimumProductionRate") or 0
 
 	for _, recipeItem in ipairs(recipe.input) do
 		for _, inputItem in ipairs(inputs) do
@@ -108,7 +108,7 @@ function refreshOutput(force)
 			end
 		end
 	end
-	if productionRate > 0 then
+	if productionRate > minimumProductionRate then
 		if recipe.output[1] then
 			local realProdcuts = copy(recipe.output)
 			for _, product in ipairs(realProdcuts) do

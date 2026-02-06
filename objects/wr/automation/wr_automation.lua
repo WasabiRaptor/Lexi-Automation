@@ -11,7 +11,6 @@ function wr_automation.init()
 	local position = object.position()
 	local size = vec2.add(rect.size(poly.boundBox(object.spaces())), 1)
 	isOffset = (position[2] % (size[2] * 2)) < size[2]
-
 end
 function wr_automation.countInputs(nodeIndex, recipe)
 	local recipe = recipe or {matchInputParameters = true, input = {}}
@@ -103,7 +102,7 @@ function wr_automation.setOutputs(products)
 end
 
 function wr_automation.playAnimations(state)
-	local animationData = isOffset and stateAnimations[state.."_offset"] or stateAnimations[state]
+	local animationData = (isOffset and stateAnimations[state.."_offset"]) or stateAnimations[state]
 	if not animationData then return end
 	for k, v in pairs(animationData.animations or {}) do
 		animator.setAnimationState(k, table.unpack(v))
