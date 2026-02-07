@@ -67,6 +67,22 @@
     "avesmingoseed" : {
       "image" : "animationParts/plants/avesmingoseed.png",
       "variants" : 5
+    },
+    "bananaseed" : {
+      "image" : "animationParts/plants/bananaseed.png",
+      "variants" : 5
+    },
+    "beakseedseed" : {
+      "image" : "animationParts/plants/beakseedseed.png",
+      "variants" : 5
+    },
+    "boltbulbseed" : {
+      "image" : "animationParts/plants/boltbulbseed.png",
+      "variants" : 5
+    },
+    "bonebooseed" : {
+      "image" : "animationParts/plants/bonebooseed.png",
+      "variants" : 5
     }
 
   },
