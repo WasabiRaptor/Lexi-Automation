@@ -15,7 +15,7 @@ function init()
 		type = "label",
 		color = "FF0000",
 		align = "center",
-		text = "Liquids only be pumped on terrestrial worlds with valid celestial coordinates.",
+		text = "Liquids can only be pumped on terrestrial worlds with valid celestial coordinates.",
 	},{
 		{
 			type = "label",
