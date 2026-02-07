@@ -83,6 +83,42 @@
     "bonebooseed" : {
       "image" : "animationParts/plants/bonebooseed.png",
       "variants" : 5
+    },
+    "carrotseed" : {
+      "image" : "animationParts/plants/carrotseed.png",
+      "variants" : 5
+    },
+    "chiliseed" : {
+      "image" : "animationParts/plants/chiliseed.png",
+      "variants" : 5
+    },
+    "cocoaseed" : {
+      "image" : "animationParts/plants/cocoaseed.png",
+      "variants" : 5
+    },
+    "coffeeseed" : {
+      "image" : "animationParts/plants/coffeeseed.png",
+      "variants" : 5
+    },
+    // "coralcreepseed" : {
+    //   "image" : "animationParts/plants/coralcreepseed.png",
+    //   "variants" : 5
+    // },
+    "cornseed" : {
+      "image" : "animationParts/plants/cornseed.png",
+      "variants" : 5
+    },
+    "cottonseed" : {
+      "image" : "animationParts/plants/cottonseed.png",
+      "variants" : 5
+    },
+    "crystalplantseed" : {
+      "image" : "animationParts/plants/crystalplantseed.png",
+      "variants" : 5
+    },
+    "currentcornseed" : {
+      "image" : "animationParts/plants/currentcornseed.png",
+      "variants" : 5
     }
 
   },
