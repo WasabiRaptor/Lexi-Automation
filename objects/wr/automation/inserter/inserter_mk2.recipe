@@ -7,7 +7,7 @@
     { "item" : "staticcell", "count" : 1 }
   ],
   "output" : {
-    "item" : "wr/inserter_mk1",
+    "item" : "wr/inserter_mk2",
     "count" : 1
   },
   "duration" : 5,

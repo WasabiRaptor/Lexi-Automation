@@ -1,11 +1,10 @@
 {
   "input" : [
-    { "item" : "manipulatormodule", "count" : 8 },
+    { "item" : "manipulatormodule", "count" : 1 },
     { "item" : "copperbar", "count" : 20 },
-    { "item" : "corefragmentore", "count" : 20 },
-    { "item" : "goldbar", "count" : 5 },
-    { "item" : "stickofram", "count" : 1 },
-    { "item" : "battery", "count" : 1 }
+    { "item" : "corefragmentore", "count" : 1 },
+    { "item" : "goldbar", "count" : 1 },
+    { "item" : "stickofram", "count" : 1 }
 
   ],
   "output" : {
