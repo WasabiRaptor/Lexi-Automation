@@ -112,10 +112,10 @@
       "image" : "animationParts/plants/cottonseed.png",
       "variants" : 5
     },
-    "crystalplantseed" : {
-      "image" : "animationParts/plants/crystalplantseed.png",
-      "variants" : 5
-    },
+    // "crystalplantseed" : {
+    //   "image" : "animationParts/plants/crystalplantseed.png",
+    //   "variants" : 5
+    // },
     "currentcornseed" : {
       "image" : "animationParts/plants/currentcornseed.png",
       "variants" : 5
