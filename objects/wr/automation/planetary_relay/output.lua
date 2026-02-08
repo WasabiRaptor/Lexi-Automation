@@ -55,7 +55,7 @@ function refreshOutput(force)
 	for _, _ in pairs(outputNodes) do
 		newOutputCount = newOutputCount + 1
 	end
-	if (not force) and compare(newInputs, inputs) and (newOutputCount == outputCount) then return end
+	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", newInputs)
 	inputs = newInputs
 	outputCount = newOutputCount

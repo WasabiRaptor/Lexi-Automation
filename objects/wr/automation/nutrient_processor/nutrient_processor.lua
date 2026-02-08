@@ -33,7 +33,7 @@ function refreshOutput(force)
 		newOutputCount = newOutputCount + 1
 	end
 	local newInputs, totalItems = wr_automation.countInputs(0)
-	if (not force) and compare(newInputs, inputs) and (newOutputCount == outputCount) then return end
+	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", newInputs)
 	inputs = newInputs
 	outputCount = newOutputCount

@@ -91,12 +91,13 @@ function refreshOutput(force)
 	end
 
 	local newInputs = wr_automation.countInputs()
-	if (not force) and compare(newInputs, inputs)
+	if (not force)
 		and (newDefaultOutputCount == defaultOutputCount)
 		and (newLeftOutputCount == leftOutputCount)
 		and (newRightOutputCount == rightOutputCount)
 		and (leftNodeValue == prevLeftNodeValue)
 		and (rightNodeValue == prevRightNodeValue)
+		and compare(newInputs, inputs)
 	then
 		return
 	end
