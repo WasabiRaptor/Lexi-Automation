@@ -21,7 +21,9 @@ This system is designed to be extremely flexible and is primarily data driven. A
 	}
 ]
 ```
-My system uses wire nodes, and with OSB wire nodes can have unique colors for their wires and icons defined, the index in `"inputNodesConfig"`/`"outputNodesConfig"` corresponding to the index of the relevant node in the `"inputNodes"`/`"outputNodes"` list. We will be seeing many config parameters regarding I/O nodes which are a list where the index corresponds to the node. Above is the parameters that should be used for consistency to indicate wire nodes compatible with my mod. In the case a machine may have multiple I/O nodes I would reccommend adding a `?hueshift=20` directive to the icon's path adding or subtracting in increments of 20 for each additional node in that group.
+My system uses wire nodes, and with OSB wire nodes can have unique colors for their wires and icons defined, the index in `"inputNodesConfig"`/`"outputNodesConfig"` corresponding to the index of the relevant node in the `"inputNodes"`/`"outputNodes"` list. We will be seeing many config parameters regarding I/O nodes which are a list where the index corresponds to the node. Above is the parameters that should be used for consistency to indicate wire nodes compatible with this system.
+
+In the case a machine may have multiple I/O nodes I would reccommend adding a `?hueshift=20` directive to the icon's path adding or subtracting in increments of 20 for each additional node in that group.
 
 ```json
 "matterStreamOutput" : [
@@ -30,11 +32,11 @@ My system uses wire nodes, and with OSB wire nodes can have unique colors for th
 	]
 ]
 ```
-This is the config parameter that is checked when any input is connected to another object's output. The object will check if the input is positive, what node index it is connected to on the output object, and if the output object has a `"matterStreamOutput"` parameter. If it exists, it will use the output node index to index to check for a list of items in `"matterStreamOutput"` at that node index. It does this for each object connected to the input node, adding to a list of input items and increasing their count if it matches items already in the list.
+This is the config parameter that is checked when any input is connected to another object's output. The recieving object will check if the input node is positive, what node index it is connected to on the output object, and if the output object has a `"matterStreamOutput"` parameter. If it exists, it will use the output node index to index to check for a list of items in `"matterStreamOutput"` at that node index. It does this for each object connected to the input node, adding to a list of input items and increasing their count if it matches items already in the list.
 
-Do take note of the `0.5` count used in this example, that is normally not possible for a real item in starbound, that is because this is not a "real" item that currently exists, the count here is actually the rate of the item being output per second. One thing of note here! This is the rate that each object the output is connected to is recieving, not the total amount being output overall. So it is best to use scripts to set this paramter to evenly distribute the output to connected objects, which I already have a premade function for.
+Do take note of the `0.5` count used in this example, that is normally not possible for a real item in starbound, that is because this is not a "real" item that currently exists, the count here is actually the rate per second that each object the output is connected to is recieving, not the total amount being output overall. So it is best to use scripts to set this parameter to evenly distribute the total output, which I already have a premade function for.
 
-While less important, after building their list of inputs, it is wise to set the `"matterStreamInput"` parameter to that list to keep track of it since some GUIs and possibly other objects will fetch it in the future.
+While less important, after building the list of inputs, it is wise to set the `"matterStreamInput"` parameter to that list to keep track of it since some GUIs and possibly other objects will fetch it.
 
 # Scripts
 
@@ -46,7 +48,7 @@ This is the general utility script that should be used by any object attempting 
 Setup function that should be called during init, loads the animation configuration and determines if the machine's animations should be "offset"
 
 ### wr_automation.playAnimations(state)
-Attempts to set animation states depending on data defined in the object's config paramters.
+Attempts to set animation states depending on data defined in the object's config parameters.
 
 ```json
 "stateAnimations" : {
@@ -66,14 +68,14 @@ All of the object scripts below use this to trigger animation states depending o
 The state data will control things such as animation states in the animator and turning lights or particle emitters on or off.
 
 ### wr_automation.countInputs(nodeIndex, recipe)
-Creates a list of all the items being recieved by the node index, with an optional argument for sorting the output list according to a recipe. The recipe will determine if items without matching paramters are combined or not, the default behavior is to not combine items with different paramters.
+Creates a list of all the items being recieved by the node index, with an optional argument for sorting the output list according to a recipe. The recipe will determine if items without matching parameters are combined or not, the default behavior is to not combine items with different parameters.
 
 This function will return the resulting list, and the total count of items being recieved.
 
 ### wr_automation.setOutputs(products)
-Products is an array that corresponds to the exact same spec as `"matterStreamOutput"` being a list of lists of items. As this function is what will set the `"matterStreamOutput"` paramter accordingly to evently distribute the total products the object is producing evenly amongst its outputs.
+Products is an array that corresponds to the exact same spec as `"matterStreamOutput"` but this time the actual total amount produced. This function is what will set the `"matterStreamOutput"` parameter to evently distribute the total products amongst its outputs.
 
-If the new products for a node are different from the previous products, or the number of inputs that output is connected to changed, then the function will send a `"refreshInputs"` message to the objects connected to that node. This message will then effectively cascade downstream for any objects who would then subsequently have had their output change because of the change in inputs. The cascade would stop if when an object would not have had its outputs effected.
+If the new products for a node are different from the previous products, or the number of inputs that output is connected to changed, then the function will send a `"refreshInputs"` message to the objects connected to that node. This message will then effectively cascade downstream for any objects who would then subsequently have had their output change because of the change in inputs. The cascade will stop when an object would not have had its outputs effected or it reaches the end of the chain.
 
 Returns the value that was set to `"matterStreamOutput"` and the total amount of items being output.
 
@@ -94,7 +96,8 @@ This script does not have an update function so it is reccommended to make it no
 ```
 Products is the total amount of items being produced by each output node, that will then be evenly divided between the number of outputs for that node and then set to `"matterStreamOutput"`.
 
-This script also includes a message handler for the message `"setProducts"` which is used to set the config paramter for the products and refresh the outputs. This is intended for attached GUIs to change what is being produced.
+This script also includes a message handler `"setProducts"` which is used to set the config parameter for the products and refresh the outputs. This is intended for attached GUIs to change what is being produced.
+
 
 ## Recipe Object
 `/objects/wr/automation/recipeObject.lua`
@@ -120,7 +123,7 @@ This script does not have an update function so it is reccommended to make it no
 "passthrough" : false, // passes unused ingrredients through it's output
 
 ```
-Most of these paramters control how fast the machine is capable of running. If the minimum production rate is met, it will start producing the recipe output, and it will set the `"products"` and then `"matterStreamOutput"` parameters much like a production object, with a slight difference. In the case of `"passthrough"` being true, the output will also have unused inputs split evenly in the output, these unused inputs will not be reported in the `"products"` parameter as they were not created by this object.
+Most of these parameters control how fast the machine is capable of running. If the minimum production rate is met, it will start producing the recipe output, and it will set the `"products"` and then `"matterStreamOutput"` parameters much like a production object, with a slight difference. In the case of `"passthrough"` being true, the output will also have unused inputs split evenly in the output, these unused inputs will not be reported in the `"products"` parameter as they were not created by this object.
 
 The recipe object uses the same spec for it's recipes as starbound's own recipes, with one main difference...
 ```json
@@ -139,11 +142,12 @@ The recipe object uses the same spec for it's recipes as starbound's own recipes
 ```
 In that recipes can support a list of output items, rather than one single output! However in this case, you should also give this recipe a `"recipeName"` so it can get listed nicely in the assembler GUI. Be aware, such recipes should ONLY ever be defined within the config parameters for objects using these scripts, and not in a standard `.recipe` file because it's not supported by the base game's recipe spec!
 
-This script has the `"setRecipe"` message handler, which as expected, sets the recipe on the object and refreshes the outputs if it needs to change.
+This script has the `"setRecipe"` message handler, which sets the recipe on the object and refreshes the outputs if it needs to change.
 
-This script is used by almost every object that has varied inputs and outputs, it may not look like it, but the hydroponics and cloning vat are both recipe objects that have special GUI that creates and sets the recipe for the object.
+This script is used by almost every object that has varied inputs and outputs, it may not look like it, but the hydroponics and cloning vat are both recipe objects that have special GUI that creates and sets the recipe for the object, the object itself behaves no different from the assembler.
 
 The assembler GUI is more multi purpose, for generalized crafting stations that have multiple recipes, and can be added to an object like so.
+
 ```json
 "interactAction" : "ScriptPane",
 "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
@@ -151,6 +155,7 @@ The assembler GUI is more multi purpose, for generalized crafting stations that 
 "uniqueRecipes" : ["/path/to/recipeList.config"],
 "lockRecipes" : false // hides the crafting station slot
 ```
-The filter can be changed to any crafting station groups to have their recipes be listed by the object without putting a station into the slot. `"lockRecipes"` can be used to hide the slots where one can input any crafting station, therefore limiting the recipes of the object to the crafting groups in the filter, as well as any recipes defined in `"uniqueRecipes"`.
 
-Unique recipes are where one defines the recipes unique to this object, this can either be the list of recipes itself, a string for an asset path to a list of recipes, or a list of paths to lists of recipes. I highly reccommend making it be a list of paths. This is the best place to put recipes that have multiple output items.
+The filter can be changed to any crafting station groups to have their recipes be listed without putting a crafting station into the crafting station slot. `"lockRecipes"` can be used to hide the slot for a crafting station, therefore limiting the recipes of the object to the crafting groups in the filter, as well as any recipes defined in `"uniqueRecipes"`.
+
+Unique recipes are where one defines the recipes unique to this object, this can either be the list of recipes itself, a string for an asset path to a list of recipes, or a list of paths to lists of recipes. I highly reccommend making it be a list of paths, as it is guarded against recursion and will therefore enforce no recipe configs ever get loaded twice. This is the best place to put recipes that have multiple output items.
