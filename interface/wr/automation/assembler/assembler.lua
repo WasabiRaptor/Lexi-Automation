@@ -42,20 +42,26 @@ function init()
 		_ENV.craftingStationSlot:setVisible(false)
 		_ENV.craftingAddonSlot:setVisible(false)
 	end
-	uniqueRecipes = world.getObjectParameter(pane.sourceEntity(), "uniqueRecipes") or {}
-	if type(uniqueRecipes) == "string" then
-		uniqueRecipes = root.assetJson(uniqueRecipes)
-	end
-	if type(uniqueRecipes[1]) == "string" then
-		local recipeConfigList = uniqueRecipes
-		uniqueRecipes = jarray()
-		for _, path in ipairs(recipeConfigList) do
-			for _, recipe in ipairs(root.assetJson(path)) do
-				table.insert(uniqueRecipes, recipe)
+	local didPath = {}
+	local function getUniqueRecipes(maybeRecipe)
+		if not maybeRecipe then return end
+		local maybeRecipeType = type(maybeRecipe)
+		if maybeRecipeType == "string" then
+			if not didPath[maybeRecipe] then
+				didPath[maybeRecipe] = true
+				getUniqueRecipes(root.assetJson(uniqueRecipes))
+			end
+		elseif maybeRecipeType == "table" then
+			if maybeRecipe[1] then
+				for _, v in ipairs(maybeRecipe) do
+					getUniqueRecipes(v)
+				end
+			else
+				table.insert(uniqueRecipes, maybeRecipe)
 			end
 		end
 	end
-
+	getUniqueRecipes(world.getObjectParameter(pane.sourceEntity(), "uniqueRecipes"))
 	refreshCurrentRecipes()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
