@@ -43,7 +43,7 @@ This is the config parameter that is checked when any input is connected to anot
 
 Do take note of the `0.5` count used in this example, that is normally not possible for a real item in starbound, that is because this is not a "real" item that currently exists, the count here is actually the rate per second that each object the output is connected to is recieving, not the total amount being output overall. So it is best to use scripts to set this parameter to evenly distribute the total output, which I already have a premade function for.
 
-While less important, after building the list of inputs, it is wise to set the `"matterStreamInput"` parameter to that list to keep track of it since some GUIs and possibly other objects will fetch it.
+While less important, after getting the inputs, it is wise to set the `"matterStreamInput"` parameter to that in the same spec as the output to keep track of it since some GUIs and possibly other objects will fetch it.
 
 # Scripts
 

@@ -498,7 +498,7 @@ end
 function displayRecipe(recipe)
 	if not recipe then return end
 
-	local inputs = world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {}
+	local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 	for _, newInput in ipairs(inputs) do
 		newInput.used = false
 		for _, input in ipairs(recipe.input) do

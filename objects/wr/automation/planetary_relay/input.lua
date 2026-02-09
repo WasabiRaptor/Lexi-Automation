@@ -9,7 +9,7 @@ function init()
 		object.setUniqueId(sb.makeUuid())
 	end
 
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	channel = config.getParameter("channel") or ""
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
@@ -61,7 +61,7 @@ function refreshOutput(force)
 	animator.setAnimationState("input", "on", true)
 	local newInputs = wr_automation.countInputs()
 	if (not force) and compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	world.setProperty("wr_matterStreamOutput."..channel, newInputs)
 	inputs = newInputs
 

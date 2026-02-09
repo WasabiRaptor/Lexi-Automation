@@ -21,7 +21,7 @@ function init()
 		object.setConfigParameter("recipe", newRecipe)
 		refreshOutput(true)
 	end)
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
 	end)
@@ -51,7 +51,7 @@ function refreshOutput(force)
 	end
 	local newInputs = wr_automation.countInputs(0, recipe)
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
 	if not recipe then

@@ -13,7 +13,7 @@ local prevLeftNodeValue
 local prevRightNodeValue
 function init()
 	wr_automation.init()
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	outputs = config.getParameter("matterStreamOutput")
 	leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()
 	rightTargetOutput = config.getParameter("rightTargetOutput") or jarray()
@@ -101,7 +101,7 @@ function refreshOutput(force)
 	then
 		return
 	end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	leftOutputCount = newLeftOutputCount
 	rightOutputCount = newRightOutputCount

@@ -16,7 +16,7 @@ function init()
 
 	leftTargetOutput = world.getObjectParameter(pane.sourceEntity(), "leftTargetOutput") or jarray()
 	rightTargetOutput = world.getObjectParameter(pane.sourceEntity(), "rightTargetOutput") or jarray()
-	inputs = world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or jarray()
+	inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or jarray()
 
 	displayInputs()
 end

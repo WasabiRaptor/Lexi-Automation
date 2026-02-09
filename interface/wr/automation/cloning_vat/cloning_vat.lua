@@ -28,7 +28,7 @@ function refreshDisplayedProducts()
 	local products
 	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
 	if recipe then
-		local inputs = world.getObjectParameter(pane.sourceEntity(), "matterStreamInput")
+		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 		local maxProductionRate = craftingSpeed / math.max(
 			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast

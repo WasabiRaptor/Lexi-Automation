@@ -9,7 +9,7 @@ function init()
 		object.setUniqueId(sb.makeUuid())
 	end
 	object.setInteractive(true)
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
     channel = config.getParameter("channel") or ""
 	outputTarget = config.getParameter("outputTarget")
 	selfTarget = config.getParameter("selfTarget")
@@ -79,7 +79,7 @@ function refreshOutput(force)
 	animator.setAnimationState("input", "on", true)
 	local newInputs = wr_automation.countInputs()
 	if (not force) and compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
     inputs = newInputs
 	if outputTarget and selfTarget then
 		world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, inputs, selfTarget)

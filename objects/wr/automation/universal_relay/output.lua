@@ -10,7 +10,7 @@ function init()
 		object.setUniqueId(sb.makeUuid())
 	end
 	object.setInteractive(true)
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	channel = config.getParameter("channel") or ""
 	inputTarget = config.getParameter("inputTarget")
 	selfTarget = config.getParameter("selfTarget")
@@ -83,7 +83,7 @@ function refreshOutput(force, newInputs)
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 
 
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
 	wr_automation.setOutputs({inputs})

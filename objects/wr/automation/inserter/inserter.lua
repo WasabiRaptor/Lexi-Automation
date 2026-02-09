@@ -4,7 +4,8 @@ local inputs
 local outputEntity
 function init()
 	wr_automation.init()
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
+	local fromExporter = config.getParameter("exporterMatterSteam")
 
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
@@ -13,7 +14,7 @@ function init()
 	if not inputs then
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
-	elseif inputs and storage.uninitTime then
+	elseif inputs and storage.uninitTime and (not fromExporter) then
 		local timePassed = world.time() - storage.uninitTime
 		for i, input in ipairs(inputs) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (input.count * timePassed)
@@ -80,7 +81,7 @@ function refreshOutput(force)
 	end
 	local newInputs = wr_automation.countInputs()
 	if compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	local mode = config.getParameter("insertMode")
 	local best

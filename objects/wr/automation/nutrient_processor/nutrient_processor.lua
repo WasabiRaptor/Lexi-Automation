@@ -10,7 +10,7 @@ local inputs
 function init()
 	old.init()
 	wr_automation.init()
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
 	end)
@@ -34,7 +34,7 @@ function refreshOutput(force)
 	end
 	local newInputs, totalItems = wr_automation.countInputs(0)
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
 

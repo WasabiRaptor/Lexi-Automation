@@ -9,7 +9,7 @@ function init()
 		object.setUniqueId(sb.makeUuid())
 	end
 
-	inputs = config.getParameter("matterStreamInput")
+	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	channel = config.getParameter("channel") or ""
 	message.setHandler("refreshInputs", function (_,_)
 		refreshOutput()
@@ -56,7 +56,7 @@ function refreshOutput(force)
 		newOutputCount = newOutputCount + 1
 	end
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-	object.setConfigParameter("matterStreamInput", newInputs)
+	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
 	wr_automation.setOutputs({inputs})
