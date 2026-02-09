@@ -66,6 +66,11 @@
   },{
   },{
   }],
+  "matterStreamReciever" : [
+    true,
+    false,
+    false
+  ],
   "outputNodes" : [
     [0, 1], // default matter stream passthrough
     [-1, 1], // default matter stream filter output left

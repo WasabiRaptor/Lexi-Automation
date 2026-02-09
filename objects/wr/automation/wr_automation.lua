@@ -75,8 +75,13 @@ function wr_automation.setOutputs(products)
 		-- count the number of entities the output is connected to so it's split evenly between them
 		local outputCount = 0
 		local nodes = object.getOutputNodeIds(nodeIndex - 1)
-		for _, _ in pairs(nodes) do
-			outputCount = outputCount + 1
+		for eid, inputIndex in pairs(nodes) do
+			local matterStreamReciever = world.getObjectParameter(eid, "matterStreamReciever")
+			if matterStreamReciever and matterStreamReciever[inputIndex+1] then
+				outputCount = outputCount + 1
+			else
+				nodes[eid] = nil -- remove it from the table so we're not sending it a message later
+			end
 		end
 		local output = jarray()
 		for _, v in ipairs(nodeProducts) do

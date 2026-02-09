@@ -139,6 +139,9 @@
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/input.png"
   }],
+  "matterStreamReciever" : [
+    true
+  ],
   "outputNodes" : [ [1, 0] ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",

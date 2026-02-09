@@ -26,6 +26,13 @@ My system uses wire nodes, and with OSB wire nodes can have unique colors for th
 In the case a machine may have multiple I/O nodes I would reccommend adding a `?hueshift=20` directive to the icon's path adding or subtracting in increments of 20 for each additional node in that group.
 
 ```json
+"matterStreamReciever" : [
+	true
+]
+```
+This is the config parameter that allows other objects to know if an input node at that index can recieve a matter stream, if this table doesn't exist, or the value at the index isn't true, then it won't be counted for dividing the output and the stream can effectively be used as a logic wire for whether the machine is active or not.
+
+```json
 "matterStreamOutput" : [
 	[
 		{"item":"perfectlygenericitem", "count":0.5, "parameters":{}}
