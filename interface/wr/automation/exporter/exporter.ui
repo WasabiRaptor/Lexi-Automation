@@ -1,0 +1,30 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [160, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [160, 128],
+
+	"title" : "Exporter",
+	"icon" : "/objects/wr/automation/exporter/icon.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "exporter.lua" ],
+	"children" : [
+		{"mode" : "v"},
+	  	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
+			{"mode" : "v"},
+			{"type":"label", "text" : "WARNING!", "color":"FFFF00", "align":"center"},
+			{"type":"label", "text" : "Streamed materials not consumed by machines are lost! Make sure to balance output rates accordingly."},
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode":"h"},
+				{"type":"label", "text" : "Efficency: ", "inline":true},
+				{"type":"label", "text" : "0%", "id":"efficencyLabel", "inline":true, "color" : "FFFF00"}
+			]},
+			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
+				{"mode" : "v"},
+				{ "type" : "scrollArea", "id" : "exporterScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+				]}
+			]}
+		]}
+	]
+}

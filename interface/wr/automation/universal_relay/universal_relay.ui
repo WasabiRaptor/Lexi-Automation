@@ -1,8 +1,8 @@
 { //  -*- grammar-ext: json -*-
 	"style" : "window", // window (has titlebar), panel (just a frame) etc.
-	"size" : [128, 50], // *internal* size (not including chrome)
+	"size" : [128, 70], // *internal* size (not including chrome)
 	"resizable" : true,
-	"minSize" : [128, 50],
+	"minSize" : [128, 70],
 
 	"title" : "Universal Relay",
 	"icon" : "/objects/wr/automation/universal_relay/icon.png",

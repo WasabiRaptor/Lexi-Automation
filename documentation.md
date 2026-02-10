@@ -45,6 +45,11 @@ Do take note of the `0.5` count used in this example, that is normally not possi
 
 While less important, after getting the inputs, it is wise to set the `"matterStreamInput"` parameter to that in the same spec as the output to keep track of it since some GUIs and possibly other objects will fetch it.
 
+```json
+"fromExporter":false
+```
+This bool controls whether the matter stream being recieved has recieved any items from an exporter at any point upstream. This bool is used to control whether machine operations could be done while unloaded, since the exporter needs to be loaded to consume items. This bool also controls whether the stream can connect to the input of a planetary/universal relay as they are set to not relay the output if they are downstream from an exporter.
+
 # Scripts
 
 ## Utility Script
@@ -77,15 +82,19 @@ The state data will control things such as animation states in the animator and 
 ### wr_automation.countInputs(nodeIndex, recipe)
 Creates a list of all the items being recieved by the node index, with an optional argument for sorting the output list according to a recipe. The recipe will determine if items without matching parameters are combined or not, the default behavior is to not combine items with different parameters.
 
-This function will return the resulting list, and the total count of items being recieved.
+This will also check the `"fromExporter"` parameter from the objects it is recieving from, and it will return true any of them were recieving from an exporter as the third return value.
 
-### wr_automation.setOutputs(products)
+This function will return the resulting list, and the total count of items being recieved, and whether it is recieving from an exporter.
+
+### wr_automation.setOutputs(products, forceRefresh)
 Products is an array that corresponds to the exact same spec as `"matterStreamOutput"` but this time the actual total amount produced. This function is what will set the `"matterStreamOutput"` parameter to evently distribute the total products amongst its outputs.
 
 If the new products for a node are different from the previous products, or the number of inputs that output is connected to changed, then the function will send a `"refreshInputs"` message to the objects connected to that node. This message will then effectively cascade downstream for any objects who would then subsequently have had their output change because of the change in inputs. The cascade will stop when an object would not have had its outputs effected or it reaches the end of the chain.
 
 Returns the value that was set to `"matterStreamOutput"` and the total amount of items being output.
 
+### wr_automation.clearAllOutputs()
+Clears all outputs that were set by `wr_automation.setOutputs()` and sets their node to false.
 
 ## Production Object
 `/objects/wr/automation/productionObject.lua`

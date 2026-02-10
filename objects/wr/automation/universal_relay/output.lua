@@ -66,9 +66,8 @@ end
 
 function refreshOutput(force, newInputs)
 	if (not inputTarget) or (not newInputs) or (channel == "") then
-		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
 		inputs = nil
 		return

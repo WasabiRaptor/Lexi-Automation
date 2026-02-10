@@ -46,6 +46,7 @@
     "input" : "animationParts/input.png"
   },
 
+  "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
   "insertMode" : "fast",
 
   "inputNodes" : [ [0, 1] ],

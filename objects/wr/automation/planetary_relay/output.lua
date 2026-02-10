@@ -11,8 +11,8 @@ function init()
 
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	channel = config.getParameter("channel") or ""
-	message.setHandler("refreshInputs", function (_,_)
-		refreshOutput()
+	message.setHandler("refreshInputs", function (_,_, force)
+		refreshOutput(force)
 	end)
 	message.setHandler("setChannel", function(_, _, newChannel)
 		if newChannel == channel then return end
@@ -42,9 +42,8 @@ function refreshOutput(force)
 	local newInputs = world.getProperty("wr_matterStreamOutput."..channel)
 
 	if (not inputUUID) or (not newInputs) or (channel == "") then
-		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
 		inputs = nil
 		return

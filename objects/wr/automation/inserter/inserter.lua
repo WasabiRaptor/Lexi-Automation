@@ -2,19 +2,24 @@ require("/objects/wr/automation/wr_automation.lua")
 
 local inputs
 local outputEntity
+local objectPosition
+local delta
 function init()
 	wr_automation.init()
+	objectPosition = object.position()
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
-	local fromExporter = config.getParameter("exporterMatterSteam")
+	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
+	local fromExporter = config.getParameter("fromExporter")
 
-	message.setHandler("refreshInputs", function (_,_)
-		refreshOutput()
+	message.setHandler("refreshInputs", function (_,_, force)
+		refreshOutput(force)
 	end)
 	storage.leftovers = storage.leftovers or {}
 	if not inputs then
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
 	elseif inputs and storage.uninitTime and (not fromExporter) then
+		script.setUpdateDelta(delta)
 		local timePassed = world.time() - storage.uninitTime
 		for i, input in ipairs(inputs) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (input.count * timePassed)
@@ -23,7 +28,12 @@ function init()
 end
 
 local wasFull
+local loaded
 function update(dt)
+	if not loaded then
+		loaded = world.regionActive({objectPosition[1]-3,objectPosition[2]-3,objectPosition[1]+3,objectPosition[2]+3})
+		if not loaded then return end
+	end
 	if not inputs then
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
@@ -31,8 +41,7 @@ function update(dt)
 		return
 	end
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
-		local position = object.position()
-		outputEntity = world.objectAt({ position[1] + object.direction(), position[2] })
+		outputEntity = world.objectAt({ objectPosition[1] + object.direction(), objectPosition[2] })
 	end
 	if not outputEntity then
 		object.setOutputNodeLevel(0, false)
@@ -55,15 +64,19 @@ function update(dt)
 	end
 
 	if attemptedInsert then
-		animator.setAnimationState("input", (insertedAny and "insert") or "on")
+		if insertedAny then
+			animator.setAnimationState("input", "insert", true)
+		else
+			animator.setAnimationState("input", "on")
+		end
 		-- set the wire node output if the inserter inserted any items on this tick
 		object.setOutputNodeLevel(0, insertedAny)
 		if (not insertedAny) and (not wasFull) then
 			wasFull = true
-			script.setUpdateDelta(math.max(3600, config.getParameter("scriptDelta") or 60))
+			script.setUpdateDelta(math.max(3600, delta))
 		elseif insertedAny and wasFull then
 			wasFull = false
-			script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
+			script.setUpdateDelta(delta)
 		end
 	end
 end
@@ -79,9 +92,10 @@ function refreshOutput(force)
 		object.setOutputNodeLevel(0, false)
 		return
 	end
-	local newInputs = wr_automation.countInputs()
-	if compare(newInputs, inputs) then return end
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	if (not force) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
+	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
 	local mode = config.getParameter("insertMode")
 	local best
@@ -106,7 +120,7 @@ function refreshOutput(force)
 
 	end
 	-- inserters will never tick faster than once per second
-	local delta = math.max(1 / best, 1) * 60
+	delta = math.max(1 / best, 1) * 60
 	script.setUpdateDelta(delta)
 	object.setConfigParameter("scriptDelta", delta)
 end

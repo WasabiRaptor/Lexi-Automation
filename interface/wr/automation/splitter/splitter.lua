@@ -3,6 +3,8 @@ require("/interface/games/util.lua")
 require("/interface/wr/automation/labels.lua")
 local leftTargetOutput
 local rightTargetOutput
+local prevLeft
+local prevRight
 local inputs
 local inputNodesConfig
 local outputNodesConfig
@@ -16,6 +18,8 @@ function init()
 
 	leftTargetOutput = world.getObjectParameter(pane.sourceEntity(), "leftTargetOutput") or jarray()
 	rightTargetOutput = world.getObjectParameter(pane.sourceEntity(), "rightTargetOutput") or jarray()
+	prevLeft = copy(leftTargetOutput)
+	prevRight = copy(rightTargetOutput)
 	inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or jarray()
 
 	displayInputs()
@@ -131,8 +135,7 @@ function displayInputs()
 		rightTextBox:setText(tostring(rightTarget.count * timeMultiplier))
 	end
 end
-local prevLeft
-local prevRight
+
 function setTargetOutputs()
 
 	if compare(prevLeft, leftTargetOutput) and compare(prevRight, rightTargetOutput) then return end

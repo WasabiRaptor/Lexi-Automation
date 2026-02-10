@@ -10,7 +10,7 @@ function init()
 	end
 	object.setInteractive(true)
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
-    channel = config.getParameter("channel") or ""
+	channel = config.getParameter("channel") or ""
 	outputTarget = config.getParameter("outputTarget")
 	selfTarget = config.getParameter("selfTarget")
 
@@ -25,7 +25,7 @@ function init()
 		object.setConfigParameter("outputTarget", outputTarget)
 		refreshOutput(true)
 	end)
-    message.setHandler("setChannel", function(_, _, newChannel, targetEntity, newSelfTarget)
+	message.setHandler("setChannel", function(_, _, newChannel, targetEntity, newSelfTarget)
 		world.setExpiryTime(math.max(5,world.expiryTime()))
 		if (newChannel == channel) and compare(targetEntity, outputTarget) then return end
 		if outputTarget then
@@ -42,7 +42,7 @@ function init()
 	message.setHandler("remove", function (_,_)
 		object.smash()
 	end)
-	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
+	if inputs and (not config.getParameter("fromExporter")) and object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
 		animator.setAnimationState("input", "on", true)
 	end
 
@@ -76,13 +76,20 @@ function refreshOutput(force)
 		end
 		return
 	end
-	animator.setAnimationState("input", "on", true)
-	local newInputs = wr_automation.countInputs()
-	if (not force) and compare(newInputs, inputs) then return end
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	animator.setAnimationState("input", fromExporter and "off" or "on", true)
+	if (not force) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
-    inputs = newInputs
-	if outputTarget and selfTarget then
-		world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, inputs, selfTarget)
+	object.setConfigParameter("fromExporter", fromExporter)
+	inputs = newInputs
+	if fromExporter then
+		if outputTarget and selfTarget then
+			world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, nil, selfTarget)
+		end
+	else
+		if outputTarget and selfTarget then
+			world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, inputs, selfTarget)
+		end
 	end
 end
 

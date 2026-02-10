@@ -25,6 +25,9 @@ function init()
 	elseif not world.terrestrial() then
 		_ENV.channelStatusLabel.color = "FFFF00"
 		_ENV.channelStatusLabel:setText("Must be placed on a terrestrial world.")
+	elseif world.getObjectParameter(pane.sourceEntity(), "fromExporter") then
+		_ENV.channelStatusLabel.color = "FFFF00"
+		_ENV.channelStatusLabel:setText("Cannot be downstream from an Exporter.")
 	end
 end
 

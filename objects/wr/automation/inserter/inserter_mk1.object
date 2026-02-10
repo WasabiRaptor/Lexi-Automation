@@ -46,6 +46,8 @@
     "input" : "animationParts/input.png"
   },
 
+  "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
+
   "inputNodes" : [ [0, 1] ],
   "inputNodesConfig" : [{
     "color" : "#1c8eff",

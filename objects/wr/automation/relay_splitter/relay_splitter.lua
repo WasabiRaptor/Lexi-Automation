@@ -17,8 +17,8 @@ function init()
 	outputs = config.getParameter("matterStreamOutput")
 	leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()
 	rightTargetOutput = config.getParameter("rightTargetOutput") or jarray()
-	message.setHandler("refreshInputs", function (_,_)
-		refreshOutput()
+	message.setHandler("refreshInputs", function (_,_,force)
+		refreshOutput(force)
 	end)
 	message.setHandler("setTargetOutputs", function(_, _, left, right)
 		local forceRefresh = false
@@ -56,15 +56,12 @@ function uninit()
 
 end
 function refreshOutput(force)
-	local leftNodeValue = object.getInputNodeLevel(1)
-	local rightNodeValue = object.getInputNodeLevel(2)
+	local leftNodeValue = object.getInputNodeLevel(1) or not object.isInputNodeConnected(1)
+	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
-		object.setOutputNodeLevel(0, false)
-		object.setOutputNodeLevel(1, false)
-		object.setOutputNodeLevel(2, false)
+		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
 		animator.setAnimationState("center", "off")
 		animator.setAnimationState("left", "off")
@@ -90,8 +87,9 @@ function refreshOutput(force)
 		newDefaultOutputCount = newDefaultOutputCount + 1
 	end
 
-	local newInputs = wr_automation.countInputs()
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	if (not force)
+		and (fromExporter == config.getParameter("fromExporter"))
 		and (newDefaultOutputCount == defaultOutputCount)
 		and (newLeftOutputCount == leftOutputCount)
 		and (newRightOutputCount == rightOutputCount)
@@ -102,6 +100,7 @@ function refreshOutput(force)
 		return
 	end
 	object.setConfigParameter("matterStreamInput", {newInputs})
+	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
 	leftOutputCount = newLeftOutputCount
 	rightOutputCount = newRightOutputCount
@@ -112,7 +111,7 @@ function refreshOutput(force)
 	local defaultOutput = copy(inputs)
 
 	local leftOutput = jarray()
-	if not leftNodeValue then
+	if leftNodeValue then
 		for _, targetOutput in ipairs(leftTargetOutput) do
 			for _, defaultOutputItem in ipairs(defaultOutput) do
 				if root.itemDescriptorsMatch(targetOutput, defaultOutputItem, true) then
@@ -132,7 +131,7 @@ function refreshOutput(force)
 		end
 	end
 	local rightOutput = jarray()
-	if not rightNodeValue then
+	if rightNodeValue then
 		for _, targetOutput in ipairs(rightTargetOutput) do
 			for _, defaultOutputItem in ipairs(defaultOutput) do
 				if root.itemDescriptorsMatch(targetOutput, defaultOutputItem, true) then

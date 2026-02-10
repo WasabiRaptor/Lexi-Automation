@@ -1,0 +1,16 @@
+{
+
+  "frameGrid" : {
+    "size" : [8, 24],
+    "dimensions" : [7, 1],
+    "names" : [
+      [ "off.1", "on.1", "output.1", "output.2", "output.3", "output.4", "output.5" ]
+    ]
+  },
+  "aliases" : {
+    "default" : "on.1",
+    "output.6" :"on.1",
+    "output.7" :"on.1",
+    "output.8" :"on.1"
+  }
+}

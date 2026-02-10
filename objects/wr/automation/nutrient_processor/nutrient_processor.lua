@@ -7,12 +7,13 @@ local old = {
 
 local outputCount
 local inputs
+local exporter
 function init()
 	old.init()
 	wr_automation.init()
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
-	message.setHandler("refreshInputs", function (_,_)
-		refreshOutput()
+	message.setHandler("refreshInputs", function (_,_, force)
+		refreshOutput(force)
 	end)
 end
 
@@ -20,9 +21,8 @@ end
 function refreshOutput(force)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		object.setConfigParameter("products", nil)
-		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		inputs = nil
 		object.setConfigParameter("status", "missingInput")
 		return
@@ -32,19 +32,20 @@ function refreshOutput(force)
 	for _, _ in pairs(outputNodes) do
 		newOutputCount = newOutputCount + 1
 	end
-	local newInputs, totalItems = wr_automation.countInputs(0)
-	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
+	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
 	outputCount = newOutputCount
+	exporter = fromExporter
 
 	local craftingSpeed = config.getParameter("craftingSpeed") or 1
 
 	if totalItems > craftingSpeed then
 		-- too many items being input clogs the machine
 		object.setConfigParameter("status", "tooMany")
-		object.setConfigParameter("matterStreamOutput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		return
 	end
 	local nutrientValue = 0
@@ -56,8 +57,7 @@ function refreshOutput(force)
 		else
 			-- an item input wasn't food and clogs the machine
 			object.setConfigParameter("status", "badInput")
-			object.setConfigParameter("matterStreamOutput", nil)
-			object.setOutputNodeLevel(0, false)
+			wr_automation.clearAllOutputs()
 			return
 		end
 	end
@@ -65,8 +65,7 @@ function refreshOutput(force)
 		object.setConfigParameter("status", "on")
 	else
 		object.setConfigParameter("status", "missingInput")
-		object.setConfigParameter("matterStreamOutput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		return
 	end
 	local product = {

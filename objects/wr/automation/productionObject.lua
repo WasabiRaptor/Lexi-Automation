@@ -26,8 +26,7 @@ end
 
 function refreshOutput(force)
 	if not products then
-		object.setConfigParameter("matterStreamOutput", nil)
-		object.setAllOutputNodes(false)
+		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "off")
 		wr_automation.playAnimations("off")
 		return

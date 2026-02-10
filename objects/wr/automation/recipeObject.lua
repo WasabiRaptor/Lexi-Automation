@@ -22,8 +22,8 @@ function init()
 		refreshOutput(true)
 	end)
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
-	message.setHandler("refreshInputs", function (_,_)
-		refreshOutput()
+	message.setHandler("refreshInputs", function (_,_, force)
+		refreshOutput(force)
 	end)
 
 	if products then
@@ -36,9 +36,8 @@ end
 function refreshOutput(force)
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		object.setConfigParameter("products", nil)
-		object.setConfigParameter("matterStreamOutput", nil)
 		object.setConfigParameter("matterStreamInput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", ((not recipe) and "noRecipe") or "missingInput")
 		wr_automation.playAnimations("off")
 		inputs = nil
@@ -49,8 +48,8 @@ function refreshOutput(force)
 	for _, _ in pairs(outputNodes) do
 		newOutputCount = newOutputCount + 1
 	end
-	local newInputs = wr_automation.countInputs(0, recipe)
-	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
@@ -126,8 +125,7 @@ function refreshOutput(force)
 		wr_automation.playAnimations("on")
 	else
 		object.setConfigParameter("products", nil)
-		object.setConfigParameter("matterStreamOutput", nil)
-		object.setOutputNodeLevel(0, false)
+		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "missingInput")
 		wr_automation.playAnimations("off")
 		return

@@ -1,12 +1,12 @@
 {
   "animatedParts" : {
     "stateTypes" : {
-      "input" : {
+      "output" : {
         "default" : "off",
         "states" : {
           "off" : {"frames" : 1},
           "on" : {"frames" : 1},
-          "insert" : {"frames" : 8,"cycle" : 1}
+          "output" : {"frames" : 8,"cycle" : 1}
         }
       }
     },
@@ -18,24 +18,24 @@
           "zLevel" : 0
         },
         "partStates" : {
-          "input" : {
+          "output" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}},
-            "insert" : {"properties" : {"image" : "<partImage>:insert.<frame>"}}
+            "output" : {"properties" : {"image" : "<partImage>:output.<frame>"}}
           }
         }
       },
-      "input" : {
+      "output" : {
         "properties" : {
           "centered" : false,
           "fullbright" : true,
           "zLevel" : 1
         },
         "partStates" : {
-          "input" : {
+          "output" : {
             "off" : {"properties" : {"image" : "<partImage>:off.<frame>"}},
             "on" : {"properties" : {"image" : "<partImage>:on.<frame>"}},
-            "insert" : {"properties" : {"image" : "<partImage>:insert.<frame>"}}
+            "output" : {"properties" : {"image" : "<partImage>:output.<frame>"}}
           }
         }
       }

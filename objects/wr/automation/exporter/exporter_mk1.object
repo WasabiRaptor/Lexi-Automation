@@ -1,0 +1,66 @@
+{
+  "objectName" : "wr/exporter_mk1",
+  "colonyTags" : [],
+  "printable" : false,
+  "rarity" : "Common",
+
+  "category" : "automation",
+  "price" : 15,
+  "description" : "Exports items from an inventory to create a matter stream.\n50% efficent at matter conversion.",
+  "shortdescription" : "Matter Exporter MK1",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "scripts" : ["exporter.lua"],
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "animationParts/back.png:default",
+      "direction" : "left",
+      "flipImages" : true,
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [0, -8],
+      "animationPosition" : [0, -8],
+
+      "spaces" : [
+        [0,0], [1,0]
+      ]
+    },
+    {
+      "image" : "animationParts/back.png:default",
+      "direction" : "right",
+      "renderLayer" : "Object-5",
+
+      "imagePosition" : [0, -8],
+      "animationPosition" : [0, -8],
+
+      "spaces" : [
+        [0,0], [1,0]
+      ]
+    }
+  ],
+  "animation" : "exporter.animation",
+  "animationParts" : {
+    "back" : "animationParts/back.png",
+    "output" : "animationParts/output.png"
+  },
+
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:exporter" },
+
+  "efficency" : 0.5,
+
+  "isExporter" : true, // marks this object as an exporter so inserters will disable when attached to the same inventory
+  "fromExporter" : true, // marks this matter stream is from an exporter, and therefore must have been loaded to function
+
+  "inputNodes" : [ [0, 0] ],
+  "inputNodesConfig" : [{
+  }],
+  "outputNodes" : [ [0, 1] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+
+}

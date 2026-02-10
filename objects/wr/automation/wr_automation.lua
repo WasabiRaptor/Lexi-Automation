@@ -6,8 +6,10 @@ wr_automation = {}
 
 local stateAnimations
 local isOffset
+local matterStreamOutput
 function wr_automation.init()
 	stateAnimations = config.getParameter("stateAnimations") or {}
+	matterStreamOutput = config.getParameter("matterStreamOutput")
 	local position = object.position()
 	local size = vec2.add(rect.size(poly.boundBox(object.spaces())), 1)
 	isOffset = (position[2] % (size[2] * 2)) < size[2]
@@ -17,9 +19,11 @@ function wr_automation.countInputs(nodeIndex, recipe)
 	local inputNodes = object.getInputNodeIds(nodeIndex or 0)
 	local inputs = {}
 	local totalItems = 0
+	local fromExporter = false
 	for eid, index in pairs(inputNodes) do
 		if world.entityExists(eid) then
 			for i, newInput in ipairs((world.getObjectParameter(eid, "matterStreamOutput") or {})[index + 1] or {}) do
+				fromExporter = fromExporter or world.getObjectParameter(eid, "fromExporter")
 				newInput.count = newInput.count or 0
 				totalItems = totalItems + newInput.count
 				local isNew = true
@@ -64,13 +68,14 @@ function wr_automation.countInputs(nodeIndex, recipe)
 		end
 	end)
 
-	return inputs, totalItems
+	return inputs, totalItems, fromExporter
 end
 
-function wr_automation.setOutputs(products)
+function wr_automation.setOutputs(products, forceRefresh)
 	local outputs = jarray()
 	local outputNodes = {}
 	local totalItems = 0
+	local fromExporter = config.getParameter("fromExporter")
 	for nodeIndex, nodeProducts in ipairs(products) do
 		-- count the number of entities the output is connected to so it's split evenly between them
 		local outputCount = 0
@@ -78,6 +83,7 @@ function wr_automation.setOutputs(products)
 		for eid, inputIndex in pairs(nodes) do
 			local matterStreamReciever = world.getObjectParameter(eid, "matterStreamReciever")
 			if matterStreamReciever and matterStreamReciever[inputIndex+1] then
+				forceRefresh = forceRefresh or (fromExporter and not world.getObjectParameter(eid, "fromExporter"))
 				outputCount = outputCount + 1
 			else
 				nodes[eid] = nil -- remove it from the table so we're not sending it a message later
@@ -95,7 +101,8 @@ function wr_automation.setOutputs(products)
 		outputs[nodeIndex] = output
 		outputNodes[nodeIndex] = nodes
 	end
-	if compare(config.getParameter("matterStreamOutput"), outputs) then return outputs end
+	if (not forceRefresh) and compare(matterStreamOutput, outputs) then return outputs, totalItems end
+	matterStreamOutput = outputs
 	object.setConfigParameter("matterStreamOutput", outputs)
 	for nodeIndex, nodes in ipairs(outputNodes) do
 		object.setOutputNodeLevel(nodeIndex-1, #outputs[nodeIndex] > 0)
@@ -104,6 +111,16 @@ function wr_automation.setOutputs(products)
 		end
 	end
 	return outputs, totalItems
+end
+
+function wr_automation.clearAllOutputs()
+	object.setConfigParameter("matterStreamOutput", nil)
+	if matterStreamOutput then
+		for nodeIndex, nodeProducts in ipairs(matterStreamOutput) do
+			object.setOutputNodeLevel(nodeIndex - 1, false)
+		end
+		matterStreamOutput = nil
+	end
 end
 
 function wr_automation.playAnimations(state)

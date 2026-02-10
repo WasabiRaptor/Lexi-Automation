@@ -9,6 +9,10 @@ local channelProperty = _ENV.metagui.inputData.channelProperty
 function init()
     channel = world.getObjectParameter(pane.sourceEntity(), "channel") or ""
     _ENV.channelTextBox:setText(channel)
+	if world.getObjectParameter(pane.sourceEntity(), "fromExporter") then
+		_ENV.channelStatusLabel.color = "FFFF00"
+		_ENV.channelStatusLabel:setText("Cannot be downstream from an Exporter.")
+	end
 end
 
 function _ENV.channelTextBox:onTextChanged()
