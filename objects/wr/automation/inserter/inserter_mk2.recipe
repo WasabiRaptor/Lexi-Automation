@@ -1,6 +1,6 @@
 {
   "input" : [
-    { "item" : "inserter_mk1", "count" : 3 },
+    { "item" : "wr/inserter_mk1", "count" : 3 },
     { "item" : "staticcell", "count" : 1 }
   ],
   "output" : {

@@ -310,37 +310,42 @@ function loadRecipes(amount)
 	return true
 end
 function searchRecipes(amount)
-	recipePage = 0
+	_ENV.recipeSearchScrollArea:clearChildren()
+	_ENV.recipeSearchScrollArea:addChild({
+		type = "label", text = "Searching Recipes...", align = "center"
+	})
 	local searchText = _ENV.searchBox.text:lower()
+	local function isRecipeSearched(i, recipe)
+		currentlySearching = recipe
+		local cache = recipeOutputCache[i]
+		amount = amount - 1
+		if amount == 0 then coroutine.yield() end
+		if recipe.output[1] then
+			if recipe.recipeName:lower():find(searchText) then
+				return table.insert(searchedRecipes, recipe)
+			end
+			for j, item in ipairs(recipe.output) do
+				local id = (item.item or item.name)
+				local cache = cache[j]
+				if id:lower():find(searchText) or cache.name:lower():find(searchText) then
+					return table.insert(searchedRecipes, recipe)
+				end
+			end
+		else
+			local id = (recipe.output.item or recipe.output.name)
+			if id:lower():find(searchText) or cache.name:lower():find(searchText) then
+				return table.insert(searchedRecipes, recipe)
+			end
+		end
+	end
+	recipePage = 0
 	if searchText == "" then
 		searchedRecipes = currentRecipes
 	else
 		searchedRecipes = {}
 		for i, recipe in ipairs(currentRecipes) do
-			currentlySearching = recipe
-			local cache = recipeOutputCache[i]
-			amount = amount - 1
-			if amount == 0 then coroutine.yield() end
-			if recipe.output[1] then
-				if recipe.recipeName:lower():find(searchText) then
-					return table.insert(searchedRecipes, recipe)
-				end
-				for j, item in ipairs(recipe.output) do
-					local id = (item.item or item.name)
-					local cache = cache[j]
-					if id:lower():find(searchText) or cache.name:lower():find(searchText) then
-						return table.insert(searchedRecipes, recipe)
-					end
-				end
-			else
-				local id = (recipe.output.item or recipe.output.name)
-				if id:lower():find(searchText) or cache.name:lower():find(searchText) then
-					return table.insert(searchedRecipes, recipe)
-				end
-			end
+			isRecipeSearched(i, recipe)
 		end
-		searchedRecipes = util.filter(currentRecipes, function(recipe)
-		end)
 	end
 	recipePages = math.ceil(#searchedRecipes / recipesPerPage)
 	coroutine.yield()
@@ -408,6 +413,13 @@ function refreshDisplayedRecipes()
 					item = input
 				})
 			end
+			local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
+			local duration = math.max(
+				0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
+				(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
+				(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
+			)
+			local divisor, timeLabel = durationLabel(duration)
 			local outputLayout
 			if recipe.output[1] then
 				local outputSlots = {
@@ -422,6 +434,10 @@ function refreshDisplayedRecipes()
 				outputLayout = {
 					{ mode = "v", expandMode = { 1, 0 } },
 					{ type = "label", text = recipe.recipeName },
+					{
+						{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
+						{ type = "label", text = timeLabel,               inline = true }
+					},
 					{
 						type = "panel",
 						style = "flat",
@@ -438,7 +454,14 @@ function refreshDisplayedRecipes()
 				outputLayout = {
 					{ mode = "h", scissoring = false },
 					{ type = "itemSlot", item = recipe.output },
-					{ type = "label", text = merged.shortdescription}
+					{
+						{ type = "label", text = merged.shortdescription},
+						{
+							{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
+							{ type = "label", text = timeLabel,               inline = true }
+						},
+
+					},
 				}
 			end
 			local listItem = _ENV.recipeSearchScrollArea:addChild({
@@ -457,7 +480,7 @@ function refreshDisplayedRecipes()
 								type = "panel",
 								style = "flat",
 								children = {
-									{ mode = "v", expandMode = {1,0} },
+									{ mode = "v", expandMode = {1,0}, scissoring = false },
 									{ type = "label", text = "Ingredients"},
 									ingredientSlots
 								},
@@ -538,11 +561,12 @@ function displayRecipe(recipe)
 	end)
 
 	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
-	local maxProductionRate = craftingSpeed / math.max(
+	local duration = math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
+	local maxProductionRate = craftingSpeed / duration
 	local productionRate
 	local minimumProductionRate = world.getObjectParameter(pane.sourceEntity(), "minimumProductionRate") or 0
 	local balanced = true
@@ -550,7 +574,7 @@ function displayRecipe(recipe)
 		if input.used then
 			for _, recipeItem in ipairs(recipe.input) do
 				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
-					local rate = (input.count / ((recipeItem.count or 1) * maxProductionRate))
+					local rate = (input.count / ((recipeItem.count or 1) * maxProductionRate)) * maxProductionRate
 					if not productionRate then
 						balanced = rate <= maxProductionRate
 						productionRate = math.min(maxProductionRate, rate)
@@ -575,7 +599,7 @@ function displayRecipe(recipe)
 			for _, recipeItem in ipairs(recipe.input) do
 				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
 					inputTarget = ((recipeItem.count or 1) * maxProductionRate)
-					inputRate = (input.count / inputTarget)
+					inputRate = (input.count / inputTarget) * maxProductionRate
 					break
 				end
 			end
@@ -589,7 +613,7 @@ function displayRecipe(recipe)
 			elseif inputRate < maxProductionRate then
 				color = "FFFF00"
 			end
-			local timeMultiplier, timeLabel = timeScale(input.count)
+			local timeMultiplier, timeLabel = timeScale(inputTarget)
 			productionLabels = {
 				{ type = "image", file = inputNodesConfig[1].icon },
 				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)),       color = color, inline = true },
@@ -643,7 +667,7 @@ function displayRecipe(recipe)
 				item = output
 			})
 		end
-		local timeMultiplier, timeLabel = timeScale(productionRate)
+		local timeMultiplier, timeLabel = timeScale(maxProductionRate)
 
 		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
 			{ type = "label", text = recipe.recipeName },
@@ -669,21 +693,23 @@ function displayRecipe(recipe)
 		local itemConfig = root.itemConfig(recipe.output)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 
-		local timeMultiplier, timeLabel = timeScale(productionRate)
+		local timeMultiplier, timeLabel = timeScale(maxProductionRate * recipe.output.count)
+		local outputDisplay = copy(recipe.output)
+		outputDisplay.count = 1
 
 		_ENV.outputPanel:addChild({
 			type = "layout",
 			mode = "h",
 			scissoring = false,
 			children = {
-				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = recipe.output},
+				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = outputDisplay},
 				{
 					{type= "label", text= merged.shortdescription},
 					{
 						{type = "image", file = outputNodesConfig[1].icon },
-						{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
+						{type= "label", text= clipAtThousandth((timeMultiplier * recipe.output.count * (productionRate or 0))), color= color, inline= true},
 						{type= "label", text= "/", inline= true},
-						{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
+						{type= "label", text= clipAtThousandth((timeMultiplier * recipe.output.count * maxProductionRate)), inline= true},
 						{type= "label", text=timeLabel, inline= true}
 					}
 				}

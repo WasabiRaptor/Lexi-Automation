@@ -1,6 +1,6 @@
 {
   "input" : [
-    { "item" : "exporter_mk1", "count" : 1 },
+    { "item" : "wr/exporter_mk1", "count" : 1 },
     { "item" : "staticcell", "count" : 1 }
   ],
   "output" : {

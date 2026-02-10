@@ -77,11 +77,12 @@ function refreshOutput(force)
 	end
 
 	local craftingSpeed = config.getParameter("craftingSpeed") or 1
-	local maxProductionRate = craftingSpeed / math.max(
+	local duration = math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(config.getParameter("minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	)
+	local maxProductionRate = craftingSpeed / duration
 	local productionRate = maxProductionRate
 	local minimumProductionRate = config.getParameter("minimumProductionRate") or 0
 
@@ -89,7 +90,8 @@ function refreshOutput(force)
 		for _, inputItem in ipairs(inputs) do
 			if inputItem.used and root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
 				productionRate = math.min(productionRate,
-					(inputItem.count / ((recipeItem.count or 1) * maxProductionRate)))
+					(inputItem.count / ((recipeItem.count or 1) * maxProductionRate)) * maxProductionRate
+				)
 				break
 			end
 		end

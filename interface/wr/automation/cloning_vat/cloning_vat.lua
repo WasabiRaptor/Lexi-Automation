@@ -30,17 +30,18 @@ function refreshDisplayedProducts()
 	if recipe then
 		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
-		local maxProductionRate = craftingSpeed / math.max(
+		local duration = math.max(
 			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 		)
+		local maxProductionRate = craftingSpeed / duration
 		local productionRate = 0
 		local maxAmount = recipe.input[1].count * maxProductionRate
 		local timeMultiplier, timeLabel = timeScale(productionRate)
 
 		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "wr/nutrient_paste") then
-			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount))
+			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount) * maxProductionRate)
 			_ENV.inputAmountLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
 			_ENV.inputAmountLabel:setText(clipAtThousandth(inputs[1].count * timeMultiplier))
 		else
@@ -130,6 +131,7 @@ function setProducts(item)
 	elseif type(dropPools) == "string" then
 		addTreasurePool(dropPools)
 	end
+
 	for _, v in ipairs(products) do
 		local itemConfig = root.itemConfig(v)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
@@ -137,9 +139,6 @@ function setProducts(item)
 		itemCount = itemCount + v.count
 	end
 
-	products = util.filter(products, function(v)
-		return (v.count > 0)
-	end)
 	table.sort(products, function(a, b)
 		return a.count > b.count
 	end)
