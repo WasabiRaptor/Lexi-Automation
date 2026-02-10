@@ -29,6 +29,8 @@ One of the few machines in the system that does run an update tick is the Insert
 
 Another boon of the pre-caluculated input and output rates not needing the world to be loaded, is systems can be linked through special nodes set to a channel to transport the output elsewhere on the planet, and in the case OpenStarbound is installed, there are even ones that can handle inter-planetary item transport. Your factory can span the entire universe and you will still only need the immediate chunks surrounding you to be loaded for it to function.
 
+However, as much as I would *like* to only have passive producing machines, there is the exporter, which can pull items out of inventories and output a constant stream as long as it can consume its filtered output. Those are inherently limited to needing to be loaded in to consume items from their inventory. I want to de-incentivize their use, so they're inefficient and consume more items than they send, and also Planetary/Universal relays downstream from them will cease functioning, as those are intended to only have machines that don't need to be loaded upstream from them.
+
 ## The Machines
 
 ### Burner Mining Drill
@@ -92,7 +94,7 @@ MK2 Inserters will tick at the rate of their fastest input.
 - wr/exporter_mk1
 - wr/exporter_mk2
 
-Exports items from the attached inventory, stops all output if any item count can't meet their filtered output rate. Exporters are inefficent at converting inventory contents to a matter stream, some materials will be lost in the conversion process.
+Exports items from the attached inventory, stops all output if any item count can't meet their filtered output rate. Exporters are inefficent at converting inventory contents to a matter stream, some materials will be lost in the conversion process. A logic input node can enable/disable the exporter.
 MK1 Exporters are 50% efficent.
 MK2 Exporters are 75% efficent.
 
