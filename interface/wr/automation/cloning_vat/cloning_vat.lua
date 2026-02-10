@@ -85,12 +85,6 @@ function setProducts(item)
 	local seed = item.parameters.pets[1].config.parameters.seed
 	local level = item.parameters.pets[1].config.parameters.level
 	local health = item.parameters.pets[1].status.stats.maxHealth
-	local dropPools = sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools)
-
-	if not dropPools then
-		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
-		return
-	end
 
 	local recipeCost = 0
 	local itemCount = 0
@@ -120,16 +114,26 @@ function setProducts(item)
 			end
 		end
 	end
-
-	if type(dropPools) == "table" and dropPools[1] then
-		dropPools = dropPools[rand:randf(1, #dropPools)]
-	end
-	if type(dropPools) == "table" then
-		for k, v in pairs(dropPools) do
-			addTreasurePool(v)
+	local function handleDropPools(dropPools)
+		if not dropPools then return end
+		if type(dropPools) == "table" and dropPools[1] then
+			dropPools = dropPools[rand:randf(1, #dropPools)]
 		end
-	elseif type(dropPools) == "string" then
-		addTreasurePool(dropPools)
+		if type(dropPools) == "table" then
+			for k, v in pairs(dropPools) do
+				addTreasurePool(v)
+			end
+		elseif type(dropPools) == "string" then
+			addTreasurePool(dropPools)
+		end
+	end
+
+	handleDropPools(sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools))
+	handleDropPools(monsterParameters.landedTreasurePool)
+
+	if #products == 0 then
+		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
+		return
 	end
 
 	for _, v in ipairs(products) do
