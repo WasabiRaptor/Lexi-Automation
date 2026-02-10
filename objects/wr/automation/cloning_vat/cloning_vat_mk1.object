@@ -44,6 +44,8 @@
   ],
   "openSounds" : [ "/sfx/objects/metalbox_open.ogg" ],
   "closeSounds" : [ "/sfx/objects/metalbox_close.ogg" ],
+  "ageItemsEvery" : 9999999999999999,
+  "itemAgeMultiplier" : 0,
   "slotCount" : 1,
   "frameCooldown" : 5,
   "autoCloseCooldown" : 3600,

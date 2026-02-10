@@ -14,6 +14,8 @@
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/nutrient_processor_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/cloning_vat_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/hydroponics_mk1"}},
-        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/ground_pump_mk1"}}
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/ground_pump_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/exporter_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/exporter_mk2"}}
     ]
 ]

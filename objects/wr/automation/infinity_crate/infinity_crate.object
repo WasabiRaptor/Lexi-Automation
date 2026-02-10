@@ -45,6 +45,8 @@
 
   "openSounds" : [ "/sfx/objects/woodenbox_open.ogg" ],
   "closeSounds" : [ "/sfx/objects/woodenbox_close.ogg" ],
+  "ageItemsEvery" : 9999999999999999,
+  "itemAgeMultiplier" : 0,
   "slotCount" : 16,
   "uiConfig" : "/interface/chests/chest<slots>.config",
   "frameCooldown" : 5,
