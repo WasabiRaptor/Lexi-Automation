@@ -12,19 +12,6 @@
         {"mode" : "h"},
       	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
             {"mode" : "v"},
-            {"type":"label","text":"Current Recipe", "align" : "center"},
-            {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
-            {"type":"label","text":"Ingredients", "align" : "center"},
-            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
-                {"mode" : "v"},
-                { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
-
-                ]}
-            ]}
-
-        ]},
-      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
-            {"mode" : "v"},
             {"type":"label","text":"Find Recipe", "align" : "center"},
             {"type":"panel","style":"flat","expandMode":[1,0],"children":[
                 {"mode" : "h"},
@@ -36,6 +23,19 @@
             {"type":"panel","style":"concave","expandMode":[1,1],"children":[
                 {"mode" : "v"},
                 { "type" : "scrollArea", "id" : "recipeSearchScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+
+        ]},
+      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+            {"mode" : "v"},
+            {"type":"label","text":"Current Recipe", "align" : "center"},
+            {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
+            {"type":"label","text":"Ingredients", "align" : "center"},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
                 ]}
             ]}
