@@ -1,6 +1,6 @@
 {
   "input" : [
-    { "item" : "glassmaterial", "count" : 10 },
+    { "item" : "glass", "count" : 10 },
     { "item" : "ironbar", "count" : 5 },
     { "item" : "goldbar", "count" : 1 },
     { "item" : "stickofram", "count" : 5 }
@@ -10,5 +10,5 @@
     "count" : 1
   },
   "duration" : 5,
-  "groups" : [ "inventorstable2", "all" ]
+  "groups" : [ "wr_logistics_station", "wr_production", "all" ]
 }

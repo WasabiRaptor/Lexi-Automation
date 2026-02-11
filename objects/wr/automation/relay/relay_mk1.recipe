@@ -2,12 +2,12 @@
   "input" : [
     { "item" : "copperbar", "count" : 6 },
     { "item" : "silverbar", "count" : 1 },
-    { "item" : "corefragmentore", "count" : 1 }
+    { "item" : "corefragmentore", "count" : 3 }
   ],
   "output" : {
     "item" : "wr/relay_mk1",
-    "count" : 9
+    "count" : 3
   },
   "duration" : 5,
-  "groups" : [ "inventorstable2", "all" ]
+  "groups" : [ "wr_logistics_station", "wr_logistics", "all" ]
 }

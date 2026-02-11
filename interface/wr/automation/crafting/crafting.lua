@@ -11,15 +11,7 @@ local recipePages = 1
 local inputNodesConfig
 local outputNodesConfig
 
-wr_assemblerRecipes = {} -- for scripted crafting stations to have scripts to tell the assembler what recipes it has
-
 function uninit()
-	local craftingItem = _ENV.craftingItemSlot:item()
-	local craftingStation = _ENV.craftingStationSlot:item()
-	local craftingAddon = _ENV.craftingAddonSlot:item()
-	if craftingItem then player.giveItem(craftingItem) end
-	if craftingStation then player.giveItem(craftingStation) end
-	if craftingAddon then player.giveItem(craftingAddon) end
 end
 
 local filter
@@ -40,10 +32,6 @@ function init()
 
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
 
-	if world.getObjectParameter(pane.sourceEntity(), "lockRecipes") then
-		_ENV.craftingStationSlot:setVisible(false)
-		_ENV.craftingAddonSlot:setVisible(false)
-	end
 	local didPath = {}
 	local function getUniqueRecipes(maybeRecipe)
 		if not maybeRecipe then return end
@@ -108,91 +96,20 @@ function update()
 end
 
 function refreshCurrentRecipes()
-	_ENV.craftingAddonSlot:setVisible(_ENV.craftingAddonSlot:item() ~= nil)
 	_ENV.recipeSearchScrollArea:clearChildren()
 	_ENV.recipeSearchScrollArea:addChild({
 		type = "label", text = "Loading Recipes...", align = "center"
 	})
-
-	local craftingItem = _ENV.craftingItemSlot:item()
-	local craftingStation = _ENV.craftingStationSlot:item()
-
 	filter = world.getObjectParameter(pane.sourceEntity(), "filter")
 
-	if craftingStation then
-		local itemConfig = root.itemConfig(craftingStation)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		local interactData
-
-		local craftingAddon = _ENV.craftingAddonSlot:item()
-		local craftingAddonConfig
-		local craftingAddonMerged
-		if craftingAddon then
-			craftingAddonConfig = root.itemConfig(craftingAddon)
-			craftingAddonMerged = sb.jsonMerge(craftingAddonConfig.config, craftingAddonConfig.parameters)
-		end
-		local function doAddons(usesAddons)
-			_ENV.craftingAddonSlot:setVisible(true)
-			if craftingAddon then
-				for _, addon in ipairs((craftingAddonMerged.addonConfig or {}).isAddons or {}) do
-					for _, addonConfig in ipairs(usesAddons) do
-						if addon.name == addonConfig.name then
-							interactData = sb.jsonMerge(interactData, addonConfig.addonData.interactData)
-						end
-					end
-				end
-			end
-		end
-		if merged.wr_assemblerRecipeScripts then
-			for _, v in ipairs(merged.wr_assemblerRecipeScripts) do
-				require(v)
-			end
-			filter, stationRecipes, requiresBlueprint = wr_assemblerRecipes[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
-		elseif merged.interactAction == "OpenCraftingInterface" then
-			interactData = merged.interactData
-		elseif merged.upgradeStages then
-			local upgradeData = merged.upgradeStages
-				[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
-			interactData = upgradeData.interactData
-			if upgradeData.addonConfig and upgradeData.addonConfig.usesAddons then
-				doAddons(upgradeData.addonConfig.usesAddons)
-			end
-		elseif merged.addonConfig and merged.addonConfig.usesAddons then
-			_ENV.craftingAddonSlot:setVisible(true)
-			doAddons(merged.addonConfig.usesAddons)
-		end
-
-		if interactData then
-			filter = interactData.filter
-			if interactData.recipes then
-				stationRecipes = interactData.recipes
-			end
-			if interactData.requiresBlueprint ~= nil then
-				requiresBlueprint = interactData.requiresBlueprint
-			else
-				requiresBlueprint = true
-			end
-		end
-	else
-		requiresBlueprint = true
-	end
-	if craftingItem then
-		itemRecipes = root.recipesForItem(craftingItem.name or craftingItem.item)
-		allRecipes = {}
-	elseif filter and (root.allRecipes ~= nil) then
-		itemRecipes = {}
+	itemRecipes = {}
+	if root.allRecipes~= nil then
 		allRecipes = root.allRecipes(filter)
-	else
-		itemRecipes = {}
-		allRecipes = {}
 	end
 	loadingCoroutine = coroutine.create(loadRecipes)
 end
 function loadRecipes(amount)
 	currentRecipes = {}
-	local item = _ENV.craftingItemSlot:item()
-	local craftingStation = _ENV.craftingStationSlot:item()
-
 	local function compareRecipes(a, a_cache, b, b_cache)
 		if a_cache.rarity == b_cache.rarity then
 			return a_cache.name < b_cache.name
@@ -225,6 +142,8 @@ function loadRecipes(amount)
 					cache.output[i].name = cache.output[i].mergedConfig.shortdescription:gsub("%b^;")
 				end
 				cache.output[i].rarity = rarityMap[(cache.output[i].mergedConfig.rarity or "common"):lower()] or 0
+
+				sb.logInfo("%s, %s", cache.output[i].mergedConfig.rarity, sb.printJson(cache.output[i].mergedConfig))
 				cache.rarity = cache.rarity + cache.output[i].rarity
 			end
 		else
@@ -258,24 +177,6 @@ function loadRecipes(amount)
 			if amount == 0 then coroutine.yield() end
 		end
 	end
-	local function validateRecipeForItem(recipe)
-		for _, input in ipairs(recipe.input) do
-			if not root.itemConfig(input) then return end
-		end
-
-		if recipe.output[1] then -- this is the only case where we have multiple
-			local isItemRecipe = false
-			for _, product in ipairs(recipe.output) do
-				isItemRecipe = isItemRecipe or ((product.name or product.item) == item.name)
-				if not root.itemConfig(product) then return end
-			end
-			if isItemRecipe then
-				insertRecipe(recipe)
-			end
-		elseif (recipe.output.name or recipe.output.item) == item.name then
-			insertRecipe(recipe)
-		end
-	end
 	local function validateRecipe(recipe)
 		for _, input in ipairs(recipe.input) do
 			if not root.itemConfig(input) then return end
@@ -289,44 +190,14 @@ function loadRecipes(amount)
 			insertRecipe(recipe)
 		end
 	end
-	if item then
-		if not craftingStation then
-			for _, recipe in ipairs(uniqueRecipes) do
-				validateRecipeForItem(recipe)
-			end
-		end
-		for _, recipe in ipairs(stationRecipes) do
-			validateRecipeForItem(recipe)
-		end
-		for _, recipe in ipairs(itemRecipes) do
-			if filter then
-				for _, group in ipairs(filter) do
-					local matched = true
-					for _, recipeGroup in ipairs(recipe.groups) do
-						if group == recipeGroup then
-							insertRecipe(recipe)
-							matched = true
-							break
-						end
-					end
-					if matched then break end
-				end
-			else
-				insertRecipe(recipe)
-			end
-		end
-	else
-		if not craftingStation then
-			for _, recipe in ipairs(uniqueRecipes) do
-				validateRecipe(recipe)
-			end
-		end
-		for _, recipe in ipairs(stationRecipes) do
-			validateRecipe(recipe)
-		end
-		for _, recipe in ipairs(allRecipes) do
-			validateRecipe(recipe)
-		end
+	for _, recipe in ipairs(uniqueRecipes) do
+		validateRecipe(recipe)
+	end
+	for _, recipe in ipairs(stationRecipes) do
+		validateRecipe(recipe)
+	end
+	for _, recipe in ipairs(allRecipes) do
+		validateRecipe(recipe)
 	end
 	searchCoroutine = coroutine.create(searchRecipes)
 	return true
@@ -377,26 +248,10 @@ end
 function refreshDisplayedRecipes()
 	_ENV.recipeSearchScrollArea:clearChildren()
 	if #currentRecipes == 0 then
-		local craftingItem = _ENV.craftingItemSlot:item()
-		if not craftingItem then
-			_ENV.recipeSearchScrollArea:addChild({
-				type = "label",
-				text = "Insert an item to list its recipes."
-			})
-		else
-			if _ENV.craftingStationSlot.visible then
-				_ENV.recipeSearchScrollArea:addChild({
-					type = "label",
-					text = ("No recipes found.\nInsert a crafting station with a recipe for the desired item.")
-				})
-			else
-				_ENV.recipeSearchScrollArea:addChild({
-					type = "label",
-					text = ("No recipes found.")
-				})
-			end
-
-		end
+		_ENV.recipeSearchScrollArea:addChild({
+			type = "label",
+			text = ("No recipes found.")
+		})
 	elseif #searchedRecipes == 0 then
 		_ENV.recipeSearchScrollArea:addChild({
 			type = "label",
@@ -543,140 +398,14 @@ end
 function displayRecipe(recipe)
 	if not recipe then return end
 
-	local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
-	for _, newInput in ipairs(inputs) do
-		newInput.used = false
-		for _, input in ipairs(recipe.input) do
-			if root.itemDescriptorsMatch(input, newInput, recipe.matchInputParameters) then
-				newInput.used = true
-				break
-			end
-		end
-	end
-	for _, recipeItem in ipairs(recipe.input) do
-		local recieved = false
-		for _, inputItem in ipairs(inputs) do
-			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
-				recieved = true
-				break
-			end
-		end
-		if not recieved then
-			table.insert(inputs, sb.jsonMerge(recipeItem, {count = 0, used = true}))
-		end
-	end
-
-	table.sort(inputs, function(a, b)
-		if a.used == b.used then
-			local a_config = root.itemConfig(a)
-			local a_merged = sb.jsonMerge(a_config.config, a_config.parameters)
-			local b_config = root.itemConfig(b)
-			local b_merged = sb.jsonMerge(b_config.config, b_config.parameters)
-			if sb.stripEscapeCodes ~= nil then
-				return sb.stripEscapeCodes(a_merged.shortdescription) < sb.stripEscapeCodes(b_merged.shortdescription)
-			else
-				return a_merged.shortdescription:gsub("%b^;") < b_merged.shortdescription:gsub("%b^;")
-			end
-		else
-			return a.used
-		end
-	end)
 
 	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 	local duration = math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
-	)
-	local maxProductionRate = craftingSpeed / duration
-	local productionRate
-	local minimumProductionRate = world.getObjectParameter(pane.sourceEntity(), "minimumProductionRate") or 0
-	local balanced = true
-	for _, input in ipairs(inputs) do
-		if input.used then
-			for _, recipeItem in ipairs(recipe.input) do
-				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
-					local rate = (input.count / ((recipeItem.count or 1) * maxProductionRate)) * maxProductionRate
-					if not productionRate then
-						balanced = rate <= maxProductionRate
-						productionRate = math.min(maxProductionRate, rate)
-					else
-						balanced = balanced and (rate == productionRate)
-						productionRate = math.min(productionRate, rate)
-					end
-					break
-				end
-			end
-		end
-	end
+	) / craftingSpeed
 
-	_ENV.recipeInputsScrollArea:clearChildren()
-	for _, input in ipairs(inputs) do
-		local itemConfig = root.itemConfig(input)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		local productionLabels
-		if input.used then
-			local inputRate = 0
-			local inputTarget = 0
-			for _, recipeItem in ipairs(recipe.input) do
-				if root.itemDescriptorsMatch(input, recipeItem, recipe.matchInputParameters) then
-					inputTarget = ((recipeItem.count or 1) * maxProductionRate)
-					inputRate = (input.count / inputTarget) * maxProductionRate
-					break
-				end
-			end
-			local color
-			if not (inputRate > minimumProductionRate) then
-				color = "FF0000"
-			elseif (inputRate == maxProductionRate) or balanced then
-				color = "00FF00"
-			elseif inputRate > maxProductionRate then
-				color = "00FFFF"
-			elseif inputRate < maxProductionRate then
-				color = "FFFF00"
-			end
-			local timeMultiplier, timeLabel = timeScale(inputTarget)
-			productionLabels = {
-				{ type = "image", file = inputNodesConfig[1].icon },
-				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)),       color = color, inline = true },
-				{ type = "label", text = "/",                        inline = true },
-				{ type = "label", text = clipAtThousandth((timeMultiplier * inputTarget)), inline = true },
-				{ type = "label", text = timeLabel,               inline = true }
-			}
-		else
-			local timeMultiplier, timeLabel = timeScale(input.count)
-			productionLabels = {
-				{ type = "image", file = inputNodesConfig[1].icon },
-				{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)), color = "FF00FF", inline = true },
-				{ type = "label", text = timeLabel,          inline = true }
-			}
-		end
-		if input.used or (input.count > 0) then
-			_ENV.recipeInputsScrollArea:addChild({
-				type = "panel",
-				style = "convex",
-				expandMode = {1,0},
-				children = {
-					{ mode = "v" },
-					{
-						{ type = "itemSlot", item = sb.jsonMerge(input, { count = 1 }) },
-						{
-							{ type = "label", text = merged.shortdescription},
-							productionLabels
-						}
-					}
-				},
-			})
-		end
-	end
-	local color
-	if not (productionRate > minimumProductionRate) then
-		color = "FF0000"
-	elseif (productionRate >= maxProductionRate) or balanced then
-		color = "00FF00"
-	elseif productionRate < maxProductionRate then
-		color = "FFFF00"
-	end
 
 	_ENV.outputPanel:clearChildren()
 	if recipe.output[1] then
@@ -689,16 +418,13 @@ function displayRecipe(recipe)
 				item = output
 			})
 		end
-		local timeMultiplier, timeLabel = timeScale(maxProductionRate)
+		local divisor, timeLabel = durationLabel(duration)
 
 		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
 			{ type = "label", text = recipe.recipeName },
 			{
-				{type = "image", file = outputNodesConfig[1].icon },
-				{type= "label", text= clipAtThousandth((timeMultiplier * (productionRate or 0))), color= color, inline= true},
-				{type= "label", text= "/", inline= true},
-				{type= "label", text= clipAtThousandth((timeMultiplier * maxProductionRate)), inline= true},
-				{type= "label", text=timeLabel, inline= true}
+				{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
+				{ type = "label", text = timeLabel,               inline = true }
 			},
 			{
 				type = "panel",
@@ -715,38 +441,23 @@ function displayRecipe(recipe)
 		local itemConfig = root.itemConfig(recipe.output)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 
-		local timeMultiplier, timeLabel = timeScale(maxProductionRate * recipe.output.count)
-		local outputDisplay = copy(recipe.output)
-		outputDisplay.count = 1
-
+		local divisor, timeLabel = durationLabel(duration)
 		_ENV.outputPanel:addChild({
 			type = "layout",
 			mode = "h",
 			scissoring = false,
 			children = {
-				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = outputDisplay},
+				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = recipe.output},
 				{
 					{type= "label", text= merged.shortdescription},
 					{
-						{type = "image", file = outputNodesConfig[1].icon },
-						{type= "label", text= clipAtThousandth((timeMultiplier * recipe.output.count * (productionRate or 0))), color= color, inline= true},
-						{type= "label", text= "/", inline= true},
-						{type= "label", text= clipAtThousandth((timeMultiplier * recipe.output.count * maxProductionRate)), inline= true},
-						{type= "label", text=timeLabel, inline= true}
+						{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
+						{ type = "label", text = timeLabel,               inline = true }
 					}
 				}
 			},
 		})
 	end
-end
-function _ENV.craftingItemSlot:onItemModified()
-	refreshCurrentRecipes()
-end
-function _ENV.craftingStationSlot:onItemModified()
-	refreshCurrentRecipes()
-end
-function _ENV.craftingAddonSlot:onItemModified()
-	refreshCurrentRecipes()
 end
 
 function _ENV.searchBox:onTextChanged()

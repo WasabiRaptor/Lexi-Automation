@@ -1,0 +1,37 @@
+{
+  "objectName" : "wr/logistics_station",
+  "colonyTags" : ["crafting","electronic"],
+  "rarity" : "Rare",
+  "price" : 1250,
+  "printable" : false,
+  "description" : "Used to produce matter streaming logistics components.",
+  "shortdescription" : "Matter Logistics Station",
+  "race" : "generic",
+  "category" : "crafting",
+
+  "inventoryIcon" : "icon.png",
+  "scripts" : ["/objects/wr/automation/logistics_station/logistics_station.lua"],
+  "orientations" : [
+    {
+      "imageLayers" : [
+        {"image":"animationParts/logistics_station.png:<color>.0"},
+        {"image":"animationParts/fullbright.png:<color>.<frame>", "fullbright" : true}
+      ],
+      "imagePosition" : [-16, 0],
+      "frames" : 15,
+      "animationCycle" : 0.75,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
+
+    }
+  ],
+  "recipes" : ["/objects/wr/automation/logistics_station/recipes.config"],
+  "filter" : ["wr_logistics_station", "wr_logistics_station_osb"],
+  "wr_assemblerRecipeScripts" : ["/objects/wr/automation/logistics_station/assemblerRecipes.lua"],
+
+  "interactData" : { // interact data for the vanilla compatible crafting which will have slightly worse recipes since we can't do multiple outputs
+    "config" : "/interface/wr/automation/vanilla_crafting/logistics_station.config",
+    "filter" : [ "wr_logistics_station", "wr_logistics_station_retail" ]
+  }
+}

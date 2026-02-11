@@ -1,14 +1,13 @@
 {
   "input" : [
-    { "item" : "copperbar", "count" : 6 },
-    { "item" : "silverbar", "count" : 1 },
-    { "item" : "corefragmentore", "count" : 1 },
-    { "item" : "stickofram", "count" : 2 }
+    { "item" : "wr/relay", "count" : 3 },
+    { "item" : "goldbar", "count" : 1 },
+    { "item" : "stickofram", "count" : 1 }
   ],
   "output" : {
     "item" : "wr/relay_splitter_mk1",
-    "count" : 3
+    "count" : 1
   },
   "duration" : 5,
-  "groups" : [ "inventorstable2", "all" ]
+  "groups" : [ "wr_logistics_station",  "wr_logistics", "all" ]
 }

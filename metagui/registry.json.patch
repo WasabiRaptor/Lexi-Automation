@@ -12,6 +12,7 @@
 		"hydroponics" : "/interface/wr/automation/hydroponics/build.lua",
 		"generic_machine" : "/interface/wr/automation/generic_machine/build.lua",
 		"exporter" : "/interface/wr/automation/exporter/build.lua",
-		"relay" : "/interface/wr/automation/relay/build.lua"
+		"relay" : "/interface/wr/automation/relay/build.lua",
+		"crafting" : "/interface/wr/automation/crafting/build.lua"
 	}}
 ]

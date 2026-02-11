@@ -1,0 +1,15 @@
+{
+  "input" : [
+    { "item" : "ironbar", "count" : 10 },
+    { "item" : "siliconboard", "count" : 5 },
+    { "item" : "stickofram", "count" : 2 },
+    { "item" : "wire", "count" : 10 },
+    { "item" : "battery", "count" : 1 }
+  ],
+  "output" : {
+    "item" : "wr/logistics_station",
+    "count" : 1
+  },
+  "duration" : 5,
+  "groups" : [ "inventorstable2", "craftingstations", "all" ]
+}

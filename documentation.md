@@ -168,10 +168,33 @@ The assembler GUI is more multi purpose, for generalized crafting stations that 
 "interactAction" : "ScriptPane",
 "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:assembler" },
 "filter" : ["craftinganvil", "emptyhands"],
-"uniqueRecipes" : ["/path/to/recipeList.config"],
+"recipes" : ["/path/to/recipeList.config"],
 "lockRecipes" : false // hides the crafting station slot
 ```
 
 The filter can be changed to any crafting station groups to have their recipes be listed without putting a crafting station into the crafting station slot. `"lockRecipes"` can be used to hide the slot for a crafting station, therefore limiting the recipes of the object to the crafting groups in the filter, as well as any recipes defined in `"uniqueRecipes"`.
 
 Unique recipes are where one defines the recipes unique to this object, this can either be the list of recipes itself, a string for an asset path to a list of recipes, or a list of paths to lists of recipes. I highly reccommend making it be a list of paths, as it is guarded against recursion and will therefore enforce no recipe configs ever get loaded twice. This is the best place to put recipes that have multiple output items.
+
+To make a crafting station compatible with being put into the assembler GUI there are three ways.
+- 1 Have your station simply be using the `"interactAction": "OpenCraftingInterface"` from vanilla starbound, the assembler already knows how to handle these.
+- 2 Use the same upgradeable crafting station scripts the stations in vanilla starbound use, the assembler already knows how to handle these.
+- 3 Create a script the assmbler will load to fetch the recipes for your object, example below.
+
+First, create a new lua script, by copying what's below.
+```lua
+wr_assemblerRecipes["your_object_id_here"] = function(craftingStation, addon)
+	local filter = {}
+	local recipes = {}
+	local requiresBlueprint = true
+	return filter, recipes, requiresBlueprint
+end
+```
+The assembler GUI will load your scripts, then call a function in the `wr_assemblerRecipes` table at your object's ID, passing the itemDescriptor for it, and an addon if its in the addon slot.
+
+You can do anything here, I reccommend just using `root.itemConfig` or `root.assetJson` to fetch your recipes/filters and pass them in the return, recipes passed here can support the expanded recipe spec that allows multiple output items.
+
+Now set a parameter in the object config like so.
+```json
+  "wr_assemblerRecipeScripts" : ["/absolute/path/to/script.lua"]
+```

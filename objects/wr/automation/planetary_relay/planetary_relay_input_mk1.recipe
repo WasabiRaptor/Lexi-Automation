@@ -1,0 +1,9 @@
+{
+  "input" : [
+    { "item" : "wr/relay_mk1", "count" : 1 },
+    { "item" : "teleportercore", "count" : 1 }
+  ],
+  "output" : { "item" : "wr/planetary_relay_input_mk1", "count" : 1 },
+  "duration" : 5,
+  "groups" : [ "wr_logistics_station_retail", "wr_logistics", "all" ]
+}

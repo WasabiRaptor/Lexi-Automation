@@ -1,0 +1,42 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [320, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [320, 128],
+
+	"title" : "Crafting",
+	"icon" : "/interface/wr/automation/assembler/crafting.png",
+	"uniqueBy" : "path",
+	"scripts" : [ "crafting.lua" ],
+	"children" : [
+        {"mode" : "h"},
+      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+            {"mode" : "v"},
+            {"type":"label","text":"Find Recipe", "align" : "center"},
+            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
+                {"mode" : "h"},
+                {"type": "textBox", "id" : "searchBox", "caption" : "Search Recipes..."}
+            ]},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "recipeSearchScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+
+        ]},
+      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+            {"mode" : "v"},
+            {"type":"label","text":"Current Recipe", "align" : "center"},
+            {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
+            {"type":"label","text":"Ingredients", "align" : "center"},
+            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
+                {"mode" : "v"},
+                { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+
+                ]}
+            ]}
+
+        ]}
+	]
+}

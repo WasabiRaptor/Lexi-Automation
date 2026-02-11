@@ -15,6 +15,8 @@
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/hydroponics_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/ground_pump_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/exporter_mk1"}},
-        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/exporter_mk2"}}
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/exporter_mk2"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/planetary_relay_input_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/planetary_relay_output_mk1"}}
     ]
 ]

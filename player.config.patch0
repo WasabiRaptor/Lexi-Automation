@@ -1,5 +1,7 @@
 [
     [
-        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/cloning_vat_mk1"}}
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/cloning_vat_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/universal_relay_input_mk1"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/universal_relay_output_mk1"}}
     ]
 ]
