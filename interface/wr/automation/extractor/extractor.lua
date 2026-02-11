@@ -7,9 +7,29 @@ end
 
 local materialList
 local products
+local visitableParameters
+local celestialCoords, isCelestial
 function init()
+	celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
 	materialList = root.assetJson("/interface/wr/automation/extractor/materialList.config")
 	products = world.getObjectParameter(pane.sourceEntity(), "products")
+	if celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+	end
+	tryDisplayProducts()
+end
+function update()
+	if (not visitableParameters) and celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+		if visitableParameters then
+			tryDisplayProducts()
+		end
+	elseif not visitableParameters then
+		return
+	end
+end
+
+function tryDisplayProducts()
 	if not products then
 		setProducts()
 	end
@@ -29,10 +49,7 @@ function init()
 end
 
 function setProducts()
-	if not world.terrestrial() then return end
-	local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
-	if not (isCelestial > 0) then return end
-	local visitableParameters = celestial.visitableParameters(celestialCoords)
+	if not visitableParameters then return end
 	setupPlanetParameters(visitableParameters)
 
 	local sufaceLayerTop = visitableParameters.surfaceLayer.layerBaseHeight

@@ -4,6 +4,9 @@ require("/scripts/wr/automation/oreNoise.lua")
 function uninit()
 end
 
+local visitableParameters
+local celestialCoords, isCelestial
+
 local planetOres
 local planetOresList = {}
 
@@ -12,41 +15,13 @@ local totalValidBlocks
 local surfaceLayerTop
 function init()
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
-
-	if not world.terrestrial() then invalidWorld() return end
-	local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
-	if not (isCelestial > 0) then invalidWorld() return end
-
-	local visitableParameters = celestial.visitableParameters(celestialCoords)
-	setupPlanetParameters(visitableParameters)
-
-	surfaceLayerTop = visitableParameters.surfaceLayer.layerBaseHeight
-	totalValidBlocks = world.size()[1] * surfaceLayerTop
-	planetOres = {}
-	for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
-		local modConfig = root.modConfig(v)
-		if modConfig.config.itemDrop then
-			planetOres[modConfig.config.itemDrop] = {
-				noise = oreNoise(modConfig.config.itemDrop, celestial.planetSeed(celestialCoords)),
-				itemConfig = root.itemConfig(modConfig.config.itemDrop).config,
-				modConfig = modConfig.config,
-				itemId = modConfig.config.itemDrop,
-				amount = 0
-			}
-			table.insert(planetOresList, planetOres[modConfig.config.itemDrop])
+	celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
+	if celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+		if visitableParameters then
+			displayOres()
 		end
 	end
-	table.sort(planetOresList, function(a, b)
-		local a_rarity = (a.itemConfig.rarity or "common"):lower()
-		local b_rarity = (b.itemConfig.rarity or "common"):lower()
-		if a_rarity == b_rarity then
-			return a.itemConfig.shortdescription < b.itemConfig.shortdescription
-		else
-			return rarityMap[a_rarity] < rarityMap[b_rarity]
-		end
-	end)
-
-	displayOres()
 end
 function invalidWorld()
 	_ENV.oresScrollArea:addChild({type = "label", color = "FF0000", text = "Resource veins can only be mined on terrestrial worlds with valid celestial coordinates."})
@@ -83,6 +58,15 @@ function cancelSearch()
 end
 
 function update()
+	if (not visitableParameters) and celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+		if visitableParameters then
+			displayOres()
+		end
+	elseif not visitableParameters then
+		return
+	end
+
 	if searching then
 		for i = 1, 1000 do -- how many to seach per tick
 			blocksScanned = blocksScanned + 1
@@ -147,6 +131,34 @@ end
 
 
 function displayOres()
+	setupPlanetParameters(visitableParameters)
+
+	surfaceLayerTop = visitableParameters.surfaceLayer.layerBaseHeight
+	totalValidBlocks = world.size()[1] * surfaceLayerTop
+	planetOres = {}
+	for _, v in ipairs(celestial.planetOres(celestialCoords, world.threatLevel())) do
+		local modConfig = root.modConfig(v)
+		if modConfig.config.itemDrop then
+			planetOres[modConfig.config.itemDrop] = {
+				noise = oreNoise(modConfig.config.itemDrop, celestial.planetSeed(celestialCoords)),
+				itemConfig = root.itemConfig(modConfig.config.itemDrop).config,
+				modConfig = modConfig.config,
+				itemId = modConfig.config.itemDrop,
+				amount = 0
+			}
+			table.insert(planetOresList, planetOres[modConfig.config.itemDrop])
+		end
+	end
+	table.sort(planetOresList, function(a, b)
+		local a_rarity = (a.itemConfig.rarity or "common"):lower()
+		local b_rarity = (b.itemConfig.rarity or "common"):lower()
+		if a_rarity == b_rarity then
+			return a.itemConfig.shortdescription < b.itemConfig.shortdescription
+		else
+			return rarityMap[a_rarity] < rarityMap[b_rarity]
+		end
+	end)
+
 	_ENV.oresScrollArea:clearChildren()
 	for _, oreData in pairs(planetOresList) do
 		_ENV.oresScrollArea:addChild({

@@ -5,9 +5,28 @@ function uninit()
 end
 
 local products
+local visitableParameters
+local celestialCoords, isCelestial
 function init()
-	materialList = root.assetJson("/interface/wr/automation/extractor/materialList.config")
+	celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
 	products = world.getObjectParameter(pane.sourceEntity(), "products")
+	if celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+	end
+	tryDisplayProducts()
+end
+function update()
+	if (not visitableParameters) and celestialCoords and (isCelestial > 0) and world.terrestrial() then
+		visitableParameters = celestial.visitableParameters(celestialCoords)
+		if visitableParameters then
+			tryDisplayProducts()
+		end
+	elseif not visitableParameters then
+		return
+	end
+end
+
+function tryDisplayProducts()
 	if not products then
 		setProducts()
 	end
@@ -35,10 +54,7 @@ local layerOrder = {
 	"coreLayer"
 }
 function setProducts()
-	if not world.terrestrial() then return end
-	local celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
-	if not (isCelestial > 0) then return end
-	local visitableParameters = celestial.visitableParameters(celestialCoords)
+	if not visitableParameters then return end
 	local position = world.entityPosition(pane.sourceEntity())
 	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier") or 1
 
