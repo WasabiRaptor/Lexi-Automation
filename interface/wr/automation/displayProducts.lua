@@ -23,7 +23,7 @@ function displayProducts(products, noProducts, noNodeProducts)
 								{
 									{ type = "label", text = merged.shortdescription },
 									{
-										{ type = "image", file = outputNodesConfig[nodeIndex].icon },
+										{ type = "image", file = outputNodesConfig[nodeIndex].icon or "/interface/wr/automation/output.png" },
 										{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)), inline = true },
 										{ type = "label", text = timeLabel,            inline = true }
 									},

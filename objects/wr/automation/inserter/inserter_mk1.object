@@ -46,6 +46,9 @@
     "input" : "animationParts/input.png"
   },
 
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:relay" },
+
   "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
 
   "inputNodes" : [ [0, 1] ],
