@@ -24,9 +24,8 @@
       "imagePosition" : [0, 0],
       "animationPosition" : [0, 0],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     },
     {
       "image" : "animationParts/back.png:default",
@@ -36,9 +35,8 @@
       "imagePosition" : [0, 0],
       "animationPosition" : [0, 0],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     }
   ],
   "animation" : "relay.animation",
@@ -46,6 +44,9 @@
     "back" : "animationParts/back.png",
     "input" : "animationParts/input.png"
   },
+
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:relay" },
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

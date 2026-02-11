@@ -11,6 +11,7 @@
 		"cloning_vat" : "/interface/wr/automation/cloning_vat/build.lua",
 		"hydroponics" : "/interface/wr/automation/hydroponics/build.lua",
 		"generic_machine" : "/interface/wr/automation/generic_machine/build.lua",
-		"exporter" : "/interface/wr/automation/exporter/build.lua"
+		"exporter" : "/interface/wr/automation/exporter/build.lua",
+		"relay" : "/interface/wr/automation/relay/build.lua"
 	}}
 ]
