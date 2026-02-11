@@ -154,8 +154,8 @@ function refreshOutput(force)
 	animator.setAnimationState("center", (#outputs[1] > 0) and "on" or "off")
 	animator.setAnimationState(leftState, (#outputs[2] > 0) and "on" or "off")
 	animator.setAnimationState(rightState, (#outputs[3] > 0) and "on" or "off")
-	animator.setAnimationState(leftState.."Logic", (leftNodeValue) and "off" or "on")
-	animator.setAnimationState(rightState.."Logic", (rightNodeValue) and "off" or "on")
+	animator.setAnimationState(leftState.."Logic", (leftNodeValue) and "on" or "off")
+	animator.setAnimationState(rightState.."Logic", (rightNodeValue) and "on" or "off")
 end
 
 function onInputNodeChange()
