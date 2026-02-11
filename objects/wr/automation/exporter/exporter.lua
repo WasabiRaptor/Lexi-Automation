@@ -43,7 +43,6 @@ function update(dt)
 		exportEntity = world.objectAt({ position[1], position[2] -1 })
 	end
 	if not exportEntity then
-		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("output", "off")
 		wr_automation.clearAllOutputs()
