@@ -53,6 +53,7 @@ function durationLabel(time)
 				elseif compTime >= 365 then
 					timeLabel = "Years"
 					timeDivisor = timeDivisor * 365
+					compTime = time / timeDivisor
 					if compTime == 1 then
 						timeLabel = "Year"
 					end
