@@ -88,7 +88,7 @@ function refreshOutput(force)
 
 	for _, recipeItem in ipairs(recipe.input) do
 		for _, inputItem in ipairs(inputs) do
-			if inputItem.used and root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
+			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
 				productionRate = math.min(productionRate,
 					(inputItem.count / ((recipeItem.count or 1) * maxProductionRate)) * maxProductionRate
 				)
@@ -96,11 +96,11 @@ function refreshOutput(force)
 			end
 		end
 	end
-	if passthrough then
-		products[1] = copy(inputs)
-		for _, product in ipairs(products[1]) do
-			if product.used then
-				for _, recipeItem in ipairs(recipe.input) do
+	if productionRate > minimumProductionRate then
+		if passthrough then
+			products[1] = copy(inputs)
+			for _, recipeItem in ipairs(recipe.input) do
+				for _, product in ipairs(products[1]) do
 					if root.itemDescriptorsMatch(recipeItem, product, recipe.matchInputParameters) then
 						product.count = product.count - (recipeItem.count * productionRate)
 						break
@@ -108,8 +108,7 @@ function refreshOutput(force)
 				end
 			end
 		end
-	end
-	if productionRate > minimumProductionRate then
+
 		if recipe.output[1] then
 			local realProdcuts = copy(recipe.output)
 			for _, product in ipairs(realProdcuts) do
@@ -125,6 +124,8 @@ function refreshOutput(force)
 		end
 		object.setConfigParameter("status", "on")
 		wr_automation.playAnimations("on")
+	elseif passthrough then
+		products[1] = copy(inputs)
 	else
 		object.setConfigParameter("products", nil)
 		wr_automation.clearAllOutputs()
