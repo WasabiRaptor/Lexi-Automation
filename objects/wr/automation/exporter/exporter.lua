@@ -56,7 +56,7 @@ function update(dt)
 		consume.totalAmount = ((consume.count / efficency) * dt) - (storage.leftovers[i] or 0)
 		consume.count = math.ceil(consume.totalAmount)
 		local available = world.containerAvailable(exportEntity, consume)
-		if available >= consume.count then
+		if (available > 0) or (consume.count <= 0) then
 			-- check if we can consume the desired amount of items or not
 			if consume.count > 0 then
 				table.insert(toConsume, consume)
