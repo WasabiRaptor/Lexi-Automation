@@ -6,8 +6,8 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Transfers a matter stream to the output of the same channel on the planet.",
-  "shortdescription" : "Planetary Matter Relay Input",
+  "description" : "Transfers a matter stream to the output of the same channel on the same planet.",
+  "shortdescription" : "Planetary Mat. Relay Input",
   "race" : "generic",
   "health" : 1.5,
 
@@ -21,24 +21,22 @@
       "flipImages" : true,
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-8, -8],
+      "animationPosition" : [-8, -8],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     },
     {
       "image" : "animationParts/back.png:default",
       "direction" : "right",
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-8, -8],
+      "animationPosition" : [-8, -8],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     }
   ],
   "animation" : "planetary_relay.animation",

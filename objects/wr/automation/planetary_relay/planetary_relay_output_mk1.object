@@ -6,8 +6,8 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Recieves a matter stream from the input of the same channel on the planet.",
-  "shortdescription" : "Planetary Matter Relay Ouput",
+  "description" : "Recieves a matter stream from the input of the same channel on the same planet.",
+  "shortdescription" : "Planetary Mat. Relay Ouput",
   "race" : "generic",
   "health" : 1.5,
 
@@ -21,24 +21,22 @@
       "flipImages" : true,
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-8, -8],
+      "animationPosition" : [-8, -8],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     },
     {
       "image" : "animationParts/back.png:default",
       "direction" : "right",
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-8, -8],
+      "animationPosition" : [-8, -8],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
     }
   ],
   "animation" : "planetary_relay.animation",
@@ -50,7 +48,7 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:planetary_relay", "data":{"channelProperty":"wr_matterStreamOutputUUID."} },
 
-  "outputNodes" : [ [0, 1] ],
+  "outputNodes" : [ [0, 0] ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/output.png"

@@ -6,8 +6,8 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Transfers a matter stream to the output of the same channel in the universe.",
-  "shortdescription" : "Universal Matter Relay Input",
+  "description" : "Transfers a matter stream to the output of the same channel in the same universe.",
+  "shortdescription" : "Universal Mat. Relay Input",
   "race" : "generic",
   "health" : 1.5,
   "unbreakable" : true,
@@ -22,24 +22,22 @@
       "flipImages" : true,
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-16, 0],
+      "animationPosition" : [-16, 0],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
     },
     {
       "image" : "animationParts/back.png:default",
       "direction" : "right",
       "renderLayer" : "Object-5",
 
-      "imagePosition" : [0, 0],
-      "animationPosition" : [0, 0],
+      "imagePosition" : [-16, 0],
+      "animationPosition" : [-16, 0],
 
-      "spaces" : [
-        [0,0], [1,0]
-      ]
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
     }
   ],
   "animation" : "universal_relay.animation",
@@ -48,7 +46,7 @@
     "input" : "animationParts/input.png"
   },
 
-  "inputNodes" : [ [0, 0] ],
+  "inputNodes" : [ [0, 2] ],
   "inputNodesConfig" : [{
     "color" : "#1c8eff",
     "icon" : "/interface/wr/automation/input.png"
