@@ -21,6 +21,7 @@ function uninit()
 end
 
 local filter
+local requiresBlueprint = true
 local uniqueRecipes = {}
 local itemRecipes = {}
 local stationRecipes = {}
@@ -160,7 +161,14 @@ function refreshCurrentRecipes()
 			if interactData.recipes then
 				stationRecipes = interactData.recipes
 			end
+			if interactData.requiresBlueprint ~= nil then
+				requiresBlueprint = interactData.requiresBlueprint
+			else
+				requiresBlueprint = true
+			end
 		end
+	else
+		requiresBlueprint = true
 	end
 	if craftingItem then
 		itemRecipes = root.recipesForItem(craftingItem.name or craftingItem.item)
@@ -195,7 +203,9 @@ function loadRecipes(amount)
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
 		if recipe.output[1] then
+			if recipe.recipeBlueprint and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.recipeBlueprint)) then return end
 			for _, product in ipairs(recipe.output) do
+				if (not recipe.recipeBlueprint) and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(product)) then return end
 				cache[1] = {}
 				cache[1].itemConfig = root.itemConfig(recipe.output)
 				cache[1].mergedConfig = sb.jsonMerge(cache[1].itemConfig.config, cache[1].itemConfig.parameters)
@@ -207,6 +217,7 @@ function loadRecipes(amount)
 				cache[1].rarity = rarityMap[(cache[1].mergedConfig.rarity or "common"):lower()] or 0
 			end
 		else
+			if requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.output)) then return end
 			cache.itemConfig = root.itemConfig(recipe.output)
 			cache.mergedConfig = sb.jsonMerge(cache.itemConfig.config, cache.itemConfig.parameters)
 			if sb.stripEscapeCodes ~= nil then
