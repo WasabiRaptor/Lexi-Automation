@@ -6,7 +6,7 @@
 
   "category" : "automation",
   "price" : 15,
-  "description" : "Inserts items from a matter stream into inventories it is attached to.\nInserts at the rate of it's slowest input.",
+  "description" : "Inserts items from a matter stream into inventories it is attached to.\nInserts at the rate of its slowest input.",
   "shortdescription" : "Matter Inserter MK1",
   "race" : "generic",
   "health" : 1.5,
