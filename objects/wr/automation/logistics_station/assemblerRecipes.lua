@@ -22,5 +22,5 @@ wr_assemblerRecipes["wr/logistics_station"] = function(craftingStation, addon)
 		end
 	end
 	getUniqueRecipes(itemConfig.config.recipes)
-	return itemConfig.config.filter, uniqueRecipes, true
+	return itemConfig.config.filter, uniqueRecipes, true, itemConfig.config.recipeTabs
 end

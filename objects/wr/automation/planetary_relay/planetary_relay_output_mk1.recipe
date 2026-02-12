@@ -5,5 +5,5 @@
   ],
   "output" : { "item" : "wr/planetary_relay_output_mk1", "count" : 1 },
   "duration" : 5,
-  "groups" : [ "wr_logistics_station_retail", "wr_logistics", "all" ]
+  "groups" : [ "logistics_station_retail", "logistics", "all" ]
 }

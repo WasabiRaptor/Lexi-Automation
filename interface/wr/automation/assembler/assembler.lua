@@ -4,10 +4,8 @@ require("/interface/wr/automation/labels.lua")
 local rarityMap = {}
 local currentRecipes = {}
 local recipeOutputCache = {}
-local recipePage = 0
 local recipesPerPage = 50
 local searchedRecipes = {}
-local recipePages = 1
 local inputNodesConfig
 local outputNodesConfig
 
@@ -29,11 +27,13 @@ local itemRecipes = {}
 local stationRecipes = {}
 local allRecipes = {}
 local recipeRPC
-local loadingCoroutine
-local searchCoroutine
+local recipeTabs
 
-local currentlySorting
-local currentlySearching
+local activeCoroutine
+local currentRecipe
+local errorMessage = "Error during initialization"
+
+local raritySort = true
 function init()
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
 	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
@@ -68,35 +68,19 @@ function init()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
 function update()
-	if loadingCoroutine and coroutine.status(loadingCoroutine) == "suspended" then
-		local success, error = coroutine.resume(loadingCoroutine, 2000)
+	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
+		local success, error = coroutine.resume(activeCoroutine, 2000)
 		if not success then
-			local itemPrintout = sb.printJson(currentlySorting, 2)
-			sb.logError("[wr_automation] Error while loading recipes.\n%s\n%s", itemPrintout, error)
-			_ENV.recipeSearchScrollArea:clearChildren()
-			_ENV.recipeSearchScrollArea:addChild({
-				type = "label", text = "Error While Loading Recipes", align = "center", color = "FF0000"
+			local itemPrintout = sb.printJson(currentRecipe, 2)
+			sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, itemPrintout, error)
+			_ENV.recipeListLayout:clearChildren()
+			_ENV.recipeListLayout:addChild({
+				type = "label", text = errorMessage, align = "center", color = "FF0000"
 			})
-			_ENV.recipeSearchScrollArea:addChild({
+			_ENV.recipeListLayout:addChild({
 				type = "label", text = itemPrintout, color = "FF7F00"
 			})
-			_ENV.recipeSearchScrollArea:addChild({
-				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
-			})
-		end
-	elseif searchCoroutine and coroutine.status(searchCoroutine) == "suspended" then
-		local success, error = coroutine.resume(searchCoroutine, 2000)
-		if not success then
-			local itemPrintout = sb.printJson(currentlySearching, 2)
-			sb.logError("[wr_automation] Error while searching recipes.\n%s\n%s", itemPrintout, error)
-			_ENV.recipeSearchScrollArea:clearChildren()
-			_ENV.recipeSearchScrollArea:addChild({
-				type = "label", text = "Error While Searching Recipes.", align = "center", color = "FF0000"
-			})
-			_ENV.recipeSearchScrollArea:addChild({
-				type = "label", text = itemPrintout, color = "FF7F00"
-			})
-			_ENV.recipeSearchScrollArea:addChild({
+			_ENV.recipeListLayout:addChild({
 				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
 			})
 		end
@@ -109,15 +93,15 @@ end
 
 function refreshCurrentRecipes()
 	_ENV.craftingAddonSlot:setVisible(_ENV.craftingAddonSlot:item() ~= nil)
-	_ENV.recipeSearchScrollArea:clearChildren()
-	_ENV.recipeSearchScrollArea:addChild({
+	_ENV.recipeListLayout:clearChildren()
+	_ENV.recipeListLayout:addChild({
 		type = "label", text = "Loading Recipes...", align = "center"
 	})
 
 	local craftingItem = _ENV.craftingItemSlot:item()
 	local craftingStation = _ENV.craftingStationSlot:item()
 
-	filter = world.getObjectParameter(pane.sourceEntity(), "filter")
+	filter = nil
 
 	if craftingStation then
 		local itemConfig = root.itemConfig(craftingStation)
@@ -147,7 +131,8 @@ function refreshCurrentRecipes()
 			for _, v in ipairs(merged.wr_assemblerRecipeScripts) do
 				require(v)
 			end
-			filter, stationRecipes, requiresBlueprint = wr_assemblerRecipes[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
+			filter, stationRecipes, requiresBlueprint, recipeTabs = wr_assemblerRecipes
+				[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
 		elseif merged.interactAction == "OpenCraftingInterface" then
 			interactData = merged.interactData
 		elseif merged.upgradeStages then
@@ -174,6 +159,8 @@ function refreshCurrentRecipes()
 			end
 		end
 	else
+		filter = world.getObjectParameter(pane.sourceEntity(), "filter")
+		recipeTabs = world.getObjectParameter(pane.sourceEntity(), "recipeTabs")
 		requiresBlueprint = true
 	end
 	if craftingItem then
@@ -186,27 +173,30 @@ function refreshCurrentRecipes()
 		itemRecipes = {}
 		allRecipes = {}
 	end
-	loadingCoroutine = coroutine.create(loadRecipes)
+	activeCoroutine = coroutine.create(loadRecipes)
+	return true
 end
+
+function compareRecipes(a, a_cache, b, b_cache)
+	if (not raritySort) or a_cache.rarity == b_cache.rarity then
+		return a_cache.name < b_cache.name
+	else
+		return a_cache.rarity > b_cache.rarity
+	end
+end
+
 function loadRecipes(amount)
+	errorMessage = "Error while loading recipes."
 	currentRecipes = {}
 	local item = _ENV.craftingItemSlot:item()
 	local craftingStation = _ENV.craftingStationSlot:item()
 
-	local function compareRecipes(a, a_cache, b, b_cache)
-		if a_cache.rarity == b_cache.rarity then
-			return a_cache.name < b_cache.name
-		else
-			return a_cache.rarity > b_cache.rarity
-		end
-	end
 	local function insertRecipe(recipe)
-		currentlySorting = recipe
+		currentRecipe = recipe
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
 		if recipe.output[1] then
-			if recipe.recipeBlueprint and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.recipeBlueprint)) then return end
 			cache.output = {}
 			cache.rarity = 0
 			if sb.stripEscapeCodes ~= nil then
@@ -215,7 +205,6 @@ function loadRecipes(amount)
 				cache.name = recipe.recipeName:gsub("%b^;")
 			end
 			for i, product in ipairs(recipe.output) do
-				if (not recipe.recipeBlueprint) and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(product)) then return end
 				cache.output[i] = {}
 				cache.output[i].itemConfig = root.itemConfig(product)
 				cache.output[i].mergedConfig = sb.jsonMerge(cache.output[i].itemConfig.config, cache.output[i].itemConfig.parameters)
@@ -228,7 +217,6 @@ function loadRecipes(amount)
 				cache.rarity = cache.rarity + cache.output[i].rarity
 			end
 		else
-			if requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.output)) then return end
 			cache.itemConfig = root.itemConfig(recipe.output)
 			cache.mergedConfig = sb.jsonMerge(cache.itemConfig.config, cache.itemConfig.parameters)
 			if sb.stripEscapeCodes ~= nil then
@@ -258,21 +246,25 @@ function loadRecipes(amount)
 			if amount == 0 then coroutine.yield() end
 		end
 	end
+
 	local function validateRecipeForItem(recipe)
 		for _, input in ipairs(recipe.input) do
 			if not root.itemConfig(input) then return end
 		end
 
 		if recipe.output[1] then -- this is the only case where we have multiple
+			if recipe.recipeBlueprint and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.recipeBlueprint)) then return end
 			local isItemRecipe = false
 			for _, product in ipairs(recipe.output) do
 				isItemRecipe = isItemRecipe or ((product.name or product.item) == item.name)
 				if not root.itemConfig(product) then return end
+				if (not recipe.recipeBlueprint) and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(product)) then return end
 			end
 			if isItemRecipe then
 				insertRecipe(recipe)
 			end
 		elseif (recipe.output.name or recipe.output.item) == item.name then
+			if requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.output)) then return end
 			insertRecipe(recipe)
 		end
 	end
@@ -281,11 +273,14 @@ function loadRecipes(amount)
 			if not root.itemConfig(input) then return end
 		end
 		if recipe.output[1] then -- this is the only case where we have multiple
+			if recipe.recipeBlueprint and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.recipeBlueprint)) then return end
 			for _, product in ipairs(recipe.output) do
 				if not root.itemConfig(product) then return end
+				if (not recipe.recipeBlueprint) and requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(product)) then return end
 			end
 			insertRecipe(recipe)
 		elseif root.itemConfig(recipe.output) then
+			if requiresBlueprint and not (player.isAdmin() or player.blueprintKnown(recipe.output)) then return end
 			insertRecipe(recipe)
 		end
 	end
@@ -328,17 +323,57 @@ function loadRecipes(amount)
 			validateRecipe(recipe)
 		end
 	end
-	searchCoroutine = coroutine.create(searchRecipes)
+	currentRecipe = nil
+	activeCoroutine = coroutine.create(searchRecipes)
+	return true
+end
+
+function sortRecipes(amount)
+	errorMessage = "Error while sorting recipes."
+	local oldRecipes = currentRecipes
+	local oldOutputCache = recipeOutputCache
+	currentRecipes = {}
+	recipeOutputCache = {}
+	local function insertRecipe(recipe, cache)
+		currentRecipe = recipe
+		amount = amount - 1
+		if amount == 0 then coroutine.yield() end
+		local upperBounds = #currentRecipes + 1
+		local lowerBounds = 1
+		while true do
+			if (upperBounds == lowerBounds) then
+				table.insert(currentRecipes, upperBounds, recipe)
+				table.insert(recipeOutputCache, upperBounds, cache)
+				return
+			end
+			local index = math.floor((upperBounds - lowerBounds) / 2) + lowerBounds
+			local b = currentRecipes[index]
+			local b_cache = recipeOutputCache[index]
+			if compareRecipes(recipe, cache, b, b_cache) then
+				upperBounds = index
+			else
+				lowerBounds = index + 1
+			end
+			amount = amount - 1
+			if amount == 0 then coroutine.yield() end
+		end
+	end
+	for i, v in ipairs(oldRecipes) do
+		insertRecipe(v, oldOutputCache[i])
+	end
+	currentRecipe = nil
+	activeCoroutine = coroutine.create(searchRecipes)
 	return true
 end
 function searchRecipes(amount)
-	_ENV.recipeSearchScrollArea:clearChildren()
-	_ENV.recipeSearchScrollArea:addChild({
+	errorMessage = "Error while searching recipes."
+	_ENV.recipeListLayout:clearChildren()
+	_ENV.recipeListLayout:addChild({
 		type = "label", text = "Searching Recipes...", align = "center"
 	})
 	local searchText = _ENV.searchBox.text:lower()
 	local function isRecipeSearched(i, recipe)
-		currentlySearching = recipe
+		currentRecipe = recipe
 		local cache = recipeOutputCache[i]
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
@@ -369,175 +404,212 @@ function searchRecipes(amount)
 			isRecipeSearched(i, recipe)
 		end
 	end
-	recipePages = math.ceil(#searchedRecipes / recipesPerPage)
-	coroutine.yield()
-	refreshDisplayedRecipes()
+	currentRecipe = nil
+	activeCoroutine = coroutine.create(refreshDisplayedRecipes)
 	return true
 end
-function refreshDisplayedRecipes()
-	_ENV.recipeSearchScrollArea:clearChildren()
+function refreshDisplayedRecipes(amount)
+	errorMessage = "Error while listing recipes."
+	_ENV.recipeListLayout:clearChildren()
 	if #currentRecipes == 0 then
 		local craftingItem = _ENV.craftingItemSlot:item()
 		if not craftingItem then
-			_ENV.recipeSearchScrollArea:addChild({
+			_ENV.recipeListLayout:addChild({
 				type = "label",
 				text = "Insert an item to list its recipes."
 			})
 		else
 			if _ENV.craftingStationSlot.visible then
-				_ENV.recipeSearchScrollArea:addChild({
+				_ENV.recipeListLayout:addChild({
 					type = "label",
 					text = ("No recipes found.\nInsert a crafting station with a recipe for the desired item.")
 				})
 			else
-				_ENV.recipeSearchScrollArea:addChild({
+				_ENV.recipeListLayout:addChild({
 					type = "label",
 					text = ("No recipes found.")
 				})
 			end
-
 		end
+		return true
 	elseif #searchedRecipes == 0 then
-		_ENV.recipeSearchScrollArea:addChild({
+		_ENV.recipeListLayout:addChild({
 			type = "label",
 			text = ("No search results.")
 		})
+		return true
 	end
-	if #searchedRecipes > recipesPerPage then
-		_ENV.recipeSearchScrollArea:addChild({
-			type = "panel",
-			style = "flat",
-			children = {
-				{ mode = "h" },
-				{ type = "button", caption = "<-", id = "recipePageBackTopButton"},
-				{ type = "label", text = ("%d of %d"):format(recipePage+1, recipePages), align = "center"},
-				{ type = "button", caption = "->", id = "recipePageNextTopButton"}
-			}
-		})
-		function _ENV.recipePageBackTopButton:onClick()
-			recipePage = (recipePage - 1) % recipePages
-			refreshDisplayedRecipes()
-		end
-		function _ENV.recipePageNextTopButton:onClick()
-			recipePage = (recipePage + 1) % recipePages
-			refreshDisplayedRecipes()
-		end
-	end
-	for i = 1, recipesPerPage do
-		local recipe = searchedRecipes[i + recipePage * recipesPerPage]
-		if recipe then
-			local ingredientSlots = {
-				{mode = "h", scissoring = false, expandMode = {1,0}}
-			}
-			for _, input in ipairs(recipe.input) do
-				table.insert(ingredientSlots, {
-					type = "itemSlot",
-					item = input
-				})
-			end
-			local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
-			local duration = math.max(
-				0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
-				(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
-				(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
-			) / craftingSpeed
-			local divisor, timeLabel = durationLabel(duration)
-			local outputLayout
-			if recipe.output[1] then
-				local outputSlots = {
-					{mode = "h", scissoring = false, expandMode = {1,0}}
-				}
-				for _, output in ipairs(recipe.output) do
-					table.insert(outputSlots, {
-						type = "itemSlot",
-						item = output
-					})
-				end
-				outputLayout = {
-					{ mode = "v", expandMode = { 1, 0 } },
-					{ type = "label", text = recipe.recipeName },
-					{
-						{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
-						{ type = "label", text = timeLabel,               inline = true }
-					},
-					{
-						type = "panel",
-						style = "flat",
-						children = {
-							{ mode = "v", expandMode = {1,0} },
-							{ type = "label", text = "Products"},
-							outputSlots
-						},
-					}
-				}
-			else
-				local itemConfig = root.itemConfig(recipe.output)
-				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-				outputLayout = {
-					{ mode = "h", scissoring = false },
-					{ type = "itemSlot", item = recipe.output },
-					{
-						{ type = "label", text = merged.shortdescription},
-						{
-							{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
-							{ type = "label", text = timeLabel,               inline = true }
-						},
+	local tabField = _ENV.recipeListLayout:addChild({
+		type = "tabField",
+		layout = "horizontal",
+		tabs = {}
+	})
+	local rand = sb.makeRandomSource()
+	local function listRecipe(layout, recipe)
+		currentRecipe = recipe
+		amount = amount - 1
+		if amount == 0 then coroutine.yield() end
 
+		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
+		local duration = math.max(
+			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
+			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
+			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
+		) / craftingSpeed
+		local divisor, timeLabel = durationLabel(duration)
+		local outputLayout
+		local productSlotsId = tostring(rand:randu32())
+		if recipe.output[1] then
+
+			local outputSlots = {
+				{ mode = "h", scissoring = false, expandMode = { 1, 0 } }
+			}
+			outputLayout = {
+				{ mode = "v",     expandMode = { 1, 0 } },
+				{ type = "label", text = recipe.recipeName },
+				{
+					{ type = "label", text = clipAtThousandth(duration / divisor), inline = true },
+					{ type = "label", text = timeLabel,                            inline = true }
+				},
+				{
+					type = "panel",
+					style = "flat",
+					children = {
+						{ mode = "v",     expandMode = { 1, 0 } },
+						{ type = "label", text = "Products" },
+						{ type = "itemGrid", id = productSlotsId, slots = 0, autoInteract = false}
 					},
 				}
-			end
-			local listItem = _ENV.recipeSearchScrollArea:addChild({
-				type = "listItem",
-				selectionGroup = "recipeSelect",
-				value = recipe,
-				expandMode = {1,0},
-				children = {
+			}
+		else
+			local itemConfig = root.itemConfig(recipe.output)
+			local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+			outputLayout = {
+				{ mode = "h",        scissoring = false },
+				{ type = "itemSlot", item = recipe.output },
+				{
+					{ type = "label", text = merged.shortdescription },
 					{
-						type = "panel",
-						style = "convex",
-						children = {
-							{ mode = "v", expandMode = {1,0} },
-							outputLayout,
-							{
-								type = "panel",
-								style = "flat",
-								children = {
-									{ mode = "v", expandMode = {1,0}, scissoring = false },
-									{ type = "label", text = "Ingredients"},
-									ingredientSlots
-								},
-							}
+						{ type = "label", text = clipAtThousandth(duration / divisor), inline = true },
+						{ type = "label", text = timeLabel,                            inline = true }
+					},
+
+				},
+			}
+		end
+		local ingredientSlotsId = tostring(rand:randu32())
+		local listItem = layout:addChild({
+			type = "listItem",
+			selectionGroup = "recipeSelect",
+			value = recipe,
+			expandMode = { 1, 0 },
+			children = {
+				{
+					type = "panel",
+					style = "convex",
+					children = {
+						{ mode = "v", expandMode = { 1, 0 } },
+						outputLayout,
+						{
+							type = "panel",
+							style = "flat",
+							children = {
+								{ mode = "v",     expandMode = { 1, 0 }, scissoring = false },
+								{ type = "label", text = "Ingredients" },
+								{ type = "itemGrid", id = ingredientSlotsId, slots = 0, autoInteract = false}
+							},
 						}
 					}
 				}
-			})
-			function listItem:onClick()
-				recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
-			end
-		else
-			break
-		end
-	end
-	if #searchedRecipes > recipesPerPage then
-		_ENV.recipeSearchScrollArea:addChild({
-			type = "panel",
-			style = "flat",
-			children = {
-				{ mode = "h" },
-				{ type = "button", caption = "<-", id = "recipePageBackBottomButton"},
-				{ type = "label", text = ("%d of %d"):format(recipePage+1, recipePages), align = "center"},
-				{ type = "button", caption = "->", id = "recipePageNextBottomButton"}
 			}
 		})
-		function _ENV.recipePageBackBottomButton:onClick()
-			recipePage = (recipePage - 1) % recipePages
-			refreshDisplayedRecipes()
+		for _, input in ipairs(recipe.input) do
+			_ENV[ingredientSlotsId]:addSlot(input)
 		end
-		function _ENV.recipePageNextBottomButton:onClick()
-			recipePage = (recipePage + 1) % recipePages
-			refreshDisplayedRecipes()
+		if recipe.output[1] then
+			for _, input in ipairs(recipe.output) do
+				_ENV[productSlotsId]:addSlot(input)
+			end
+		end
+
+		function listItem:onClick()
+			recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
 		end
 	end
+
+	if recipeTabs then
+		for _, tabData in ipairs(recipeTabs) do
+			local hash = tostring(rand:randu32())
+			local tab = tabField:newTab({
+				id = tabData.id,
+				title = tabData.title or "",
+				icon = tabData.icon,
+				contents = {
+					{
+						type = "panel",
+						style = "concave",
+						expandMode = { 2, 2 },
+						children = {
+							{
+								type = "scrollArea",
+								id = hash,
+								expandMode = { 2, 2 },
+								scrollDirectons = { 0, 1 },
+								children = {}
+							}
+						},
+					}
+				}
+			})
+			local tabScrollArea = _ENV[hash]
+			for _, recipe in ipairs(currentRecipes) do
+				for _, v in ipairs(tabData.filter) do
+					for _, group in ipairs(recipe.groups) do
+						if group == v then
+							listRecipe(tabScrollArea, recipe)
+							break
+						end
+					end
+				end
+			end
+		end
+	else
+		for j = 1, math.ceil(#currentRecipes / recipesPerPage) do
+			local hash = tostring(rand:randu32())
+			local tab = tabField:newTab({
+				id = tostring(j),
+				title = ("  %d  "):format(j),
+				contents = {
+					{
+						type = "panel",
+						style = "concave",
+						expandMode = { 2, 2 },
+						children = {
+							{
+								type = "scrollArea",
+								id = hash,
+								expandMode = { 2, 2 },
+								scrollDirectons = { 0, 1 },
+								children = {}
+							}
+						},
+					}
+				}
+			})
+			local tabScrollArea = _ENV[hash]
+
+			for i = 1, recipesPerPage do
+				local recipe = searchedRecipes[i + ((j - 1) * recipesPerPage)]
+				if recipe then
+					listRecipe(tabScrollArea, recipe)
+				else
+					break
+				end
+			end
+		end
+	end
+	currentRecipe = nil
+	return true
 end
 
 function displayRecipe(recipe)
@@ -750,5 +822,5 @@ function _ENV.craftingAddonSlot:onItemModified()
 end
 
 function _ENV.searchBox:onTextChanged()
-	searchCoroutine = coroutine.create(searchRecipes)
+	activeCoroutine = coroutine.create(searchRecipes)
 end

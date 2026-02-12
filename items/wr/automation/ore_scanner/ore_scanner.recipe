@@ -7,5 +7,5 @@
     { "item" : "smallbattery", "count" : 4 }
   ],
   "output" : { "item" : "wr/ore_scanner", "count" : 1 },
-  "groups" : [ "wr_logistics_station", "wr_equipment" ]
+  "groups" : [ "logistics_station", "equipment" ]
 }

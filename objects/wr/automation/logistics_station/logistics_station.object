@@ -27,11 +27,16 @@
     }
   ],
   "recipes" : ["/objects/wr/automation/logistics_station/recipes.config"],
-  "filter" : ["wr_logistics_station", "wr_logistics_station_osb"],
+  "filter" : ["logistics_station", "logistics_station_osb"],
+  "recipeTabs" : [
+    {"icon" : "/interface/crafting/tabicon_mechanics.png", "filter" : ["production"], "id" : "production"},
+    {"icon" : "/interface/crafting/tabicon_logic.png", "filter" : ["logistics"], "id": "logistics"},
+    {"icon" : "/interface/crafting/tabicon_equipment.png", "filter" : ["equipment"], "id": "equipment"}
+  ],
   "wr_assemblerRecipeScripts" : ["/objects/wr/automation/logistics_station/assemblerRecipes.lua"],
 
   "interactData" : { // interact data for the vanilla compatible crafting which will have slightly worse recipes since we can't do multiple outputs
     "config" : "/interface/wr/automation/vanilla_crafting/logistics_station.config",
-    "filter" : [ "wr_logistics_station", "wr_logistics_station_retail" ]
+    "filter" : [ "logistics_station", "logistics_station_retail" ]
   }
 }

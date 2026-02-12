@@ -191,7 +191,15 @@ wr_assemblerRecipes["your_object_id_here"] = function(craftingStation, addon)
 	local filter = {}
 	local recipes = {}
 	local requiresBlueprint = true
-	return filter, recipes, requiresBlueprint
+	local tabs = { -- optional
+		{
+			id = "tabId"
+			icon = "/path/to/icon.png"
+			title = "Tab Title"
+			filter = {"all"}
+		}
+	}
+	return filter, recipes, requiresBlueprint, tabs
 end
 ```
 The assembler GUI will load your scripts, then call a function in the `wr_assemblerRecipes` table at your object's ID, passing the itemDescriptor for it, and an addon if its in the addon slot.

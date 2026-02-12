@@ -12,5 +12,5 @@
     "count" : 1
   },
   "duration" : 5,
-  "groups" : [ "wr_logistics_station", "wr_production", "all" ]
+  "groups" : [ "logistics_station", "production", "all" ]
 }
