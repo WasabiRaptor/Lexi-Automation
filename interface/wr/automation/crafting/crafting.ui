@@ -9,27 +9,54 @@
 	"uniqueBy" : "path",
 	"scripts" : [ "crafting.lua" ],
 	"children" : [
-        {"mode" : "h"},
-      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
-            {"mode" : "v"},
-            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
-                {"mode" : "h"},
-                {"type": "textBox", "id" : "searchBox", "caption" : "Search Recipes..."}
-            ]},
-            {"type":"layout","id":"recipeListLayout","expandMode":[1,2], "mode": "v", "children":[]}
-        ]},
-      	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
-            {"mode" : "v"},
-            {"type":"label","text":"Current Recipe", "align" : "center"},
-            {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
-            {"type":"label","text":"Ingredients", "align" : "center"},
-            {"type":"panel","style":"concave","expandMode":[1,1],"children":[
-                {"mode" : "v"},
-                { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+		{"mode" : "h"},
+		{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+			{"mode" : "v"},
+			{"type": "textBox", "id" : "searchBox", "caption" : "Search Recipes..."},
+			{"type":"layout","id":"recipeListLayout","expandMode":[1,2], "mode": "v", "children":[]},
+			[
+				[
+					{"mode" : "h", "expandMode" : [0,0]},
+					{"type":"checkBox", "id" : "materialsAvailableCheckBox"},
+					{"type":"label", "text" : "Materials Available", "inline":true}
+				]
+			]
+		]},
+		{"type":"panel","style":"convex","expandMode":[1,1],"children":[
+			{"mode" : "v", "scissoring" : false},
+			{"type":"label","text":"Current Recipe", "align" : "center"},
+			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
+				{"mode" : "v"},
+				{ "type" : "scrollArea", "id" : "recipeOutputScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 
-                ]}
-            ]}
+				]}
+			]},
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode" : "v", "scissoring":false},
+				{"type":"label", "text" : "Materials", "align" : "center"},
+				{"type":"itemGrid", "id" : "recipeMaterialsGrid", "slots": 0, "autoInteract":false}
+			]},
+			[
+				{"mode" : "v", "expandMode":[1,0]},
+				[
+					{"mode" : "h", "expandMode":[0,0]},
+					{"type":"label", "id":"craftTimeDurationLabel", "text" : "", "inline":true},
+					{"type":"label", "id":"craftTimeScaleLabel", "text" : "", "inline":true},
+					{"type":"label", "id":"craftTimePercentageLabel", "text" : "", "inline":true}
+				]
+			],
+			[
+				{"scissoring" : false},
+				{"type":"itemSlot", "id" : "craftItemSlot", "autoInteract":false, "glyph" : "/interface/wr/automation/assembler/output.png"},
+				{"type":"iconButton", "id" :"decAmountButton", "image" : "/interface/pickleft.png", "hoverImage":"/interface/pickleftover.png"},
+				[
+					{"expandMode":[0,0], "size" : [40,16]},
+					{"type":"textBox", "id" : "amountTextBox", "expandMode":[0,0]}
+				],
+				{"type":"iconButton", "id" :"incAmountButton", "image" : "/interface/pickright.png", "hoverImage":"/interface/pickrightover.png"},
+				{"type":"button", "id" :"craftButton", "caption" : "Craft", "expandMode":[2,0]}
 
-        ]}
+			]
+		]}
 	]
 }

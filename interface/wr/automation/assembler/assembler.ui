@@ -12,20 +12,20 @@
         {"mode" : "h"},
       	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
             {"mode" : "v"},
-            {"type":"panel","style":"flat","expandMode":[1,0],"children":[
+            [
                 {"mode" : "h"},
                 {"type": "itemSlot", "id" : "craftingStationSlot", "autoInteract" : true, "glyph" : "crafting.png", "toolTip" : "Crafting Station"},
                 {"type": "itemSlot", "id" : "craftingAddonSlot", "autoInteract" : true, "glyph" : "crafting.png", "toolTip" : "Crafting Addon", "visible" : false},
                 {"type": "itemSlot", "id" : "craftingItemSlot", "autoInteract" : true, "glyph" : "output.png", "toolTip" : "Output Item"},
                 {"type": "textBox", "id" : "searchBox", "caption" : "Search Recipes..."}
-            ]},
+            ],
             {"type":"layout","id":"recipeListLayout","expandMode":[1,2], "mode": "v", "children":[]}
         ]},
       	{"type":"panel","style":"convex","expandMode":[1,1],"children":[
             {"mode" : "v"},
             {"type":"label","text":"Current Recipe", "align" : "center"},
             {"type":"panel","style":"flat", "id":"outputPanel","expandMode":[1,0],"children":[{"mode":"h", "scissoring":false}]},
-            {"type":"label","text":"Ingredients", "align" : "center"},
+            {"type":"label","text":"Materials", "align" : "center"},
             {"type":"panel","style":"concave","expandMode":[1,1],"children":[
                 {"mode" : "v"},
                 { "type" : "scrollArea", "id" : "recipeInputsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [

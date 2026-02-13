@@ -32,7 +32,9 @@ function durationLabel(time)
 	local timeDivisor = 1
 	local timeLabel	= "Seconds"
 	local compTime = time
-	if compTime >= 60 then
+	if time == 1 then
+		timeLabel = "Second"
+	elseif compTime >= 60 then
 		timeLabel = "Minutes"
 		timeDivisor = timeDivisor * 60
 		compTime = time / timeDivisor
@@ -76,5 +78,5 @@ function clipAtThousandth(n)
 	if n < 0.001 then
 		return "< 0.001"
 	end
-	return tostring(math.floor(n * 1000) / 1000)
+	return ("%s"):format(math.floor(n * 1000) / 1000)
 end

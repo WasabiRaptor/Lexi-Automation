@@ -28,6 +28,7 @@ local stationRecipes = {}
 local allRecipes = {}
 local recipeRPC
 local recipeTabs
+local craftingSpeed
 
 local activeCoroutine
 local currentRecipe
@@ -37,6 +38,7 @@ local raritySort = true
 function init()
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
 	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
+	craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
 
@@ -65,7 +67,7 @@ function init()
 	end
 	getUniqueRecipes(world.getObjectParameter(pane.sourceEntity(), "recipes"))
 	refreshCurrentRecipes()
-	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+	selectRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
 function update()
 	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
@@ -87,7 +89,7 @@ function update()
 	end
 	if recipeRPC and recipeRPC:finished() then
 		recipeRPC = nil
-		displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+		selectRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 	end
 end
 
@@ -378,12 +380,12 @@ function searchRecipes(amount)
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		if recipe.output[1] then
-			if recipe.recipeName:lower():find(searchText) then
+			if cache.name:lower():find(searchText) then
 				return table.insert(searchedRecipes, recipe)
 			end
 			for j, item in ipairs(recipe.output) do
 				local id = (item.item or item.name)
-				local cache = cache[j]
+				local cache = cache.output[j]
 				if id:lower():find(searchText) or cache.name:lower():find(searchText) then
 					return table.insert(searchedRecipes, recipe)
 				end
@@ -395,7 +397,6 @@ function searchRecipes(amount)
 			end
 		end
 	end
-	recipePage = 0
 	if searchText == "" then
 		searchedRecipes = currentRecipes
 	else
@@ -416,18 +417,21 @@ function refreshDisplayedRecipes(amount)
 		if not craftingItem then
 			_ENV.recipeListLayout:addChild({
 				type = "label",
-				text = "Insert an item to list its recipes."
+				text = "Insert an item to list its recipes.",
+				align = "center"
 			})
 		else
 			if _ENV.craftingStationSlot.visible then
 				_ENV.recipeListLayout:addChild({
 					type = "label",
-					text = ("No recipes found.\nInsert a crafting station with a recipe for the desired item.")
+					text = ("No recipes found.\nInsert a crafting station with a recipe for the desired item."),
+					align = "center"
 				})
 			else
 				_ENV.recipeListLayout:addChild({
 					type = "label",
-					text = ("No recipes found.")
+					text = ("No recipes found."),
+					align = "center"
 				})
 			end
 		end
@@ -435,7 +439,8 @@ function refreshDisplayedRecipes(amount)
 	elseif #searchedRecipes == 0 then
 		_ENV.recipeListLayout:addChild({
 			type = "label",
-			text = ("No search results.")
+			text = ("No search results."),
+			align = "center"
 		})
 		return true
 	end
@@ -450,7 +455,6 @@ function refreshDisplayedRecipes(amount)
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 
-		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 		local duration = math.max(
 			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
@@ -460,10 +464,6 @@ function refreshDisplayedRecipes(amount)
 		local outputLayout
 		local productSlotsId = tostring(rand:randu32())
 		if recipe.output[1] then
-
-			local outputSlots = {
-				{ mode = "h", scissoring = false, expandMode = { 1, 0 } }
-			}
 			outputLayout = {
 				{ mode = "v",     expandMode = { 1, 0 } },
 				{ type = "label", text = recipe.recipeName },
@@ -476,7 +476,7 @@ function refreshDisplayedRecipes(amount)
 					style = "flat",
 					children = {
 						{ mode = "v",     expandMode = { 1, 0 } },
-						{ type = "label", text = "Products" },
+						{ type = "label", text = "Products", align = "center" },
 						{ type = "itemGrid", id = productSlotsId, slots = 0, autoInteract = false}
 					},
 				}
@@ -515,7 +515,7 @@ function refreshDisplayedRecipes(amount)
 							style = "flat",
 							children = {
 								{ mode = "v",     expandMode = { 1, 0 }, scissoring = false },
-								{ type = "label", text = "Ingredients" },
+								{ type = "label", text = "Materials", align = "center" },
 								{ type = "itemGrid", id = ingredientSlotsId, slots = 0, autoInteract = false}
 							},
 						}
@@ -533,17 +533,19 @@ function refreshDisplayedRecipes(amount)
 		end
 
 		function listItem:onClick()
-			recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
+			selectRecipe(recipe)
 		end
 	end
 
 	if recipeTabs then
+		local firstTab
 		for _, tabData in ipairs(recipeTabs) do
 			local hash = tostring(rand:randu32())
 			local tab = tabField:newTab({
 				id = tabData.id,
 				title = tabData.title or "",
 				icon = tabData.icon,
+				visible = false,
 				contents = {
 					{
 						type = "panel",
@@ -561,17 +563,26 @@ function refreshDisplayedRecipes(amount)
 					}
 				}
 			})
+			local found = false
 			local tabScrollArea = _ENV[hash]
 			for _, recipe in ipairs(currentRecipes) do
 				for _, v in ipairs(tabData.filter) do
 					for _, group in ipairs(recipe.groups) do
 						if group == v then
 							listRecipe(tabScrollArea, recipe)
+							found = true
 							break
 						end
 					end
 				end
 			end
+			tab:setVisible(found)
+			if found and not firstTab then
+				firstTab = tab
+			end
+		end
+		if firstTab then
+			firstTab:select()
 		end
 	else
 		for j = 1, math.ceil(#currentRecipes / recipesPerPage) do
@@ -612,7 +623,7 @@ function refreshDisplayedRecipes(amount)
 	return true
 end
 
-function displayRecipe(recipe)
+function selectRecipe(recipe)
 	if not recipe then return end
 
 	local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
@@ -654,7 +665,6 @@ function displayRecipe(recipe)
 		end
 	end)
 
-	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 	local duration = math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
@@ -777,11 +787,14 @@ function displayRecipe(recipe)
 				style = "flat",
 				children = {
 					{ mode = "v", expandMode = {1,0} },
-					{ type = "label", text = "Products"},
-					outputSlots
+					{ type = "label", text = "Products", align = "center"},
+					{ type = "itemGrid", id = "recipeProductsItemGrid", slots = 0, autoInteract = false}
 				},
 			}
 		}})
+		for _, input in ipairs(recipe.output) do
+			_ENV.recipeProductsItemGrid:addSlot(input)
+		end
 
 	else
 		local itemConfig = root.itemConfig(recipe.output)

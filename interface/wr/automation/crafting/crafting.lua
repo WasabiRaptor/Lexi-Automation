@@ -6,7 +6,6 @@ local currentRecipes = {}
 local recipeOutputCache = {}
 local recipesPerPage = 50
 local searchedRecipes = {}
-
 function uninit()
 end
 
@@ -15,15 +14,21 @@ local requiresBlueprint = true
 local uniqueRecipes = {}
 local stationRecipes = {}
 local allRecipes = {}
-local recipeRPC
 local activeCoroutine
 local recipeTabs
+local selectedRecipe
+local craftAmount = 1
+local crafting = false
+local craftTimer = 0
 
+local craftingSpeed
 local currentRecipe
 local raritySort = true
 function init()
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
 	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
+
+	craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 
 	rarityMap = root.assetJson("/interface/wr/automation/rarity.config")
 
@@ -48,8 +53,12 @@ function init()
 	end
 	getUniqueRecipes(world.getObjectParameter(pane.sourceEntity(), "recipes"))
 	refreshCurrentRecipes()
-	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+	selectRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+
+	_ENV.amountTextBox:setText("1")
 end
+
+
 function update()
 	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
 		local success, error = coroutine.resume(activeCoroutine, 2000)
@@ -64,14 +73,52 @@ function update()
 				type = "label", text = itemPrintout, color = "FF7F00"
 			})
 			_ENV.recipeListLayout:addChild({
-				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
+				type = "label", text = error:gsub("\t", "  "), color = "FFFF00"
 			})
 		end
 	end
-	if recipeRPC and recipeRPC:finished() then
-		recipeRPC = nil
-		displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+	if crafting and selectedRecipe then
+		craftRecipe()
 	end
+end
+
+function craftRecipe()
+	craftTimer = craftTimer + script.updateDt()
+	local duration = (selectedRecipe.duration / craftingSpeed)
+	if craftTimer >= duration then
+		for _, v in ipairs(selectedRecipe.input) do
+			if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) > 0) and not player.isAdmin() then
+				crafting = false
+				craftAmount = 0
+				craftTimer = 0
+				return
+			end
+		end
+		if not player.isAdmin() then
+			for _, v in ipairs(selectedRecipe.input) do
+				player.consumeItem(v, false, selectedRecipe.matchInputParameters)
+			end
+		end
+		if selectedRecipe.output[1] then
+			for _, v in ipairs(selectedRecipe.output) do
+				player.giveItem(v)
+			end
+		else
+			player.giveItem(selectedRecipe.output)
+		end
+		craftAmount = craftAmount - 1
+		craftTimer = craftTimer - duration
+		if craftAmount == 0 then
+			crafting = false
+		end
+		local craftItem = _ENV.craftItemSlot:item()
+		craftItem.count = math.max(1,craftAmount)
+		_ENV.craftItemSlot:setItem(craftItem)
+		widget.setItemSlotProgress(_ENV.craftItemSlot.subWidgets.slot, 0)
+	else
+		widget.setItemSlotProgress(_ENV.craftItemSlot.subWidgets.slot, craftTimer / duration)
+	end
+
 end
 
 function refreshCurrentRecipes()
@@ -125,7 +172,6 @@ function loadRecipes(amount)
 				end
 				cache.output[i].rarity = rarityMap[(cache.output[i].mergedConfig.rarity or "common"):lower()] or 0
 
-				sb.logInfo("%s, %s", cache.output[i].mergedConfig.rarity, sb.printJson(cache.output[i].mergedConfig))
 				cache.rarity = cache.rarity + cache.output[i].rarity
 			end
 		else
@@ -237,13 +283,21 @@ function searchRecipes(amount)
 		local cache = recipeOutputCache[i]
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
+		if _ENV.materialsAvailableCheckBox.checked then
+			for _, v in ipairs(recipe.input) do
+				if not (player.hasCountOfItem(v, recipe.matchInputParameters) > 0) and not player.isAdmin() then
+					return
+				end
+			end
+		end
+		if searchText == "" then return table.insert(searchedRecipes, recipe) end
 		if recipe.output[1] then
-			if recipe.recipeName:lower():find(searchText) then
+			if cache.name:lower():find(searchText) then
 				return table.insert(searchedRecipes, recipe)
 			end
 			for j, item in ipairs(recipe.output) do
 				local id = (item.item or item.name)
-				local cache = cache[j]
+				local cache = cache.output[j]
 				if id:lower():find(searchText) or cache.name:lower():find(searchText) then
 					return table.insert(searchedRecipes, recipe)
 				end
@@ -255,8 +309,7 @@ function searchRecipes(amount)
 			end
 		end
 	end
-	recipePage = 0
-	if searchText == "" then
+	if searchText == "" and not _ENV.materialsAvailableCheckBox.checked then
 		searchedRecipes = currentRecipes
 	else
 		searchedRecipes = {}
@@ -295,7 +348,8 @@ function refreshDisplayedRecipes(amount)
 	elseif #searchedRecipes == 0 then
 		_ENV.recipeListLayout:addChild({
 			type = "label",
-			text = ("No search results.")
+			text = ("No search results."),
+			align = "center"
 		})
 		return true
 	end
@@ -310,7 +364,6 @@ function refreshDisplayedRecipes(amount)
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 
-		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 		local duration = math.max(
 			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
@@ -320,10 +373,6 @@ function refreshDisplayedRecipes(amount)
 		local outputLayout
 		local productSlotsId = tostring(rand:randu32())
 		if recipe.output[1] then
-
-			local outputSlots = {
-				{ mode = "h", scissoring = false, expandMode = { 1, 0 } }
-			}
 			outputLayout = {
 				{ mode = "v",     expandMode = { 1, 0 } },
 				{ type = "label", text = recipe.recipeName },
@@ -336,7 +385,7 @@ function refreshDisplayedRecipes(amount)
 					style = "flat",
 					children = {
 						{ mode = "v",     expandMode = { 1, 0 } },
-						{ type = "label", text = "Products" },
+						{ type = "label", text = "Products", align = "center" },
 						{ type = "itemGrid", id = productSlotsId, slots = 0, autoInteract = false}
 					},
 				}
@@ -375,7 +424,7 @@ function refreshDisplayedRecipes(amount)
 							style = "flat",
 							children = {
 								{ mode = "v",     expandMode = { 1, 0 }, scissoring = false },
-								{ type = "label", text = "Ingredients" },
+								{ type = "label", text = "Materials", align = "center" },
 								{ type = "itemGrid", id = ingredientSlotsId, slots = 0, autoInteract = false}
 							},
 						}
@@ -393,17 +442,19 @@ function refreshDisplayedRecipes(amount)
 		end
 
 		function listItem:onClick()
-			recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
+			selectRecipe(recipe)
 		end
 	end
 
 	if recipeTabs then
+		local firstTab
 		for _, tabData in ipairs(recipeTabs) do
 			local hash = tostring(rand:randu32())
 			local tab = tabField:newTab({
 				id = tabData.id,
 				title = tabData.title or "",
 				icon = tabData.icon,
+				visible = false,
 				contents = {
 					{
 						type = "panel",
@@ -421,17 +472,26 @@ function refreshDisplayedRecipes(amount)
 					}
 				}
 			})
+			local found = false
 			local tabScrollArea = _ENV[hash]
 			for _, recipe in ipairs(currentRecipes) do
 				for _, v in ipairs(tabData.filter) do
 					for _, group in ipairs(recipe.groups) do
 						if group == v then
 							listRecipe(tabScrollArea, recipe)
+							found = true
 							break
 						end
 					end
 				end
 			end
+			tab:setVisible(found)
+			if found and not firstTab then
+				firstTab = tab
+			end
+		end
+		if firstTab then
+			firstTab:select()
 		end
 	else
 		for j = 1, math.ceil(#currentRecipes / recipesPerPage) do
@@ -472,71 +532,108 @@ function refreshDisplayedRecipes(amount)
 	return true
 end
 
-function displayRecipe(recipe)
-	if not recipe then return end
+function selectRecipe(recipe)
+	crafting = false
+	craftAmount = 0
+	craftTimer = 0
+	_ENV.recipeOutputScrollArea:clearChildren()
+	_ENV.recipeMaterialsGrid:setNumSlots(0)
+	widget.setItemSlotProgress(_ENV.craftItemSlot.subWidgets.slot, 0)
+	selectedRecipe = recipe
+	if not recipe then
+		_ENV.craftTimeDurationLabel:setText("")
+		_ENV.craftTimeScaleLabel:setText("")
+		_ENV.craftItemSlot:setItem(nil)
+		return
+	end
 
-
-	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 	local duration = math.max(
 		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
 		(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	) / craftingSpeed
 
-
-	_ENV.outputPanel:clearChildren()
-	if recipe.output[1] then
-		local outputSlots = {
-			{mode = "h", scissoring = false, expandMode = {1,0}}
-		}
-		for _, output in ipairs(recipe.output) do
-			table.insert(outputSlots, {
-				type = "itemSlot",
-				item = output
-			})
-		end
-		local divisor, timeLabel = durationLabel(duration)
-
-		_ENV.outputPanel:addChild({ type = "layout", mode = "v", expandMode = { 1, 0 }, children = {
-			{ type = "label", text = recipe.recipeName },
-			{
-				{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
-				{ type = "label", text = timeLabel,               inline = true }
-			},
-			{
-				type = "panel",
-				style = "flat",
-				children = {
-					{ mode = "v", expandMode = {1,0} },
-					{ type = "label", text = "Products"},
-					outputSlots
-				},
-			}
-		}})
-
-	else
-		local itemConfig = root.itemConfig(recipe.output)
+	local divisor, timeLabel = durationLabel(duration)
+	local function addProduct(item)
+		local itemConfig = root.itemConfig(item)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-
-		local divisor, timeLabel = durationLabel(duration)
-		_ENV.outputPanel:addChild({
-			type = "layout",
-			mode = "h",
-			scissoring = false,
+		_ENV.recipeOutputScrollArea:addChild({
+			type = "panel",
+			style = "convex",
+			expandMode = {1,0},
 			children = {
-				{type= "itemSlot", autoInteract= false, glyph= "output.png", item = recipe.output},
+				{mode = "v", expandMode = {1,0}},
 				{
-					{type= "label", text= merged.shortdescription},
-					{
-						{ type = "label", text = clipAtThousandth(duration/divisor), inline = true },
-						{ type = "label", text = timeLabel,               inline = true }
-					}
-				}
-			},
+					{ mode = "h" },
+					{ type = "itemSlot", item = item, autoInteract = false },
+					{ type = "label", text = merged.shortdescription },
+				},
+				{ type = "label", text = merged.description },
+			}
 		})
+
+	end
+	_ENV.craftTimeDurationLabel:setText(clipAtThousandth(duration / divisor))
+	_ENV.craftTimeScaleLabel:setText(timeLabel)
+	if recipe.output[1] then
+		local craftItem = copy(recipe.output[1])
+		craftItem.count = 1
+		_ENV.craftItemSlot:setItem(craftItem)
+		for _, product in ipairs(recipe.output) do
+			addProduct(product)
+		end
+	else
+		local craftItem = copy(recipe.output)
+		craftItem.count = 1
+		_ENV.craftItemSlot:setItem(craftItem)
+		addProduct(recipe.output)
+	end
+	for _, v in ipairs(recipe.input) do
+		_ENV.recipeMaterialsGrid:addSlot(v)
 	end
 end
 
 function _ENV.searchBox:onTextChanged()
+	activeCoroutine = coroutine.create(searchRecipes)
+end
+
+function _ENV.amountTextBox:onTextChanged()
+	local number = tonumber(self.text)
+	if number and (number >= 0) then
+		self:setColor("00FF00")
+	else
+		self:setColor("FF0000")
+	end
+end
+
+function _ENV.decAmountButton:onClick()
+	local number = tonumber(_ENV.amountTextBox.text)
+	number = math.max(1, number - 1)
+	_ENV.amountTextBox:setText(tostring(number))
+end
+function _ENV.incAmountButton:onClick()
+	local number = tonumber(_ENV.amountTextBox.text)
+	number = math.max(1, number + 1)
+	_ENV.amountTextBox:setText(tostring(number))
+end
+
+function _ENV.craftButton:onClick()
+	for _, v in ipairs(selectedRecipe.input) do
+		if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) > 0) and not player.isAdmin() then
+			return
+		end
+	end
+
+	local number = tonumber(_ENV.amountTextBox.text)
+	if number and (number >= 0) then
+		craftAmount = craftAmount + number
+		local craftItem = _ENV.craftItemSlot:item()
+		craftItem.count = craftAmount
+		_ENV.craftItemSlot:setItem(craftItem)
+	end
+	crafting = true
+end
+
+function _ENV.materialsAvailableCheckBox:onClick()
 	activeCoroutine = coroutine.create(searchRecipes)
 end
