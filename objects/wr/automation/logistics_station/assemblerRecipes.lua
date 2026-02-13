@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 
 wr_assemblerRecipes["wr/logistics_station"] = function(craftingStation, addon)
 	local itemConfig = root.itemConfig(craftingStation)

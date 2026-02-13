@@ -67,7 +67,7 @@ function init()
 	end
 	getUniqueRecipes(world.getObjectParameter(pane.sourceEntity(), "recipes"))
 	refreshCurrentRecipes()
-	selectRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
 function update()
 	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
@@ -89,7 +89,7 @@ function update()
 	end
 	if recipeRPC and recipeRPC:finished() then
 		recipeRPC = nil
-		selectRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
+		displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 	end
 end
 
@@ -624,6 +624,10 @@ function refreshDisplayedRecipes(amount)
 end
 
 function selectRecipe(recipe)
+	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
+end
+
+function displayRecipe(recipe)
 	if not recipe then return end
 
 	local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
