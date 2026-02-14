@@ -1,0 +1,17 @@
+{
+  "itemName" : "wr/automation_manual_technical",
+  "price" : 1,
+  "maxStack" : 1,
+  "rarity" : "common",
+  "description" : "Information manual for the matter logistics system.\nThis one contains techincial details about the mod itself rather than from an in-universe perspective.",
+  "shortdescription" : "Matter Logistics Manual (Technical)",
+  "twoHanded" : true,
+  "category" : "Tool",
+  "itemTags" : ["tool"],
+
+  "inventoryIcon" : "icon.png",
+
+  "ui" : "wr_automation:manual_technical",
+  "scripts" : ["manual.lua"],
+  "scriptDelta" : 0
+}

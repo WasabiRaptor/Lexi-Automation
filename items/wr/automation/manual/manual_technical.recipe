@@ -1,0 +1,11 @@
+{
+  "input" : [
+    { "item" : "money", "count" : 10 }
+  ],
+  "output" : {
+    "item" : "wr/automation_manual_technical",
+    "count" : 1
+  },
+  "duration" : 0,
+  "groups" : [ "logistics_station", "equipment", "all" ]
+}

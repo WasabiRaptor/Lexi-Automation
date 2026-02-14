@@ -1,0 +1,103 @@
+{ //  -*- grammar-ext: json -*-
+	"style" : "window", // window (has titlebar), panel (just a frame) etc.
+	"size" : [320, 256], // *internal* size (not including chrome)
+	"resizable" : true,
+	"minSize" : [320, 128],
+
+	"title" : "Matter Logistics Manual",
+	"icon" : "/items/wr/automation/manual/icon.png",
+	"uniqueBy" : "path",
+	"scripts" : [ ],
+	"children" : [
+		{"type":"tabField", "layout" : "vertical", "tabs":[
+			{"id":"intro", "title":"Intro", "icon":"/items/wr/automation/manual/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"label", "text":"Welcome to Lexi's Automation mod! This mod is a labor of love (and spite) to make the best and most lag free automation mod I can make within starbound!"},
+				{"type":"label", "text":"In this manual I'll be explaining some of the mechanics in detail with how they relate to the actual functionality of the game rather than flavoring it with an in-universe perspective on what's going on."},
+				{"type":"label", "text":"While most of the features of this mod do not explicitly require OpenStarbound to be installed, your experience will be much better if it is."},
+				[
+					{"type":"image", "file":"/interface/wr/automation/input.png"},
+					{"type":"label", "text":"Input"}
+				],
+				[
+					{"type":"image", "file":"/interface/wr/automation/output.png"},
+					{"type":"label", "text":"Output"}
+				],
+				{"type":"label", "text":"Prime example of a better experience being, the custom wire node icons and wire colors. This was a feature I personally implemented into OSB which allows an object's config to define it's own images for its wire node icons, as well as what color its wires are. Rather than in retail it being hardcoded to a specific image and color."},
+				{"type":"label", "text":"While that isn't required for the mod to function, it does help with visualization a lot. Other than that there are some machines which require some more functionality that just isn't accessible to lua in the retail build of starbound, such as being not being able to fetch the config needed to determine monster drops via a monster's id, so the cloning vat can't function."}
+
+			]}]}]},
+			{"id":"relay", "title":"Relay", "icon":"/objects/wr/automation/relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/relay/animationParts/back.png:default"},
+				{"type":"label", "text":"Relays, relays are very important and kinda are just how everything works, a relay will combine matter streams from its input and repeat them to its output."},
+				{"type":"label", "text":"A relay's output, and all other matter stream outputs for any object, will split their output evenly between all valid matter stream recievers it is connected to. When a matter stream output is connected to a non matter stream reciever, it will not be counted when splitting the output, meaning it can be used as a logic wire signal."},
+				{"type":"label", "text":"Relays and all other matter streaming objects are smart! They only refresh and cause updates downstream if a change in inputs causes a change in their outputs. They do not have any logic that has to process each game tick, this is the main reason this system is lag friendly."}
+			]}]}]},
+			{"id":"relay_splitter", "title":"Relay Splitter", "icon":"/objects/wr/automation/relay_splitter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/relay_splitter/animationParts/back.png:default"},
+				{"type":"label", "text":"Relay splitters are very important for setting specific output rates for matter streams. They have three output nodes on the top, one matter stream input node on the bottom, and two logic input nodes on the bottom."},
+				{"type":"label", "text":"The output rates for the left and right nodes can be configured to specific rates within it's menu, the left output has priority over the right output if you set a rate higher than the current input is supplying. The logic input nodes beneath the left and right outputs can be used to control whether that output is active or not."},
+				{"type":"label", "text":"Any inputs that aren't filtered to the left or right will simply pass through the center output."}
+			]}]}]},
+			{"id":"planetary_relay", "title":"Planetary Relay", "icon":"/objects/wr/automation/planetary_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back.png:default"},
+				{"type":"label", "text":"Planetary relays are used to transport a matter stream to anywhere else on the same planet."},
+				{"type":"label", "text":"Only a single pair of relays can share a channel, attempting to assign the same channel to a second input or output is not allowed. These channels are not player specific! Any player on the same planet can pair a relay to the same channel."},
+				{"type":"label", "text":"When an input has the output stream change, the output and objects connected downstream are briefly loaded in when recieving the entity message to refresh the matter stream."},
+				{"type":"label", "text":"They're also useful as a sort of stop-gap in a network. Seeing as objects connected by wire nodes inherently cause the connected objects to also be loaded, these sort of cause a 'break' in that chain, as the paired relays only cause the other to become loaded via an entity message when the output changes."},
+				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will now allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
+			]}]}]},
+			{"id":"universal_relay", "title":"Universal Relay", "icon":"/objects/wr/automation/universal_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back.png:default"},
+				{"type":"label", "text":"Universal relays are used to transport a matter stream to anywhere else in the same universe."},
+				{"type":"label", "text":"Only a single pair of relays can share a channel, attempting to assign the same channel to a second input or output is not allowed. These channels are player specific! Two different players assigning channel 'A' to a relay will never have their relays interact with the one belonging to the other player."},
+				{"type":"label", "text":"When an input has the output stream change, the output and objects connected downstream are briefly loaded in when recieving the entity message to refresh the matter stream. These entity messages that can cross to different planets are only possible in OpenStarbound! So the recipe for these is not availble when OSB is not installed."},
+				{"type":"label", "text":"They're also useful as a sort of stop-gap in a network. Seeing as objects connected by wire nodes inherently cause the connected objects to also be loaded, these sort of cause a 'break' in that chain, as the paired relays only cause the other to become loaded via an entity message when the output changes."},
+				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will now allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
+			]}]}]},
+			{"id":"inserter", "title":"Inserter", "icon":"/objects/wr/automation/inserter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/inserter/animationParts/back.png:default"},
+				{"type":"label", "text":"Inserters are used to insert items from a matter stream into an inventory. It only occupies two tiles, the part sticking out to the side goes behind a container object to attach it."},
+				{"type":"label", "text":"They have one matter stream input node, and one logic output node. The logic node will output positive if the inserter was able to insert any items into the inventory it was attached to the last time it ticked."},
+				{"type":"label", "text":"There are two varieties of inserter, MK1 and MK2."},
+				{"type": "spacer"},
+				{"type":"label", "text":"MK1 inserter will insert items at the rate of the slowest item in its matter stream input. These are the optimal ones for performance, as they will tick less often input a bulk amount of items into an inventory at once. And if used smartly with splitters so it only recieves only one kind of item, it will be functionally identical to a MK2 Inserter."},
+				{"type": "spacer"},
+				{"type":"label", "text":"MK2 inserter will insert items at the rate of the fastest item in its matter stream input. They will still build up their slower inputs over time until they have enough to insert an item. But as these would likely be ticking faster, they're not as optimal for performance."},
+				{"type": "spacer"},
+				{"type":"label", "text":"Regardless of performance, neither of these should lag your game out too much, as they're both limited to never tick faster than once per second. And after the inventory they're attached to is full, they'll slow their tick rate down to once per minute."},
+				{"type":"label", "text":"Another very cool feature of constant production rates, is these can even 'function' while they're not loaded in! They simply save the world time when they were unloaded, and then the next time they load in they will insert as many items as they would have from the difference in time! As long as they weren't recieving a stream from an exporter at least."}
+
+			]}]}]},
+			{"id":"exporter", "title":"Exporter", "icon":"/objects/wr/automation/exporter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/exporter/animationParts/back.png:default"},
+				{"type":"label", "text":"Exporters are used to consume items from an inventory to output a matter stream. It only occupies two tiles, the part sticking out below goes behind a container object to attach it."},
+				{"type":"label", "text":"They have one matter stream output node, and one logic input node. The logic input node can be used to enable or disable the exporter."},
+				{"type":"label", "text":"There are two varieties of exporter, MK1 and MK2."},
+				{"type": "spacer"},
+				{"type":"label", "text":"MK1 Exporter is 50% efficient, meaning it will consume 2x the amount it outputs."},
+				{"type": "spacer"},
+				{"type":"label", "text":"MK2 Exporter is 75% efficient. meaning it will consume 1.3x the amount it outputs."},
+				{"type": "spacer"},
+				{"type":"label", "text":"These both tick at the rate of their fastest output, but only consumes slower items when they need to. It will also only consume items when all of it's filtered outputs can be consumed. If it can't consme enough on a tick for any of it's outputs, it will stop outputting everying."},
+				{"type":"label", "text":"The reason for the ineffecient conversion rates for these is an intentional decision to de-incentivize their use. Because of the fact that these cannot be relied on to produce a constant unchanging matter stream, and the fact that they have to be loaded in for their inventory contents to be consumed, these and any machines downstream from their output are deined from connecting to a Planetary or Universal relay."}
+			]}]}]},
+			{"id":"assembler", "title":"Assembler", "icon":"/objects/wr/automation/assembler/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/assembler/animationParts/assembler.png:default"},
+				{"type":"label", "text":"Assemblers are used to craft any recipe in the game, including modded ones!"},
+				{"type":"label", "text":"By default they will have recipes from crafting anvil 2 available, however they can have their available recipes set to inherit from any crafting station that uses the vanilla crafting interface when that crafting station is placed into the slot in the top left of it's GUI"},
+				{"type":"image", "file":"/interface/wr/automation/assembler/crafting.png"},
+				{"type":"label", "text":"If OpenStarbound is installed, then all currently available recipes will be listed, otherwise the desired result item must also be placed in the slot next to it for it's recipes to be listed. This is because in the retail starbound executable, one can get a list of recipes for a result item, but not all available recipes for a station."},
+				{"type":"label", "text":"Once a recipe is selected, the crafting station can be removed and the recipe will stay in that assembler until it is broken or changed to a different recipe. These recipes set on machines will not update themselves if the recipe for an item is changed between mod updates."},
+				{"type":"label", "text":"Assemblers will craft a recipe if all it's inputs are above the machine's minimum production rate. It will output the crafted item at the rate of it's slowest input, and excess ingredients are discarded, so it is best to use splitters to try and balance input rates and only send it what it is using."}
+			]}]}]}
+		]}
+	]
+}

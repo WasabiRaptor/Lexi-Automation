@@ -13,6 +13,8 @@
 		"generic_machine" : "/interface/wr/automation/generic_machine/build.lua",
 		"exporter" : "/interface/wr/automation/exporter/build.lua",
 		"relay" : "/interface/wr/automation/relay/build.lua",
-		"crafting" : "/interface/wr/automation/crafting/build.lua"
+		"crafting" : "/interface/wr/automation/crafting/build.lua",
+		"manual" : "/interface/wr/automation/manual/manual.ui",
+		"manual_technical" : "/interface/wr/automation/manual/manual_technical.ui"
 	}}
 ]

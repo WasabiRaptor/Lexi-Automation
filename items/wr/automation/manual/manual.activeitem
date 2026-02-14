@@ -1,0 +1,17 @@
+{
+  "itemName" : "wr/automation_manual",
+  "price" : 1,
+  "maxStack" : 1,
+  "rarity" : "common",
+  "description" : "Information manual for the matter logistics system.",
+  "shortdescription" : "Matter Logistics Manual",
+  "twoHanded" : true,
+  "category" : "Tool",
+  "itemTags" : ["tool"],
+
+  "inventoryIcon" : "icon.png",
+
+  "ui" : "wr_automation:manual",
+  "scripts" : ["manual.lua"],
+  "scriptDelta" : 0
+}
