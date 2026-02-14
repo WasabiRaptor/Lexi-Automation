@@ -19,6 +19,8 @@
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/planetary_relay_input_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/planetary_relay_output_mk1"}},
         {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/logistics_station"}},
-        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/ore_scanner"}}
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/ore_scanner"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/automation_manual"}},
+        {"op":"add", "path":"/defaultBlueprints/tier1/-", "value" : {"item":"wr/automation_manual_technical"}}
     ]
 ]

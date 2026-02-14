@@ -8,5 +8,5 @@
     "count" : 1
   },
   "duration" : 5,
-  "groups" : [ "logistics_station", "logistics", "all" ]
+  "groups" : [ "wr_logistics_station", "logistics", "all" ]
 }
