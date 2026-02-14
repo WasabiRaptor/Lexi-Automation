@@ -17,12 +17,14 @@ function init()
 	storage.leftovers = storage.leftovers or {}
 	storage.fuel = storage.fuel or 0
 
-	if products and products[1] and storage.uninitTime then
+	if products and products[1] and storage.uninitTime and (not (world.type() == "unknown")) then
 		if storage.fuel > 0 then
 			animator.setAnimationState("extractor", "on")
 			initTick = true
 		end
-		local timePassed = math.min(world.time() - storage.uninitTime, storage.fuel)
+		local currentTime = world.time()
+		local timePassed = math.min(currentTime - storage.uninitTime, storage.fuel)
+		storage.uninitTime = currentTime
 		storage.fuel = math.max(0, storage.fuel - timePassed)
 		for i, product in ipairs(products[1]) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (product.count * timePassed)

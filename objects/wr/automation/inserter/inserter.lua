@@ -18,9 +18,10 @@ function init()
 	if not inputs then
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
-	elseif inputs and storage.uninitTime and (not fromExporter) then
-		script.setUpdateDelta(delta)
-		local timePassed = world.time() - storage.uninitTime
+	elseif inputs and storage.uninitTime and (not fromExporter) and (not (world.type() == "unknown")) then
+		local currentTime = world.time()
+		local timePassed = currentTime - storage.uninitTime
+		storage.uninitTime = currentTime
 		for i, input in ipairs(inputs) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (input.count * timePassed)
 		end
