@@ -198,6 +198,9 @@ function loadRecipes(amount)
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
+		for currency, value in pairs(recipe.currencyInputs or {}) do
+			table.insert(recipe.input, {item = currency, count = value})
+		end
 		if recipe.output[1] then
 			cache.output = {}
 			cache.rarity = 0

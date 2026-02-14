@@ -78,5 +78,10 @@ function clipAtThousandth(n)
 	if n < 0.001 then
 		return "< 0.001"
 	end
-	return ("%s"):format(math.floor(n * 1000) / 1000)
+    local printNumber = math.floor(n * 1000) / 1000
+    local floored = math.floor(printNumber)
+	if floored == printNumber then
+		return ("%s"):format(floored)
+	end
+	return ("%s"):format(printNumber)
 end

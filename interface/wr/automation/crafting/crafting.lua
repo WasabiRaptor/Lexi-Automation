@@ -99,9 +99,21 @@ function craftRecipe()
 				return
 			end
 		end
+		for currency, value in pairs(selectedRecipe.currencyInputs or {}) do
+			if (player.currency(currency) < value) and not player.isAdmin() then
+				crafting = false
+				craftAmount = 0
+				craftTimer = 0
+				return
+			end
+		end
+
 		if not player.isAdmin() then
 			for _, v in ipairs(selectedRecipe.input) do
 				player.consumeItem(v, false, selectedRecipe.matchInputParameters)
+			end
+			for currency, v in pairs(selectedRecipe.currencyInputs or {}) do
+				player.consumeCurrency(currency, v)
 			end
 		end
 		if selectedRecipe.output[1] then
@@ -294,6 +306,11 @@ function searchRecipes(amount)
 					return
 				end
 			end
+			for currency, value in pairs(recipe.currencyInputs or {}) do
+				if (player.currency(currency) < value) and not player.isAdmin() then
+					return
+				end
+			end
 		end
 		if searchText == "" then return table.insert(searchedRecipes, recipe) end
 		if recipe.output[1] then
@@ -440,6 +457,10 @@ function refreshDisplayedRecipes(amount)
 		for _, input in ipairs(recipe.input) do
 			_ENV[ingredientSlotsId]:addSlot(input)
 		end
+		for currency, value in pairs(recipe.currencyInputs or {}) do
+			_ENV[ingredientSlotsId]:addSlot({item = currency, count = value})
+		end
+
 		if recipe.output[1] then
 			for _, input in ipairs(recipe.output) do
 				_ENV[productSlotsId]:addSlot(input)
@@ -553,7 +574,7 @@ function selectRecipe(recipe)
 	end
 
 	local duration = math.max(
-		0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
+		0, -- It's fine to let people craft instantly here
 		(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 		(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 	) / craftingSpeed
@@ -595,6 +616,9 @@ function selectRecipe(recipe)
 	end
 	for _, v in ipairs(recipe.input) do
 		_ENV.recipeMaterialsGrid:addSlot(v)
+	end
+	for currency, value in pairs(recipe.currencyInputs or {}) do
+		_ENV.recipeMaterialsGrid:addSlot({item = currency, count = value})
 	end
 end
 
