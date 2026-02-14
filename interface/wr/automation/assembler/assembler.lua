@@ -374,7 +374,7 @@ function searchRecipes(amount)
 		type = "label", text = "Searching Recipes...", align = "center"
 	})
 	local searchText = _ENV.searchBox.text:lower()
-	local function isRecipeSearched(i, recipe)
+	local function insertSearchedRecipe(i, recipe)
 		currentRecipe = recipe
 		local cache = recipeOutputCache[i]
 		amount = amount - 1
@@ -402,7 +402,7 @@ function searchRecipes(amount)
 	else
 		searchedRecipes = {}
 		for i, recipe in ipairs(currentRecipes) do
-			isRecipeSearched(i, recipe)
+			insertSearchedRecipe(i, recipe)
 		end
 	end
 	currentRecipe = nil
@@ -565,7 +565,7 @@ function refreshDisplayedRecipes(amount)
 			})
 			local found = false
 			local tabScrollArea = _ENV[hash]
-			for _, recipe in ipairs(currentRecipes) do
+			for _, recipe in ipairs(searchedRecipes) do
 				for _, v in ipairs(tabData.filter) do
 					for _, group in ipairs(recipe.groups) do
 						if group == v then

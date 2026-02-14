@@ -67,13 +67,18 @@ function update()
 			sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, itemPrintout, error)
 			_ENV.recipeListLayout:clearChildren()
 			_ENV.recipeListLayout:addChild({
-				type = "label", text = errorMessage, align = "center", color = "FF0000"
-			})
-			_ENV.recipeListLayout:addChild({
-				type = "label", text = itemPrintout, color = "FF7F00"
-			})
-			_ENV.recipeListLayout:addChild({
-				type = "label", text = error:gsub("\t", "  "), color = "FFFF00"
+				type = "scrollArea",
+				expandMode = { 2, 2 },
+				scrollDirectons = { 0, 1 },
+				children = {
+					{
+						type = "label", text = errorMessage, align = "center", color = "FF0000"
+					},{
+						type = "label", text = itemPrintout, color = "FF7F00"
+					},{
+						type = "label", text = error:gsub("\t", "  "), color = "FFFF00"
+					}
+				}
 			})
 		end
 	end
@@ -87,7 +92,7 @@ function craftRecipe()
 	local duration = (selectedRecipe.duration / craftingSpeed)
 	if craftTimer >= duration then
 		for _, v in ipairs(selectedRecipe.input) do
-			if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) >= v.count) and not player.isAdmin() then
+			if (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) < v.count) and not player.isAdmin() then
 				crafting = false
 				craftAmount = 0
 				craftTimer = 0
@@ -278,14 +283,14 @@ function searchRecipes(amount)
 		type = "label", text = "Searching Recipes...", align = "center"
 	})
 	local searchText = _ENV.searchBox.text:lower()
-	local function isRecipeSearched(i, recipe)
+	local function insertSearchedRecipe(i, recipe)
 		currentRecipe = recipe
 		local cache = recipeOutputCache[i]
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		if _ENV.materialsAvailableCheckBox.checked then
 			for _, v in ipairs(recipe.input) do
-				if not (player.hasCountOfItem(v, recipe.matchInputParameters) >= v.count) and not player.isAdmin() then
+				if (player.hasCountOfItem(v, recipe.matchInputParameters) < v.count) and not player.isAdmin() then
 					return
 				end
 			end
@@ -309,12 +314,12 @@ function searchRecipes(amount)
 			end
 		end
 	end
-	if searchText == "" and not _ENV.materialsAvailableCheckBox.checked then
+	if (searchText == "") and (not _ENV.materialsAvailableCheckBox.checked) then
 		searchedRecipes = currentRecipes
 	else
 		searchedRecipes = {}
 		for i, recipe in ipairs(currentRecipes) do
-			isRecipeSearched(i, recipe)
+			insertSearchedRecipe(i, recipe)
 		end
 	end
 	currentRecipe = nil
@@ -365,7 +370,7 @@ function refreshDisplayedRecipes(amount)
 		if amount == 0 then coroutine.yield() end
 
 		local duration = math.max(
-			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
+			0, -- It's fine to let people craft instantly here
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 		) / craftingSpeed
@@ -474,7 +479,7 @@ function refreshDisplayedRecipes(amount)
 			})
 			local found = false
 			local tabScrollArea = _ENV[hash]
-			for _, recipe in ipairs(currentRecipes) do
+			for _, recipe in ipairs(searchedRecipes) do
 				for _, v in ipairs(tabData.filter) do
 					for _, group in ipairs(recipe.groups) do
 						if group == v then
@@ -619,7 +624,7 @@ end
 
 function _ENV.craftButton:onClick()
 	for _, v in ipairs(selectedRecipe.input) do
-		if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) >= v.count) and not player.isAdmin() then
+		if (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) < v.count) and not player.isAdmin() then
 			return
 		end
 	end
