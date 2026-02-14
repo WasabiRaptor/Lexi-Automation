@@ -16,7 +16,7 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "animationParts/back.png:default",
+      "image" : "animationParts/back/output.png:default",
       "direction" : "left",
       "flipImages" : true,
       "renderLayer" : "Object-5",
@@ -28,7 +28,7 @@
       "anchors" : [ "background" ]
     },
     {
-      "image" : "animationParts/back.png:default",
+      "image" : "animationParts/back/output.png:default",
       "direction" : "right",
       "renderLayer" : "Object-5",
 
@@ -41,8 +41,8 @@
   ],
   "animation" : "planetary_relay.animation",
   "animationParts" : {
-    "back" : "animationParts/back.png",
-    "input" : "animationParts/input.png"
+    "back" : "animationParts/back/output.png",
+    "fullbright" : "animationParts/fullbright/output.png"
   },
 
   "interactAction" : "ScriptPane",

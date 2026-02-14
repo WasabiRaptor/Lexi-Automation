@@ -56,7 +56,11 @@
 			]}]}]},
 			{"id":"planetary_relay", "title":"P. Relay", "icon":"/objects/wr/automation/planetary_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
-				{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back.png:default"},
+				[
+					{"mode":"h", "expandMode":[0,0]},
+					{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back/input.png:default"},
+					{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back/output.png:default"}
+				],
 				{"type":"label", "text":"Planetary relays are used to transport a matter stream to anywhere else on the same planet."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Only a single pair of relays can share a channel, attempting to assign the same channel to a second input or output is not allowed. These channels are not player specific! Any player on the same planet can pair a relay to the same channel."},
@@ -69,7 +73,11 @@
 			]}]}]},
 			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
-				{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back.png:default"},
+				[
+					{"mode":"h", "expandMode":[0,0]},
+					{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back/input.png:default"},
+					{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back/output.png:default"}
+				],
 				{"type":"label", "text":"Universal relays are used to transport a matter stream to anywhere else in the same universe."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Only a single pair of relays can share a channel, attempting to assign the same channel to a second input or output is not allowed. These channels are player specific! Two different players assigning channel 'A' to a relay will never have their relays interact with the one belonging to the other player."},

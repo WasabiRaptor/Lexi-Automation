@@ -23,7 +23,7 @@
           }
         }
       },
-      "input" : {
+      "fullbright" : {
         "properties" : {
           "centered" : false,
           "fullbright" : true,
