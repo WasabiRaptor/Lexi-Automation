@@ -87,7 +87,7 @@ function craftRecipe()
 	local duration = (selectedRecipe.duration / craftingSpeed)
 	if craftTimer >= duration then
 		for _, v in ipairs(selectedRecipe.input) do
-			if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) > 0) and not player.isAdmin() then
+			if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) >= v.count) and not player.isAdmin() then
 				crafting = false
 				craftAmount = 0
 				craftTimer = 0
@@ -285,7 +285,7 @@ function searchRecipes(amount)
 		if amount == 0 then coroutine.yield() end
 		if _ENV.materialsAvailableCheckBox.checked then
 			for _, v in ipairs(recipe.input) do
-				if not (player.hasCountOfItem(v, recipe.matchInputParameters) > 0) and not player.isAdmin() then
+				if not (player.hasCountOfItem(v, recipe.matchInputParameters) >= v.count) and not player.isAdmin() then
 					return
 				end
 			end
@@ -619,7 +619,7 @@ end
 
 function _ENV.craftButton:onClick()
 	for _, v in ipairs(selectedRecipe.input) do
-		if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) > 0) and not player.isAdmin() then
+		if not (player.hasCountOfItem(v, selectedRecipe.matchInputParameters) >= v.count) and not player.isAdmin() then
 			return
 		end
 	end
