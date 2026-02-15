@@ -137,7 +137,7 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Assemblers will craft a recipe if all it's inputs are above the machine's minimum production rate. It will output the crafted item at the rate of it's slowest input, and excess ingredients are discarded, so it is best to use splitters to try and balance input rates and only send it what it is using."}
 			]}]}]},
-			{"id":"extractor", "title":"Exctractor", "icon":"/objects/wr/automation/extractor/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+			{"id":"extractor", "title":"Extractor", "icon":"/objects/wr/automation/extractor/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				[
 					{"mode":"stack", "expandMode":[0,0]},
