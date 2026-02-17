@@ -10,6 +10,7 @@ local inputNodesConfig
 local outputNodesConfig
 
 wr_assemblerRecipes = {} -- for scripted crafting stations to have scripts to tell the assembler what recipes it has
+require("/interface/wr/automation/assembler/assemblerRecipes.lua")
 
 function uninit()
 	local craftingItem = _ENV.craftingItemSlot:item()
@@ -129,7 +130,7 @@ function refreshCurrentRecipes()
 				end
 			end
 		end
-		if merged.wr_assemblerRecipeScripts then
+		if merged.wr_assemblerRecipeScripts or (type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function") then
 			for _, v in ipairs(merged.wr_assemblerRecipeScripts) do
 				require(v)
 			end
