@@ -130,10 +130,10 @@ function refreshCurrentRecipes()
 				end
 			end
 		end
-		if merged.wr_assemblerRecipeScripts or (type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function") then
-			for _, v in ipairs(merged.wr_assemblerRecipeScripts) do
-				require(v)
-			end
+		for _, v in ipairs(merged.wr_assemblerRecipeScripts or {}) do
+			require(v)
+		end
+		if type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function" then
 			filter, stationRecipes, requiresBlueprint, recipeTabs = wr_assemblerRecipes
 				[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
 		elseif merged.interactAction == "OpenCraftingInterface" then
@@ -182,10 +182,18 @@ end
 
 function compareRecipes(a, a_cache, b, b_cache)
 	if (not raritySort) or a_cache.rarity == b_cache.rarity then
+		if a_cache.name == b_cache.name then
+			if a_cache.count == b_cache.count then
+				if a_cache.inputRarity == b_cache.inputRarity then
+					return a_cache.inputNames < b_cache.inputNames
+				end
+				return a_cache.inputRarity < b_cache.inputRarity
+			end
+			return a_cache.count > b_cache.count
+		end
 		return a_cache.name < b_cache.name
-	else
-		return a_cache.rarity > b_cache.rarity
 	end
+	return a_cache.rarity > b_cache.rarity
 end
 
 function loadRecipes(amount)
@@ -200,11 +208,33 @@ function loadRecipes(amount)
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
 		for currency, value in pairs(recipe.currencyInputs or {}) do
-			table.insert(recipe.input, {item = currency, count = value})
+			table.insert(recipe.input, { item = currency, count = value })
 		end
+		recipe.currencyInputs = nil
+
+		cache.input = {}
+		cache.inputRarity = 0
+		cache.inputNames = ""
+		for i, input in ipairs(recipe.input) do
+			cache.input[i] = {}
+			local inputCache = cache.input[i]
+			inputCache.itemConfig = root.itemConfig(input)
+			inputCache.mergedConfig = sb.jsonMerge(inputCache.itemConfig.config, inputCache.itemConfig.parameters)
+			if sb.stripEscapeCodes ~= nil then
+				inputCache.name = sb.stripEscapeCodes(inputCache.mergedConfig.shortdescription)
+			else
+				inputCache.name = inputCache.mergedConfig.shortdescription:gsub("%b^;")
+			end
+			inputCache.rarity = rarityMap[(inputCache.mergedConfig.rarity or "common"):lower()] or 0
+
+			cache.inputRarity = cache.inputRarity + inputCache.rarity
+			cache.inputNames = cache.inputNames .. inputCache.name
+		end
+
 		if recipe.output[1] then
 			cache.output = {}
 			cache.rarity = 0
+			cache.count = 0
 			if sb.stripEscapeCodes ~= nil then
 				cache.name = sb.stripEscapeCodes(recipe.recipeName)
 			else
@@ -212,15 +242,18 @@ function loadRecipes(amount)
 			end
 			for i, product in ipairs(recipe.output) do
 				cache.output[i] = {}
-				cache.output[i].itemConfig = root.itemConfig(product)
-				cache.output[i].mergedConfig = sb.jsonMerge(cache.output[i].itemConfig.config, cache.output[i].itemConfig.parameters)
+				local outputCache = cache.output[i]
+				outputCache.itemConfig = root.itemConfig(product)
+				outputCache.mergedConfig = sb.jsonMerge(outputCache.itemConfig.config, outputCache.itemConfig.parameters)
 				if sb.stripEscapeCodes ~= nil then
-					cache.output[i].name = sb.stripEscapeCodes(cache.output[i].mergedConfig.shortdescription)
+					outputCache.name = sb.stripEscapeCodes(outputCache.mergedConfig.shortdescription)
 				else
-					cache.output[i].name = cache.output[i].mergedConfig.shortdescription:gsub("%b^;")
+					outputCache.name = outputCache.mergedConfig.shortdescription:gsub("%b^;")
 				end
-				cache.output[i].rarity = rarityMap[(cache.output[i].mergedConfig.rarity or "common"):lower()] or 0
-				cache.rarity = cache.rarity + cache.output[i].rarity
+				outputCache.rarity = rarityMap[(outputCache.mergedConfig.rarity or "common"):lower()] or 0
+
+				cache.rarity = cache.rarity + outputCache.rarity
+				cache.count = cache.count + (product.count or 1)
 			end
 		else
 			cache.itemConfig = root.itemConfig(recipe.output)
@@ -231,6 +264,7 @@ function loadRecipes(amount)
 				cache.name = cache.mergedConfig.shortdescription:gsub("%b^;")
 			end
 			cache.rarity = rarityMap[(cache.mergedConfig.rarity or "common"):lower()] or 0
+			cache.count = recipe.output.count or 1
 		end
 		local upperBounds = #currentRecipes + 1
 		local lowerBounds = 1
