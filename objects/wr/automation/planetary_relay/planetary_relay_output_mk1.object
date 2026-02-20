@@ -48,6 +48,12 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:planetary_relay", "data":{"channelProperty":"wr_matterStreamOutputUUID."} },
 
+  // this isn't harmful being here when there's no input nodes, and the gui script uses it
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }],
+
   "outputNodes" : [ [0, 0] ],
   "outputNodesConfig" : [{
     "color" : "#1c8eff",

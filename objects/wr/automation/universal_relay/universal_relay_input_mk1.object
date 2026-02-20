@@ -53,6 +53,12 @@
   }],
   "matterStreamReciever" : [
     true
-  ]
+  ],
+
+  // this isn't harmful being here when there's no output nodes, and the gui script uses it
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
 
 }
