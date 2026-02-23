@@ -151,6 +151,9 @@ function refreshCurrentRecipes()
 		end
 
 		if interactData then
+			if interactData.config then
+				interactData = sb.jsonMerge(root.assetJson(interactData.config), interactData)
+			end
 			filter = interactData.filter
 			if interactData.recipes then
 				stationRecipes = interactData.recipes
