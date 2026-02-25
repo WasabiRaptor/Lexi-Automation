@@ -1,3 +1,7 @@
-{
-	"scriptContexts" : { "wr_automation" : ["/scripts/wr/automation/world.lua"] }
-}
+[
+	[
+		{"op" : "merge", "path":"", "value":{
+			"scriptContexts" : { "wr_automation" : ["/scripts/wr/automation/world.lua"]}
+		}}
+	]
+]
