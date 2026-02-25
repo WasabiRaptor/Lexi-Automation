@@ -189,7 +189,7 @@ function loadRecipes(amount)
 			if sb.stripEscapeCodes ~= nil then
 				inputCache.name = sb.stripEscapeCodes(inputCache.mergedConfig.shortdescription)
 			else
-				inputCache.name = inputCache.mergedConfig.shortdescription:gsub("%b^;")
+				inputCache.name = inputCache.mergedConfig.shortdescription:gsub("%b^;", "")
 			end
 			inputCache.rarity = rarityMap[(inputCache.mergedConfig.rarity or "common"):lower()] or 0
 
@@ -204,7 +204,7 @@ function loadRecipes(amount)
 			if sb.stripEscapeCodes ~= nil then
 				cache.name = sb.stripEscapeCodes(recipe.recipeName)
 			else
-				cache.name = recipe.recipeName:gsub("%b^;")
+				cache.name = recipe.recipeName:gsub("%b^;", "")
 			end
 			for i, product in ipairs(recipe.output) do
 				cache.output[i] = {}
@@ -214,7 +214,7 @@ function loadRecipes(amount)
 				if sb.stripEscapeCodes ~= nil then
 					outputCache.name = sb.stripEscapeCodes(outputCache.mergedConfig.shortdescription)
 				else
-					outputCache.name = outputCache.mergedConfig.shortdescription:gsub("%b^;")
+					outputCache.name = outputCache.mergedConfig.shortdescription:gsub("%b^;", "")
 				end
 				outputCache.rarity = rarityMap[(outputCache.mergedConfig.rarity or "common"):lower()] or 0
 
@@ -227,7 +227,7 @@ function loadRecipes(amount)
 			if sb.stripEscapeCodes ~= nil then
 				cache.name = sb.stripEscapeCodes(cache.mergedConfig.shortdescription)
 			else
-				cache.name = cache.mergedConfig.shortdescription:gsub("%b^;")
+				cache.name = cache.mergedConfig.shortdescription:gsub("%b^;", "")
 			end
 			cache.rarity = rarityMap[(cache.mergedConfig.rarity or "common"):lower()] or 0
 			cache.count = recipe.output.count or 1
