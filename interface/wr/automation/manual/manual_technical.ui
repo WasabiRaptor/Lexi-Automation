@@ -54,7 +54,7 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Any inputs that aren't filtered to the left or right will simply pass through the center output."}
 			]}]}]},
-			{"id":"planetary_relay", "title":"P. Relay", "icon":"/objects/wr/automation/planetary_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+			{"id":"planetary_relay", "title":"P. Relay", "icon":"/objects/wr/automation/planetary_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				[
 					{"mode":"h", "expandMode":[0,0]},
@@ -71,7 +71,7 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will now allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
 			]}]}]},
-			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				[
 					{"mode":"h", "expandMode":[0,0]},

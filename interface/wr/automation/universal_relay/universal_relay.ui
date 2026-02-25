@@ -5,7 +5,7 @@
 	"minSize" : [160, 128],
 
 	"title" : "Universal Relay",
-	"icon" : "/objects/wr/automation/universal_relay/icon.png",
+	"icon" : "/objects/wr/automation/universal_relay/input_icon.png",
 	"uniqueBy" : "path",
 	"scripts" : [ "universal_relay.lua", "/interface/wr/automation/relay/relay.lua" ],
 	"children" : [

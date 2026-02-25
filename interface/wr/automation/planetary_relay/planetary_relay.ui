@@ -5,7 +5,7 @@
 	"minSize" : [160, 128],
 
 	"title" : "Planetary Relay",
-	"icon" : "/objects/wr/automation/planetary_relay/icon.png",
+	"icon" : "/objects/wr/automation/planetary_relay/input_icon.png",
 	"uniqueBy" : "path",
 	"scripts" : [ "planetary_relay.lua", "/interface/wr/automation/relay/relay.lua" ],
 	"children" : [

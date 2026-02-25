@@ -14,7 +14,7 @@
 
   "scriptDelta":0,
   "scripts" : ["output.lua"],
-  "inventoryIcon" : "icon.png",
+  "inventoryIcon" : "output_icon.png",
   "orientations" : [
     {
       "image" : "animationParts/back/output.png:default",
@@ -26,7 +26,7 @@
       "animationPosition" : [-16, 0],
 
       "spaceScan" : 0.1,
-      "anchors" : [ "bottom" ]
+      "anchors" : [ "background" ]
     },
     {
       "image" : "animationParts/back/output.png:default",
@@ -37,7 +37,7 @@
       "animationPosition" : [-16, 0],
 
       "spaceScan" : 0.1,
-      "anchors" : [ "bottom" ]
+      "anchors" : [ "background" ]
     }
   ],
   "animation" : "universal_relay.animation",

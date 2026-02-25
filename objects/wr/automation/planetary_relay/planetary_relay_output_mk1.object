@@ -13,7 +13,7 @@
 
   "scriptDelta":0,
   "scripts" : ["output.lua"],
-  "inventoryIcon" : "icon.png",
+  "inventoryIcon" : "output_icon.png",
   "orientations" : [
     {
       "image" : "animationParts/back/output.png:default",
