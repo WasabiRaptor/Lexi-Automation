@@ -5,7 +5,7 @@
   "price" : 1250,
   "printable" : false,
   "description" : "Used to produce matter streaming logistics components.",
-  "shortdescription" : "Matter Logistics Station",
+  "shortdescription" : "^orange;Matter Logistics Station^white;",
   "race" : "generic",
   "category" : "crafting",
 
