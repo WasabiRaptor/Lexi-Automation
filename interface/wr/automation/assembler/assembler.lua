@@ -223,9 +223,10 @@ function loadRecipes(amount)
 			local inputCache = cache.input[i]
 			inputCache.itemConfig = root.itemConfig(input)
 			inputCache.mergedConfig = sb.jsonMerge(inputCache.itemConfig.config, inputCache.itemConfig.parameters)
+			inputCache.mergedConfig.shortdescription = inputCache.mergedConfig.shortdescription or (input.name or input.item)
 			if sb.stripEscapeCodes ~= nil then
 				inputCache.name = sb.stripEscapeCodes(inputCache.mergedConfig.shortdescription)
-            else
+			else
 				sb.logInfo(sb.printJson(inputCache.mergedConfig,2))
 				inputCache.name = inputCache.mergedConfig.shortdescription:gsub("%b^;", "")
 			end
@@ -249,6 +250,7 @@ function loadRecipes(amount)
 				local outputCache = cache.output[i]
 				outputCache.itemConfig = root.itemConfig(product)
 				outputCache.mergedConfig = sb.jsonMerge(outputCache.itemConfig.config, outputCache.itemConfig.parameters)
+				outputCache.mergedConfig.shortdescription = outputCache.mergedConfig.shortdescription or (product.name or product.item)
 				if sb.stripEscapeCodes ~= nil then
 					outputCache.name = sb.stripEscapeCodes(outputCache.mergedConfig.shortdescription)
 				else
