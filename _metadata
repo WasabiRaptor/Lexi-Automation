@@ -2,9 +2,11 @@
 	"version" : "0.1.2",
 	"tags" : "",
 	"author" : "Wasabi_Raptor",
-	"description" : "",
+	"description" : "Lag friendly automation mod.",
 	"name" : "wr_automation",
 	"friendlyName" : "Lexi's Automation Mod",
+	"link" : "https://github.com/WasabiRaptor/Lexi-Automation",
+	"steamContentId" : "3673481087",
 	"includes" : [
 		"base",
 		"StardustLib", "Stardust Core", "QuickbarMini", "Stardust Core Lite"
