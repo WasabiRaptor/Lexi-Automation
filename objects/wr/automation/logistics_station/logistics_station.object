@@ -27,7 +27,7 @@
     }
   ],
   "recipes" : ["/objects/wr/automation/logistics_station/recipes.config"],
-  "filter" : ["wr_logistics_station", "logistics_station_osb"],
+  "filter" : ["wr_logistics_station", "wr_logistics_station_osb"],
   "recipeTabs" : [
     {"icon" : "/interface/crafting/tabicon_mechanics.png", "filter" : ["production"], "id" : "production"},
     {"icon" : "/interface/crafting/tabicon_logic.png", "filter" : ["logistics"], "id": "logistics"},

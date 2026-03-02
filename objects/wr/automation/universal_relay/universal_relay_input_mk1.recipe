@@ -1,0 +1,10 @@
+{
+  "input" : [
+    { "item" : "wr/planetary_relay_input_mk1", "count" : 1 },
+    { "item" : "teleportercore", "count" : 1 },
+    { "item" : "solariumstar", "count" : 2 }
+  ],
+  "output" : { "item" : "wr/universal_relay_input_mk1", "count" : 1 },
+  "duration" : 5,
+  "groups" : [ "wr_logistics_station_uncraft", "logistics", "all" ]
+}
