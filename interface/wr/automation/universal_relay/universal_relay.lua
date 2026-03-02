@@ -13,7 +13,7 @@ local swapper = {
 	output = "input"
 }
 function init()
-    channel = world.getObjectParameter(pane.sourceEntity(), "channel") or ""
+	channel = world.getObjectParameter(pane.sourceEntity(), "channel") or ""
 	serverUuid = player.serverUuid()
 	serverChannels = player.getProperty("wr_serverRelayChannels") or {}
 	serverChannels[serverUuid] = serverChannels[serverUuid] or {}
@@ -35,27 +35,41 @@ function _ENV.channelTextBox:onTextChanged()
 	if (not _ENV.metagui.inputData.supported) or not world.terrestrial() then
 		return
 	end
-	serverChannels[serverUuid][self.text] = serverChannels[serverUuid][self.text] or {}
-	local used = serverChannels[serverUuid][self.text]
 	if self.text == "" then
 		_ENV.channelStatusLabel.color = nil
 		_ENV.channelStatusLabel:setText("Input a channel name.")
-	elseif used and used[channelProperty] and ((player.worldId() ~= used[channelProperty].worldId) or (world.entityUniqueId(pane.sourceEntity()) ~= used[channelProperty].uniqueId)) then
-		_ENV.channelStatusLabel.color = "FF0000"
-		_ENV.channelStatusLabel:setText("Channel is already in use.")
 	else
-		used[channelProperty] = {
-			uniqueId = world.entityUniqueId(pane.sourceEntity()),
-			worldId = player.worldId()
-		}
-		if channel ~= "" then
-			serverChannels[serverUuid][channel][channelProperty] = nil
+		serverChannels[serverUuid][self.text] = serverChannels[serverUuid][self.text] or {}
+		if (serverChannels[serverUuid][self.text][channelProperty] ~= nil) and (
+			(player.worldId() ~= serverChannels[serverUuid][self.text][channelProperty].worldId)
+			or (world.entityUniqueId(pane.sourceEntity()) ~= serverChannels[serverUuid][self.text][channelProperty].uniqueId)
+		)
+		then
+			_ENV.channelStatusLabel.color = "FF0000"
+			_ENV.channelStatusLabel:setText("Channel is already in use.")
+		else
+			if serverChannels[serverUuid][channel] and (channel ~= self.text) then
+				serverChannels[serverUuid][channel][channelProperty] = nil
+				if not (serverChannels[serverUuid][channel].input and serverChannels[serverUuid][channel].output) then
+					serverChannels[serverUuid][channel] = nil
+				end
+			end
+			serverChannels[serverUuid][self.text][channelProperty] = {
+				uniqueId = world.entityUniqueId(pane.sourceEntity()),
+				worldId = player.worldId()
+			}
+			_ENV.channelStatusLabel.color = "00FF00"
+			_ENV.channelStatusLabel:setText("Channel is available.")
+			world.sendEntityMessage(
+				pane.sourceEntity(),
+				"setChannel",
+				self.text,
+				serverChannels[serverUuid][self.text][swapper[channelProperty]],
+				serverChannels[serverUuid][self.text][channelProperty]
+			)
+			player.setProperty("wr_serverRelayChannels", serverChannels)
+			channel = self.text
 		end
-		channel = self.text
-		_ENV.channelStatusLabel.color = "00FF00"
-		_ENV.channelStatusLabel:setText("Channel is available.")
-		world.sendEntityMessage(pane.sourceEntity(), "setChannel", channel, used[swapper[channelProperty]], used[channelProperty])
-		player.setProperty("wr_serverRelayChannels", serverChannels)
 	end
 end
 
