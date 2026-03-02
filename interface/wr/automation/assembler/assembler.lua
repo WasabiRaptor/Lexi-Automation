@@ -138,10 +138,11 @@ function refreshCurrentRecipes()
 				[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
 		elseif merged.interactAction == "OpenCraftingInterface" then
 			interactData = merged.interactData
-		elseif merged.upgradeStages then
+		end
+		if merged.upgradeStages then
 			local upgradeData = merged.upgradeStages
 				[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
-			interactData = upgradeData.interactData
+			interactData = sb.jsonMerge(interactData, upgradeData.interactData)
 			if upgradeData.addonConfig and upgradeData.addonConfig.usesAddons then
 				doAddons(upgradeData.addonConfig.usesAddons)
 			end
