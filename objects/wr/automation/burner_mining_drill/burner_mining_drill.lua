@@ -1,11 +1,12 @@
 require("/interface/games/util.lua")
-
+require("/objects/wr/automation/wr_automation.lua")
 local products
 local initTick = false
 local wasFull
 local active
 
 function init()
+	wr_automation.init()
 	products = config.getParameter("products")
 	message.setHandler("setProducts", function(_, _, newOutput)
 		setProducts(newOutput)
@@ -19,11 +20,11 @@ function init()
 
 	if products and products[1] and storage.uninitTime and (not (world.type() == "unknown")) then
 		if storage.fuel > 0 then
-			animator.setAnimationState("extractor", "on")
+			wr_automation.playAnimations("on")
 			initTick = true
 		end
 		local currentTime = world.time()
-		local timePassed = math.min(currentTime - storage.uninitTime, storage.fuel)
+		local timePassed = math.min(math.max(0, currentTime - storage.uninitTime), storage.fuel)
 		storage.uninitTime = currentTime
 		storage.fuel = math.max(0, storage.fuel - timePassed)
 		for i, product in ipairs(products[1]) do
@@ -45,7 +46,7 @@ function update(dt)
 		end
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
-		animator.setAnimationState("extractor", "off")
+		wr_automation.playAnimations("off")
 		active = false
 		return
 	end
@@ -65,7 +66,7 @@ function update(dt)
 		end
 	end
 	if attemptedInsert then
-		animator.setAnimationState("extractor", insertedAny and "on" or "off")
+		wr_automation.playAnimations(insertedAny and "on" or "off")
 		storage.fuel = math.max(0, storage.fuel - ((insertedAny and dt) or 0))
 		-- set the wire node output if the inserter inserted any items on this tick
 		object.setOutputNodeLevel(0, insertedAny)

@@ -42,6 +42,7 @@ function _ENV.addFuelButton:onClick()
 end
 
 function _ENV.fuelSlot:acceptsItem(item)
+	if not item then return true end
 	return fuelValues[(item.item or item.name)] ~= nil
 end
 
@@ -70,16 +71,16 @@ local totalFuel = 0
 function update()
 	if fuelRPC and fuelRPC:finished() then
 		if fuelRPC:succeeded() then
-			local consumedFuelValue
+			local item = _ENV.fuelSlot:item()
+			local consumedFuelValue = 0
 			consumedFuelValue, totalFuel = table.unpack(fuelRPC:result())
 			if item then
 				local consumed = math.ceil(consumedFuelValue / fuelValues[(item.item or item.name)])
-				local item = _ENV.fuelSlot:item()
 				item.count = item.count - consumed
 				if item.count <= 0 then
-					_ENV.fuelSlot:setItem(nil)
+					_ENV.fuelSlot:setItem(nil, true)
 				else
-					_ENV.fuelSlot:setItem(item)
+					_ENV.fuelSlot:setItem(item, true)
 				end
 			end
 			maxFuelValue = world.getObjectParameter(pane.sourceEntity(), "maxFuel")

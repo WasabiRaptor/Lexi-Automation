@@ -53,6 +53,11 @@
     "extractor" : "animationParts/big_manipulator.png",
     "front" : "animationParts/frame/front.png"
   },
+  "stateAnimations" : {
+    "on" : { "animations" : {"producing": ["on"]}},
+    "on_offset" : { "animations" : {"producing": ["on_offset"]}},
+    "off" : { "animations" : {"producing": ["off"]}}
+  },
 
   "fuelValues" : {
     "coalore" : 10,
