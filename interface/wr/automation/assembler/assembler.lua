@@ -102,74 +102,9 @@ function refreshCurrentRecipes()
 	})
 
 	local craftingItem = _ENV.craftingItemSlot:item()
-	local craftingStation = _ENV.craftingStationSlot:item()
 
-	filter = nil
+	getCraftingStationRecipes()
 
-	if craftingStation then
-		local itemConfig = root.itemConfig(craftingStation)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		local interactData
-
-		local craftingAddon = _ENV.craftingAddonSlot:item()
-		local craftingAddonConfig
-		local craftingAddonMerged
-		if craftingAddon then
-			craftingAddonConfig = root.itemConfig(craftingAddon)
-			craftingAddonMerged = sb.jsonMerge(craftingAddonConfig.config, craftingAddonConfig.parameters)
-		end
-		local function doAddons(usesAddons)
-			_ENV.craftingAddonSlot:setVisible(true)
-			if craftingAddon then
-				for _, addon in ipairs((craftingAddonMerged.addonConfig or {}).isAddons or {}) do
-					for _, addonConfig in ipairs(usesAddons) do
-						if addon.name == addonConfig.name then
-							interactData = sb.jsonMerge(interactData, addonConfig.addonData.interactData)
-						end
-					end
-				end
-			end
-		end
-		for _, v in ipairs(merged.wr_assemblerRecipeScripts or {}) do
-			require(v)
-		end
-		if type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function" then
-			filter, stationRecipes, requiresBlueprint, recipeTabs = wr_assemblerRecipes
-				[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
-		elseif merged.interactAction == "OpenCraftingInterface" then
-			interactData = merged.interactData
-		end
-		if merged.upgradeStages then
-			local upgradeData = merged.upgradeStages
-				[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
-			interactData = sb.jsonMerge(interactData, upgradeData.interactData)
-			if upgradeData.addonConfig and upgradeData.addonConfig.usesAddons then
-				doAddons(upgradeData.addonConfig.usesAddons)
-			end
-		elseif merged.addonConfig and merged.addonConfig.usesAddons then
-			_ENV.craftingAddonSlot:setVisible(true)
-			doAddons(merged.addonConfig.usesAddons)
-		end
-
-		if interactData then
-			if interactData.config then
-				interactData = sb.jsonMerge(root.assetJson(interactData.config), interactData)
-			end
-			filter = interactData.filter
-			if interactData.recipes then
-				stationRecipes = interactData.recipes
-			end
-			if interactData.requiresBlueprint ~= nil then
-				requiresBlueprint = interactData.requiresBlueprint
-			else
-				requiresBlueprint = true
-			end
-		end
-	else
-		filter = world.getObjectParameter(pane.sourceEntity(), "filter")
-		recipeTabs = world.getObjectParameter(pane.sourceEntity(), "recipeTabs")
-		requiresBlueprint = true
-	end
 	if craftingItem then
 		itemRecipes = root.recipesForItem(craftingItem.name or craftingItem.item)
 		allRecipes = {}
@@ -182,6 +117,82 @@ function refreshCurrentRecipes()
 	end
 	activeCoroutine = coroutine.create(loadRecipes)
 	return true
+end
+
+function getCraftingStationRecipes()
+	local craftingStation = _ENV.craftingStationSlot:item()
+	if not craftingStation then
+		filter = world.getObjectParameter(pane.sourceEntity(), "filter")
+		recipeTabs = world.getObjectParameter(pane.sourceEntity(), "recipeTabs")
+		requiresBlueprint = true
+		return
+	end
+	local itemConfig = root.itemConfig(craftingStation)
+	local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+
+	if merged.recipeGroup and (merged.objectType == "container") then -- for refinery type objects
+		filter = { merged.recipeGroup }
+		recipeTabs = nil
+		requiresBlueprint = false
+		return
+	end
+
+	local interactData
+	local craftingAddon = _ENV.craftingAddonSlot:item()
+	local craftingAddonConfig
+	local craftingAddonMerged
+	if craftingAddon then
+		craftingAddonConfig = root.itemConfig(craftingAddon)
+		craftingAddonMerged = sb.jsonMerge(craftingAddonConfig.config, craftingAddonConfig.parameters)
+	end
+	local function doAddons(usesAddons)
+		_ENV.craftingAddonSlot:setVisible(true)
+		if craftingAddon then
+			for _, addon in ipairs((craftingAddonMerged.addonConfig or {}).isAddons or {}) do
+				for _, addonConfig in ipairs(usesAddons) do
+					if addon.name == addonConfig.name then
+						interactData = sb.jsonMerge(interactData, addonConfig.addonData.interactData)
+					end
+				end
+			end
+		end
+	end
+	for _, v in ipairs(merged.wr_assemblerRecipeScripts or {}) do
+		require(v)
+	end
+	if type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function" then
+		filter, stationRecipes, requiresBlueprint, recipeTabs = wr_assemblerRecipes
+			[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
+		return
+	elseif merged.interactAction == "OpenCraftingInterface" then
+		interactData = merged.interactData
+	end
+	if merged.upgradeStages then
+		local upgradeData = merged.upgradeStages
+			[(merged.scriptStorage or {}).currentStage or merged.startingUpgradeStage]
+		interactData = sb.jsonMerge(interactData, upgradeData.interactData)
+		if upgradeData.addonConfig and upgradeData.addonConfig.usesAddons then
+			doAddons(upgradeData.addonConfig.usesAddons)
+		end
+	elseif merged.addonConfig and merged.addonConfig.usesAddons then
+		_ENV.craftingAddonSlot:setVisible(true)
+		doAddons(merged.addonConfig.usesAddons)
+	end
+
+	if interactData then
+		if interactData.config then
+			interactData = sb.jsonMerge(root.assetJson(interactData.config), interactData)
+		end
+		filter = interactData.filter
+		if interactData.recipes then
+			stationRecipes = interactData.recipes
+		end
+		if interactData.requiresBlueprint ~= nil then
+			requiresBlueprint = interactData.requiresBlueprint
+		else
+			requiresBlueprint = true
+		end
+	end
 end
 
 function compareRecipes(a, a_cache, b, b_cache)
