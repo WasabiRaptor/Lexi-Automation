@@ -183,7 +183,8 @@ Unique recipes are where one defines the recipes unique to this object, this can
 To make a crafting station compatible with being put into the assembler GUI there are three ways.
 - 1 Have your station simply be using the `"interactAction": "OpenCraftingInterface"` from vanilla starbound, the assembler already knows how to handle these.
 - 2 Use the same upgradeable crafting station scripts the stations in vanilla starbound use, the assembler already knows how to handle these.
-- 3 Create a script the assmbler will load to fetch the recipes for your object, example below.
+- 3 Have your station be a container object that uses a `"recipeGroup"` parameter, much like the refinery, the assembler already knows how to handle these.
+- 4 Create a script the assmbler will load to fetch the recipes for your object, example below.
 
 First, create a new lua script, by copying what's below.
 ```lua
