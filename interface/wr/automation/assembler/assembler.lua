@@ -130,13 +130,6 @@ function getCraftingStationRecipes()
 	local itemConfig = root.itemConfig(craftingStation)
 	local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 
-	if merged.recipeGroup and (merged.objectType == "container") then -- for refinery type objects
-		filter = { merged.recipeGroup }
-		recipeTabs = nil
-		requiresBlueprint = false
-		return
-	end
-
 	local interactData
 	local craftingAddon = _ENV.craftingAddonSlot:item()
 	local craftingAddonConfig
@@ -163,6 +156,11 @@ function getCraftingStationRecipes()
 	if type(wr_assemblerRecipes[(craftingStation.item or craftingStation.name)]) == "function" then
 		filter, stationRecipes, requiresBlueprint, recipeTabs = wr_assemblerRecipes
 			[(craftingStation.item or craftingStation.name)](craftingStation, craftingAddon)
+		return
+	elseif merged.recipeGroup and (merged.objectType == "container") then -- for refinery type objects
+		filter = { merged.recipeGroup }
+		recipeTabs = nil
+		requiresBlueprint = false
 		return
 	elseif merged.interactAction == "OpenCraftingInterface" then
 		interactData = merged.interactData
