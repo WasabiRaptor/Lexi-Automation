@@ -59,7 +59,7 @@ function displayInputs()
 				{ mode = "h" },
 				{ type = "itemSlot", item = sb.jsonMerge(target, { count = 1 }) },
 				{
-					{ type = "label",   text = merged.shortdescription },
+					{ type = "label",   text = (merged.shortdescription or target.name or target.item or "") },
 					{
 						{ type = "image", file = outputNodesConfig[1].icon },
 						{ type = "textBox", align = "center", id = "targetTextBox" .. hash },

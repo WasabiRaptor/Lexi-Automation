@@ -67,7 +67,7 @@ function displayInputs()
 				{
 					{ type = "itemSlot", item = sb.jsonMerge(input, { count = 1 }) },
 					{
-						{ type = "label",   text = merged.shortdescription },
+						{ type = "label",   text = (merged.shortdescription or input.name or input.item or "") },
 						{
 							{ type = "image", file = inputNodesConfig[1].icon },
 							{ type = "label", text = clipAtThousandth((timeMultiplier * input.count)), inline = true },

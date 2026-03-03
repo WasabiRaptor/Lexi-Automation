@@ -27,7 +27,7 @@ function refreshDisplayedProducts()
 	if item then
 		local itemConfig = root.itemConfig(item)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		_ENV.inputItemLabel:setText(merged.shortdescription or "")
+		_ENV.inputItemLabel:setText(merged.shortdescription or item.name or item.item or "")
 	else
 		_ENV.inputItemLabel:setText("")
 	end

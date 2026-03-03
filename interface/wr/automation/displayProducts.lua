@@ -21,7 +21,7 @@ function displayProducts(products, noProducts, noNodeProducts)
 							{
 								{ type = "itemSlot", item = sb.jsonMerge(product, { count = 1 }) },
 								{
-									{ type = "label", text = merged.shortdescription },
+									{ type = "label", text = (merged.shortdescription or product.name or product.item or "") },
 									{
 										{ type = "image", file = outputNodesConfig[nodeIndex].icon or "/interface/wr/automation/output.png" },
 										{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)), inline = true },

@@ -153,7 +153,7 @@ function displayOres()
 		local a_rarity = (a.itemConfig.rarity or "common"):lower()
 		local b_rarity = (b.itemConfig.rarity or "common"):lower()
 		if a_rarity == b_rarity then
-			return a.itemConfig.shortdescription < b.itemConfig.shortdescription
+			return (a.itemConfig.shortdescription or a.itemId or "") < (b.itemConfig.shortdescription or b.itemId or "")
 		else
 			return rarityMap[a_rarity] < rarityMap[b_rarity]
 		end
@@ -170,7 +170,7 @@ function displayOres()
 				{
 					{ type = "itemSlot", item = {name = oreData.itemId} },
 					{
-						{ type = "label", text = oreData.itemConfig.shortdescription },
+						{ type = "label", text = (oreData.itemConfig.shortdescription or oreData.itemId or "") },
 						{
 							{ type = "textBox", id = oreData.itemId.."_textBox" },
 							{ type = "label", text = "Per Second" }

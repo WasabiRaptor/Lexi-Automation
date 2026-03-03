@@ -27,7 +27,7 @@ function update()
 					local itemConfig = root.itemConfig(modConfig.config.itemDrop)
 					math.randomseed(sb.staticRandomI32(modConfig.config.itemDrop))
 					if not detectConfig.colors[v] then
-						sb.logWarn("[wr_automation] Resource '%s' does not have color defined for scanning.")
+						sb.logWarn("[wr_automation] Resource '%s' does not have color defined for scanning.", v)
 					end
 					planetOres[modConfig.config.itemDrop] = {
 						noise = oreNoise(modConfig.config.itemDrop, planetData.planetSeed),
