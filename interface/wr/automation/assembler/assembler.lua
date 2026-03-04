@@ -225,7 +225,6 @@ function loadRecipes(amount)
 	local craftingStation = _ENV.craftingStationSlot:item()
 
 	local function insertRecipe(recipe)
-		currentRecipe = recipe
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
@@ -312,6 +311,7 @@ function loadRecipes(amount)
 	end
 
 	local function validateRecipeForItem(recipe)
+		currentRecipe = recipe
 		for _, input in ipairs(recipe.input) do
 			if not root.itemConfig(input) then return end
 		end
@@ -333,6 +333,7 @@ function loadRecipes(amount)
 		end
 	end
 	local function validateRecipe(recipe)
+		currentRecipe = recipe
 		for _, input in ipairs(recipe.input) do
 			if not root.itemConfig(input) then return end
 		end
@@ -364,6 +365,7 @@ function loadRecipes(amount)
 			end
 		end
 		for _, recipe in ipairs(itemRecipes) do
+			currentRecipe = recipe
 			if filter then
 				for _, group in ipairs(filter) do
 					local matched = false

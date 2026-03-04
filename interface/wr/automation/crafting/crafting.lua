@@ -177,7 +177,6 @@ function loadRecipes(amount)
 	currentRecipes = {}
 
 	local function insertRecipe(recipe)
-		currentRecipe = recipe
 		amount = amount - 1
 		if amount == 0 then coroutine.yield() end
 		local cache = {}
@@ -259,6 +258,7 @@ function loadRecipes(amount)
 	end
 
 	local function validateRecipe(recipe)
+		currentRecipe = recipe
 		for _, input in ipairs(recipe.input) do
 			if not root.itemConfig(input) then return end
 		end
