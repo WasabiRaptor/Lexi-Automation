@@ -20,7 +20,6 @@ function init()
 	end)
 	message.setHandler("refreshOutput", function(_, _, targetEntity)
 		world.setExpiryTime(math.max(5,world.expiryTime()))
-		if compare(targetEntity, outputTarget) then return end
 		outputTarget = targetEntity
 		object.setConfigParameter("outputTarget", outputTarget)
 		refreshOutput(true)
@@ -84,7 +83,7 @@ function refreshOutput(force)
 	inputs = newInputs
 	if fromExporter then
 		if outputTarget and selfTarget then
-			world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, nil, selfTarget)
+			world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, false, selfTarget)
 		end
 	else
 		if outputTarget and selfTarget then

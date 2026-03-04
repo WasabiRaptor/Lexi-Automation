@@ -50,7 +50,7 @@ function _ENV.channelTextBox:onTextChanged()
 		else
 			if serverChannels[serverUuid][channel] and (channel ~= self.text) then
 				serverChannels[serverUuid][channel][channelProperty] = nil
-				if not (serverChannels[serverUuid][channel].input and serverChannels[serverUuid][channel].output) then
+				if not (serverChannels[serverUuid][channel].input or serverChannels[serverUuid][channel].output) then
 					serverChannels[serverUuid][channel] = nil
 				end
 			end
@@ -58,8 +58,18 @@ function _ENV.channelTextBox:onTextChanged()
 				uniqueId = world.entityUniqueId(pane.sourceEntity()),
 				worldId = player.worldId()
 			}
-			_ENV.channelStatusLabel.color = "00FF00"
-			_ENV.channelStatusLabel:setText("Channel is available.")
+			_ENV.channelStatusLabel.color = nil
+			if serverChannels[serverUuid][self.text][swapper[channelProperty]] then
+				local celestialCoords, isCelestial = serverChannels[serverUuid][self.text][swapper[channelProperty]].worldId:gsub("^CelestialWorld%:", "")
+				if isCelestial > 0 then
+					_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..celestial.planetName(celestialCoords))
+				else
+					_ENV.channelStatusLabel:setText("Paired")
+				end
+			else
+				_ENV.channelStatusLabel.color = "00FF00"
+				_ENV.channelStatusLabel:setText("Channel is available.")
+			end
 			world.sendEntityMessage(
 				pane.sourceEntity(),
 				"setChannel",

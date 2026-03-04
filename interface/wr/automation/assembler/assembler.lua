@@ -237,7 +237,6 @@ function loadRecipes(amount)
 			if sb.stripEscapeCodes ~= nil then
 				inputCache.name = sb.stripEscapeCodes(inputCache.mergedConfig.shortdescription)
 			else
-				sb.logInfo(sb.printJson(inputCache.mergedConfig,2))
 				inputCache.name = inputCache.mergedConfig.shortdescription:gsub("%b^;", "")
 			end
 			inputCache.rarity = rarityMap[(inputCache.mergedConfig.rarity or "common"):lower()] or 0
