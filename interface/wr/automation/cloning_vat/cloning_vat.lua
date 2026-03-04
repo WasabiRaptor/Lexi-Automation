@@ -80,17 +80,16 @@ function setProducts(item)
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
 		return
 	end
-	local monsterParameters = sb.jsonMerge(root.monsterParameters(item.parameters.pets[1].config.type, item.parameters.pets[1].config.parameters.seed), item.parameters.pets[1].config.parameters)
-	local monsterConfig = root.monsterConfig(item.parameters.pets[1].config.type)
-	local seed = item.parameters.pets[1].config.parameters.seed
-	local level = item.parameters.pets[1].config.parameters.level
-	local health = item.parameters.pets[1].status.stats.maxHealth
+	if not (item.parameters.currentPets and item.parameters.currentPets[1] and item.parameters.currentPets[1].status)  then
+		_ENV.productsScrollArea:clearChildren()
+		_ENV.productsScrollArea:addChild({type = "label", color = "FFFF00", text = "Please activate pod at least once to refresh data.", align = "center"})
+		return
+	end
 
 	local recipeCost = 0
 	local itemCount = 0
 	local products = jarray()
-	local rand = sb.makeRandomSource(sb.staticRandomI32(seed))
-
+	local totalHealth = 0
 	local function addProduct(nodeProducts, item)
 		local found = false
 		for _, v in ipairs(nodeProducts) do
@@ -104,8 +103,7 @@ function setProducts(item)
 			table.insert(nodeProducts, item)
 		end
 	end
-
-	local function addTreasurePool(pool)
+	local function addTreasurePool(pool, level, rand)
 		if not root.isTreasurePool(pool) then return end
 		for i = 1, treasureRolls do
 			for _, treasure in ipairs(root.createTreasure(pool, level, rand:randu32())) do
@@ -114,22 +112,31 @@ function setProducts(item)
 			end
 		end
 	end
-	local function handleDropPools(dropPools)
+	local function handleDropPools(dropPools, level, rand)
 		if not dropPools then return end
 		if type(dropPools) == "table" and dropPools[1] then
 			dropPools = dropPools[rand:randf(1, #dropPools)]
 		end
 		if type(dropPools) == "table" then
 			for k, v in pairs(dropPools) do
-				addTreasurePool(v)
+				addTreasurePool(v, level, rand)
 			end
 		elseif type(dropPools) == "string" then
-			addTreasurePool(dropPools)
+			addTreasurePool(dropPools, level, rand)
 		end
 	end
+	for i, pet in ipairs(item.parameters.currentPets) do
+		local monsterParameters = sb.jsonMerge(root.monsterParameters(pet.config.type, pet.config.parameters.seed), pet.config.parameters)
+		local monsterConfig = root.monsterConfig(pet.config.type)
+		local seed = pet.config.parameters.seed
+		local level = pet.config.parameters.level
+		local health = pet.status.stats.maxHealth
+		local rand = sb.makeRandomSource(sb.staticRandomI32(seed))
 
-	handleDropPools(sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools))
-	handleDropPools(monsterParameters.landedTreasurePool)
+		totalHealth = totalHealth + health
+		handleDropPools(sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools), level, rand)
+		handleDropPools(monsterParameters.landedTreasurePool, level, rand)
+	end
 
 	if #products == 0 then
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
@@ -149,10 +156,10 @@ function setProducts(item)
 
 	local recipe = {
 		input = {
-			{ item = "wr/nutrient_paste", count = math.max(recipeCost,0) + (itemCount * 10) }
+			{ item = "wr/nutrient_paste", count = math.ceil(math.max(recipeCost,0) + totalHealth + (itemCount * 10)) }
 		},
 		output = products,
-		duration = health
+		duration = math.ceil(totalHealth)
 	}
 
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
