@@ -58,13 +58,15 @@ function init()
 	_ENV.amountTextBox:setText("1")
 end
 
+local function errorPrintout(error)
+	sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, sb.printJson(currentRecipe, 2), error)
+end
 
 function update()
 	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
 		local success, error = coroutine.resume(activeCoroutine, 2000)
 		if not success then
-			local itemPrintout = sb.printJson(currentRecipe, 2)
-			sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, itemPrintout, error)
+			errorPrintout(error)
 			_ENV.recipeListLayout:clearChildren()
 			_ENV.recipeListLayout:addChild({
 				type = "scrollArea",
@@ -74,7 +76,7 @@ function update()
 					{
 						type = "label", text = errorMessage, align = "center", color = "FF0000"
 					},{
-						type = "label", text = itemPrintout, color = "FF7F00"
+						type = "label", text = sb.printJson(currentRecipe, 2), color = "FF7F00"
 					},{
 						type = "label", text = error:gsub("\t", "  "), color = "FFFF00"
 					}
@@ -86,6 +88,7 @@ function update()
 		craftRecipe()
 	end
 end
+
 
 function craftRecipe()
 	craftTimer = craftTimer + script.updateDt()
@@ -170,7 +173,7 @@ function compareRecipes(a, a_cache, b, b_cache)
 end
 
 function loadRecipes(amount)
-	errorMessage = "Error while loading recipes."
+	errorMessage = "Error while loading recipe."
 	currentRecipes = {}
 
 	local function insertRecipe(recipe)
@@ -272,13 +275,22 @@ function loadRecipes(amount)
 		end
 	end
 	for _, recipe in ipairs(uniqueRecipes) do
-		validateRecipe(recipe)
+		local success, error = pcall(validateRecipe, recipe)
+		if not success then
+			errorPrintout(error)
+		end
 	end
 	for _, recipe in ipairs(stationRecipes) do
-		validateRecipe(recipe)
+		local success, error = pcall(validateRecipe, recipe)
+		if not success then
+			errorPrintout(error)
+		end
 	end
 	for _, recipe in ipairs(allRecipes) do
-		validateRecipe(recipe)
+		local success, error = pcall(validateRecipe, recipe)
+		if not success then
+			errorPrintout(error)
+		end
 	end
 	currentRecipe = nil
 	activeCoroutine = coroutine.create(searchRecipes)

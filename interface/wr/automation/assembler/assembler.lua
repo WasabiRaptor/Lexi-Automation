@@ -70,21 +70,30 @@ function init()
 	refreshCurrentRecipes()
 	displayRecipe(world.getObjectParameter(pane.sourceEntity(), "recipe"))
 end
+
+local function errorPrintout(error)
+	sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, sb.printJson(currentRecipe, 2), error)
+end
+
 function update()
 	if activeCoroutine and coroutine.status(activeCoroutine) == "suspended" then
 		local success, error = coroutine.resume(activeCoroutine, 2000)
 		if not success then
-			local itemPrintout = sb.printJson(currentRecipe, 2)
-			sb.logError("[wr_automation] %s\n%s\n%s", errorMessage, itemPrintout, error)
+			errorPrintout(error)
 			_ENV.recipeListLayout:clearChildren()
 			_ENV.recipeListLayout:addChild({
-				type = "label", text = errorMessage, align = "center", color = "FF0000"
-			})
-			_ENV.recipeListLayout:addChild({
-				type = "label", text = itemPrintout, color = "FF7F00"
-			})
-			_ENV.recipeListLayout:addChild({
-				type = "label", text = error:gsub("\t","  "), color = "FFFF00"
+				type = "scrollArea",
+				expandMode = { 2, 2 },
+				scrollDirectons = { 0, 1 },
+				children = {
+					{
+						type = "label", text = errorMessage, align = "center", color = "FF0000"
+					},{
+						type = "label", text = sb.printJson(currentRecipe, 2), color = "FF7F00"
+					},{
+						type = "label", text = error:gsub("\t", "  "), color = "FFFF00"
+					}
+				}
 			})
 		end
 	end
@@ -210,7 +219,7 @@ function compareRecipes(a, a_cache, b, b_cache)
 end
 
 function loadRecipes(amount)
-	errorMessage = "Error while loading recipes."
+	errorMessage = "Error while loading recipe."
 	currentRecipes = {}
 	local item = _ENV.craftingItemSlot:item()
 	local craftingStation = _ENV.craftingStationSlot:item()
@@ -342,11 +351,17 @@ function loadRecipes(amount)
 	if item then
 		if not craftingStation then
 			for _, recipe in ipairs(uniqueRecipes) do
-				validateRecipeForItem(recipe)
+				local success, error = pcall(validateRecipeForItem, recipe)
+				if not success then
+					errorPrintout(error)
+				end
 			end
 		end
 		for _, recipe in ipairs(stationRecipes) do
-			validateRecipeForItem(recipe)
+			local success, error = pcall(validateRecipeForItem, recipe)
+			if not success then
+				errorPrintout(error)
+			end
 		end
 		for _, recipe in ipairs(itemRecipes) do
 			if filter then
@@ -354,7 +369,10 @@ function loadRecipes(amount)
 					local matched = false
 					for _, recipeGroup in ipairs(recipe.groups) do
 						if group == recipeGroup then
-							insertRecipe(recipe)
+							local success, error = pcall(insertRecipe, recipe)
+							if not success then
+								errorPrintout(error)
+							end
 							matched = true
 							break
 						end
@@ -362,20 +380,32 @@ function loadRecipes(amount)
 					if matched then break end
 				end
 			else
-				insertRecipe(recipe)
+				local success, error = pcall(insertRecipe, recipe)
+				if not success then
+					errorPrintout(error)
+				end
 			end
 		end
 	else
 		if not craftingStation then
 			for _, recipe in ipairs(uniqueRecipes) do
-				validateRecipe(recipe)
+				local success, error = pcall(validateRecipe, recipe)
+				if not success then
+					errorPrintout(error)
+				end
 			end
 		end
 		for _, recipe in ipairs(stationRecipes) do
-			validateRecipe(recipe)
+			local success, error = pcall(validateRecipe, recipe)
+			if not success then
+				errorPrintout(error)
+			end
 		end
 		for _, recipe in ipairs(allRecipes) do
-			validateRecipe(recipe)
+			local success, error = pcall(validateRecipe, recipe)
+			if not success then
+				errorPrintout(error)
+			end
 		end
 	end
 	currentRecipe = nil
