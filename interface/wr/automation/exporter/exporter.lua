@@ -12,8 +12,8 @@ function init()
 	targetOutput = world.getObjectParameter(pane.sourceEntity(), "targetOutput") or jarray()
 	prevOutput = copy(targetOutput)
 
-    _ENV.efficencyLabel:setText(
-        tostring(math.floor(world.getObjectParameter(pane.sourceEntity(), "efficency") * 100)).."%"
+	_ENV.efficencyLabel:setText(
+		tostring(math.floor(world.getObjectParameter(pane.sourceEntity(), "efficency") * 100)).."%"
 	)
 	local position = world.entityPosition(pane.sourceEntity())
 	local eid = world.objectAt({position[1], position[2]-1})

@@ -55,16 +55,17 @@ function update(dt)
 		local consume = copy(output)
 		consume.totalAmount = ((consume.count / efficency) * dt) - (storage.leftovers[i] or 0)
 		consume.count = math.ceil(consume.totalAmount)
-		local available = world.containerAvailable(exportEntity, consume)
-		if (available > 0) or (consume.count <= 0) then
+		-- check if we're actually consuming items this tick
+		if consume.count > 0 then
 			-- check if we can consume the desired amount of items or not
-			if consume.count > 0 then
+			local available = world.containerAvailable(exportEntity, consume)
+			if not (available > 0) then
+				canConsume = false
+			else
 				table.insert(toConsume, consume)
 			end
-		else
-			canConsume = false
-			break
 		end
+		if not canConsume then break end
 	end
 	if canConsume then
 		animator.setAnimationState("output", "output", true)
