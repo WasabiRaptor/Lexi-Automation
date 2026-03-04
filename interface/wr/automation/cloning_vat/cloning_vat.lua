@@ -9,6 +9,9 @@ local inputNodesConfig
 function init()
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
 	_ENV.inputIconWidget:setFile(inputNodesConfig[1].icon)
+	if root.monsterConfig ~= nil then
+		_ENV.creatureDescLabel:setText("")
+	end
 end
 local initial = true
 function update()
@@ -82,7 +85,7 @@ function setProducts(item)
 	end
 	if not (item.parameters.currentPets and item.parameters.currentPets[1] and item.parameters.currentPets[1].status)  then
 		_ENV.productsScrollArea:clearChildren()
-		_ENV.productsScrollArea:addChild({type = "label", color = "FFFF00", text = "Please activate pod at least once to refresh data.", align = "center"})
+		_ENV.productsScrollArea:addChild({type = "label", color = "FFFF00", text = "Please activate pod at least once to refresh status.", align = "center"})
 		return
 	end
 
@@ -181,7 +184,7 @@ function _ENV.inputItemSlot:onItemModified()
 	local item = self:item()
 	if item then
 		setProducts(item)
-		displayMonster(item.parameters.pets[1].portrait, item.parameters.pets[1].description, item.parameters.tooltipFields.subtitle)
+		displayMonster(item.parameters.tooltipFields.objectImage, item.parameters.description, item.parameters.tooltipFields.subtitle)
 	else
 		setProducts()
 		displayMonster()
