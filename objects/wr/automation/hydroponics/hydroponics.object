@@ -133,7 +133,7 @@
   "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:hydroponics",
 
   "minimumDuration" : 1, // the minimum duration to craft a recipe
-  "craftingSpeed" : 2, // the amount of times it crafts a recipe per cycle
+  "craftingSpeed" : 24, // the amount of times it crafts a recipe per cycle
   "passthrough" : true, // passes unused ingrredients through it's output
 
   "inputNodes" : [ [0, 0] ],

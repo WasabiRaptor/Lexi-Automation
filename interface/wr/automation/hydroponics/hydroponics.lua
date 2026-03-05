@@ -156,9 +156,10 @@ function setProducts()
 		return a.count > b.count
 	end)
 
+	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 	local recipe = {
 		input = {
-			{ item = "liquidwater", count = (itemCount + #merged.stages) * duration }
+			{ item = "liquidwater", count = (itemCount + #merged.stages) * (duration / craftingSpeed) }
 		},
 		output = products,
 		duration = duration
