@@ -69,7 +69,7 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"They're also useful as a sort of stop-gap in a network. Seeing as objects connected by wire nodes inherently cause the connected objects to also be loaded, these sort of cause a 'break' in that chain, as the paired relays only cause the other to become loaded via an entity message when the output changes."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will now allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
+				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will not allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
 			]}]}]},
 			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
@@ -86,7 +86,7 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"They're also useful as a sort of stop-gap in a network. Seeing as objects connected by wire nodes inherently cause the connected objects to also be loaded, these sort of cause a 'break' in that chain, as the paired relays only cause the other to become loaded via an entity message when the output changes."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will now allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
+				{"type":"label", "text":"However this also comes with a limitation. As entities upstream from an output or downstream from an input may be loaded, an input will not allow itself to recieve inputs from an Exporter, as doing so would allow the Exporter to output items while being unloaded and unable to consume items from the inventory it is attached to, or conversely, allow the Exporter to output to a line that currently isn't loaded, which would cause items to be deleted since Insterters at the end of the line aren't loaded in to recieve the output."}
 			]}]}]},
 			{"id":"inserter", "title":"Inserter", "icon":"/objects/wr/automation/inserter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
@@ -168,7 +168,7 @@
 				],
 				{"type":"label", "text":"Ground Pumps are used to extract any naturally occuring fluids from a planet."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"Production rates of fluids are calculated using the planet's celestial parameters. Finding which layer the current position is in, and then providing fluids found in that layer's region data."}
+				{"type":"label", "text":"Production rates of fluids are calculated using the planet's celestial parameters. Finding which layer the current position is in, and then providing fluids found in that layer's biome region data. If the pump is placed beneath the 'sea level' of that biome, it will produce more fluid. A side effect of larger planets having more biomes, means that pumps on larger planets will be more productive."}
 			]}]}]},
 			{"id":"hydroponics", "title":"Hydroponics", "icon":"/objects/wr/automation/hydroponics/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
