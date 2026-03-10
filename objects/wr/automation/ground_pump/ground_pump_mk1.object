@@ -66,7 +66,8 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:ground_pump" },
 
-  "multiplier" : 1,
+  "multiplier" : 3,
+  "oceanAmount" : 15, // amount produced per tick when below sea level for a fluid, stacks with multiplier
 
   "outputNodes" : [ [0, 0] ],
   "outputNodesConfig" : [{

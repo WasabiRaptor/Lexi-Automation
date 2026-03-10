@@ -57,6 +57,7 @@ function setProducts()
 	if not visitableParameters then return end
 	local position = world.entityPosition(pane.sourceEntity())
 	local multiplier = world.getObjectParameter(pane.sourceEntity(), "multiplier") or 1
+	local oceanAmount = world.getObjectParameter(pane.sourceEntity(), "oceanAmount") or 1
 
 	local layers = {}
 	for _, layerName in ipairs(layerOrder) do
@@ -109,7 +110,7 @@ function setProducts()
 	local function addRegionLiquids(region)
 		if region.oceanLiquid ~= 0 then
 			if position[2] <= region.oceanLiquidLevel then
-				addLiquid(region.oceanLiquid, 10)
+				addLiquid(region.oceanLiquid, oceanAmount)
 			end
 		end
 		if region.caveLiquid ~= 0 then
