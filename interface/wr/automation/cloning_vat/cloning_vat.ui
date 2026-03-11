@@ -12,7 +12,8 @@
 		{"mode" : "v"},
 		{"type":"panel","style":"convex","expandMode":[1,2],"children":[
 			{"mode" : "v"},
-			[
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode" : "h"},
 				[
 					{"mode" : "v","expandMode":[2,1]},
 					[
@@ -25,15 +26,24 @@
 				{"type":"panel","style":"convex","expandMode":[0,0],"children":[
 					{"type":"canvas", "size":[50,50], "id":"creaturePortraitCanvas"}
 				]}
-			],
-			[
-				{"type":"itemSlot", "item": {"item":"wr/nutrient_paste", "count":1, "autoInteract":false}},
-				{"type":"image", "file" : "/interface/wr/automation/input.png", "id": "inputIconWidget"},
-				{"type":"label", "text" : "0", "inline":true, "id": "inputAmountLabel"},
-				{"type":"label", "text" : "/", "inline":true},
-				{"type":"label", "text" : "0", "inline":true, "id": "inputMaxAmountLabel"},
-				{"type":"label", "text" : "", "id" : "inputTimeScaleLabel"}
-			],
+			]},
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode" : "v"},
+				[
+					{"type":"itemSlot", "item": {"item":"wr/nutrient_paste", "count":1, "autoInteract":false}},
+					{"type":"image", "file" : "/interface/wr/automation/input.png", "id": "inputIconWidget"},
+					{"type":"label", "text" : "0", "inline":true, "id": "inputAmountLabel"},
+					{"type":"label", "text" : "/", "inline":true},
+					{"type":"label", "text" : "0", "inline":true, "id": "inputMaxAmountLabel"},
+					{"type":"label", "text" : "", "id" : "inputTimeScaleLabel"}
+				],
+				[
+					{"type":"label", "text" : "0", "inline":true, "id": "amountExcludedLabel"},
+					{"type":"label", "text" : "/", "inline":true},
+					{"type":"label", "text" : "0", "inline":true, "id": "maxExcludedLabel"},
+					{"type":"label", "text" : "Materials Excluded"}
+				]
+			]},
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
 				{"mode" : "v"},
 				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [

@@ -1,13 +1,25 @@
 require("/scripts/util.lua")
 require("/interface/games/util.lua")
-require("/interface/wr/automation/displayProducts.lua")
+require("/interface/wr/automation/labels.lua")
 function uninit()
 end
 
+local outputNodesConfig
 local recipeRPC
 local inputNodesConfig
+local cloningProducts
+local cloningEnabled
+local excludedProducts = 0
+local totalProducts = 0
+local cloningPrecision = 0
 function init()
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
+	cloningProducts = world.getObjectParameter(pane.sourceEntity(), "cloningProducts")
+	cloningEnabled = world.getObjectParameter(pane.sourceEntity(), "cloningEnabled")
+	cloningPrecision = world.getObjectParameter(pane.sourceEntity(), "cloningPrecision") or 0
+	cloningCountMultiplier = world.getObjectParameter(pane.sourceEntity(), "cloningCountMultiplier") or 1
+	cloningPriceMultiplier = world.getObjectParameter(pane.sourceEntity(), "cloningPriceMultiplier") or 1
 	_ENV.inputIconWidget:setFile(inputNodesConfig[1].icon)
 	if root.monsterConfig ~= nil then
 		_ENV.creatureDescLabel:setText("")
@@ -28,8 +40,8 @@ function update()
 end
 
 function refreshDisplayedProducts()
-	local products
 	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
+	local productionRate = 0
 	if recipe then
 		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
@@ -39,7 +51,6 @@ function refreshDisplayedProducts()
 			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 		)
 		local maxProductionRate = craftingSpeed / duration
-		local productionRate = 0
 		local maxAmount = recipe.input[1].count * maxProductionRate
 		local timeMultiplier, timeLabel = timeScale(productionRate)
 
@@ -53,32 +64,88 @@ function refreshDisplayedProducts()
 		end
 		_ENV.inputMaxAmountLabel:setText(clipAtThousandth(maxAmount * timeMultiplier))
 		_ENV.inputTimeScaleLabel:setText(timeLabel)
-
-		products = jarray()
-		products[1] = copy(recipe.output)
-		for _, product in ipairs(products[1]) do
-			product.count = product.count * productionRate
-		end
 	else
 		_ENV.inputAmountLabel.color = "FF0000"
 		_ENV.inputAmountLabel:setText("0")
 		_ENV.inputMaxAmountLabel:setText("0")
 	end
 
-	displayProducts(products, {
-		type = "label",
-		text = "Insert a capture pod.",
-	}, {
-		{
+	_ENV.productsScrollArea:clearChildren()
+	if cloningProducts and cloningEnabled then
+		countExcludedProducts()
+		if totalProducts == 0 then
+			_ENV.amountExcludedLabel:setText("0%")
+		else
+			_ENV.amountExcludedLabel:setText(("%d%%"):format(math.ceil((excludedProducts / totalProducts) * 100)))
+		end
+		_ENV.maxExcludedLabel:setText(("%d%%"):format(math.ceil((cloningPrecision) * 100)))
+		if #cloningProducts > 0 then
+			for i, product in ipairs(cloningProducts) do
+				local itemConfig = root.itemConfig(product)
+				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+				local timeMultiplier, timeLabel = timeScale(product.count)
+				_ENV.productsScrollArea:addChild({
+					type = "panel",
+					style = "convex",
+					expandMode = { 1, 0 },
+					children = {
+						{ mode = "v" },
+						{
+							{ type = "itemSlot", item = sb.jsonMerge(product, { count = 1 }) },
+							{
+								{ type = "label", text = (merged.shortdescription or product.name or product.item or "") },
+								{
+									{ type = "checkBox", checked = cloningEnabled[i], id = "cloningProduct"..i.."CheckBox" },
+									{ type = "image", file = outputNodesConfig[1].icon or "/interface/wr/automation/output.png" },
+									{ type = "label", text = clipAtThousandth((timeMultiplier * product.count * productionRate)), inline = true },
+									{ type = "label", text = "/", inline = true },
+									{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)),                        inline = true },
+									{ type = "label", text = timeLabel,                                                                 inline = true }
+								},
+
+							}
+						}
+					},
+				})
+				local checkBox = _ENV["cloningProduct"..i.."CheckBox"]
+				function checkBox:onClick()
+					if self.checked then
+						cloningEnabled[i] = self.checked
+						world.sendEntityMessage(pane.sourceEntity(), "setCloningProducts", cloningProducts, cloningEnabled)
+						countExcludedProducts()
+						setRecipe()
+					else
+						if (((excludedProducts + product.count) / totalProducts) > cloningPrecision) then
+							pane.playSound("/sfx/interface/clickon_error.ogg")
+							self:setChecked(true)
+						else
+							cloningEnabled[i] = self.checked
+							world.sendEntityMessage(pane.sourceEntity(), "setCloningProducts", cloningProducts, cloningEnabled)
+							countExcludedProducts()
+							setRecipe()
+						end
+					end
+				end
+			end
+		else
+			_ENV.productsScrollArea:addChild({
+				type = "label",
+				color = "FF0000",
+				text = "This life-form does not produce any resources.",
+			})
+		end
+	else
+		_ENV.productsScrollArea:addChild({
 			type = "label",
-			color = "FF0000",
-			text = "This life-form does not produce any resources.",
-		}
-	})
+			text = "Insert a capture pod.",
+		})
+	end
 end
 
 local treasureRolls = 100
 function setProducts(item)
+	cloningProducts = nil
+	cloningEnabled = nil
 	if not item then
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
 		return
@@ -88,11 +155,9 @@ function setProducts(item)
 		_ENV.productsScrollArea:addChild({type = "label", color = "FFFF00", text = "Please activate pod at least once to refresh status.", align = "center"})
 		return
 	end
+	cloningProducts = jarray()
+	cloningEnabled = jarray()
 
-	local recipeCost = 0
-	local itemCount = 0
-	local products = jarray()
-	local totalHealth = 0
 	local function addProduct(nodeProducts, item)
 		local found = false
 		for _, v in ipairs(nodeProducts) do
@@ -111,7 +176,7 @@ function setProducts(item)
 		for i = 1, treasureRolls do
 			for _, treasure in ipairs(root.createTreasure(pool, level, rand:randu32())) do
 				treasure.count = treasure.count / treasureRolls
-				addProduct(products, treasure)
+				addProduct(cloningProducts, treasure)
 			end
 		end
 	end
@@ -133,19 +198,45 @@ function setProducts(item)
 		local monsterConfig = root.monsterConfig(pet.config.type)
 		local seed = pet.config.parameters.seed
 		local level = pet.config.parameters.level
-		local health = pet.status.stats.maxHealth
 		local rand = sb.makeRandomSource(sb.staticRandomI32(seed))
 
-		totalHealth = totalHealth + health
 		handleDropPools(sb.jsonMerge(monsterConfig.dropPools, monsterParameters.dropPools), level, rand)
 		handleDropPools(monsterParameters.landedTreasurePool, level, rand)
 	end
 
-	if #products == 0 then
+	if #cloningProducts == 0 then
+		world.sendEntityMessage(pane.sourceEntity(), "setCloningProducts", cloningProducts, cloningEnabled)
 		recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", nil)
 		return
 	end
 
+	table.sort(cloningProducts, function(a, b)
+		return a.count > b.count
+	end)
+
+	for i, v in ipairs(cloningProducts) do
+		cloningEnabled[i] = true
+	end
+	world.sendEntityMessage(pane.sourceEntity(), "setCloningProducts", cloningProducts, cloningEnabled)
+	setRecipe()
+end
+
+function setRecipe()
+	local item = _ENV.inputItemSlot:item()
+	if not item then return end
+	local products = jarray()
+	local recipeCost = 0
+	local itemCount = 0
+	local totalHealth = 0
+	for i, pet in ipairs(item.parameters.currentPets) do
+		totalHealth = totalHealth + pet.status.stats.maxHealth
+	end
+	totalHealth = math.ceil(totalHealth)
+	for i, v in ipairs(cloningProducts) do
+		if cloningEnabled[i] then
+			table.insert(products,v)
+		end
+	end
 	for _, v in ipairs(products) do
 		local itemConfig = root.itemConfig(v)
 		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
@@ -153,21 +244,16 @@ function setProducts(item)
 		itemCount = itemCount + v.count
 	end
 
-	table.sort(products, function(a, b)
-		return a.count > b.count
-	end)
-
 	local recipe = {
 		input = {
-			{ item = "wr/nutrient_paste", count = math.ceil(math.max(recipeCost,0) + totalHealth + (itemCount * 10)) }
+			{ item = "wr/nutrient_paste", count = totalHealth + (recipeCost * cloningPriceMultiplier) + (itemCount * cloningCountMultiplier)}
 		},
 		output = products,
-		duration = math.ceil(totalHealth)
+		duration = totalHealth
 	}
-
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
-	world.sendEntityMessage(pane.sourceEntity(), "setCapturePod", _ENV.inputItemSlot:item())
 end
+
 function displayMonster(portrait, description, name)
 	local canvas = widget.bindCanvas(_ENV.creaturePortraitCanvas.backingWidget)
 	canvas:clear()
@@ -194,4 +280,15 @@ end
 function _ENV.inputItemSlot:acceptsItem(item)
 	if not root.monsterConfig then return false end
 	return item and item.parameters and item.parameters.pets and item.parameters.pets[1] ~= nil
+end
+
+function countExcludedProducts()
+	totalProducts = 0
+	excludedProducts = 0
+	for i, v in ipairs(cloningProducts) do
+		totalProducts = totalProducts + v.count
+		if not cloningEnabled[i] then
+			excludedProducts = excludedProducts + v.count
+		end
+	end
 end

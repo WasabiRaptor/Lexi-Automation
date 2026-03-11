@@ -167,7 +167,6 @@ function setProducts()
 
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
 	world.sendEntityMessage(pane.sourceEntity(), "setPlantImage", (item.item or item.name))
-	world.sendEntityMessage(pane.sourceEntity(), "setCapturePod", _ENV.inputItemSlot:item())
 end
 
 function _ENV.inputItemSlot:onItemModified()
