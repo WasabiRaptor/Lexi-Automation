@@ -42,6 +42,7 @@ end
 function refreshDisplayedProducts()
 	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
 	local productionRate = 0
+	local maxProductionRate = 0
 	if recipe then
 		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
@@ -50,9 +51,9 @@ function refreshDisplayedProducts()
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 		)
-		local maxProductionRate = craftingSpeed / duration
+		maxProductionRate = craftingSpeed / duration
 		local maxAmount = recipe.input[1].count * maxProductionRate
-		local timeMultiplier, timeLabel = timeScale(productionRate)
+		local timeMultiplier, timeLabel = timeScale(maxAmount)
 
 		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "wr/nutrient_paste") then
 			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount) * maxProductionRate)
@@ -83,7 +84,7 @@ function refreshDisplayedProducts()
 			for i, product in ipairs(cloningProducts) do
 				local itemConfig = root.itemConfig(product)
 				local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-				local timeMultiplier, timeLabel = timeScale(product.count)
+				local timeMultiplier, timeLabel = timeScale(product.count * maxProductionRate)
 				_ENV.productsScrollArea:addChild({
 					type = "panel",
 					style = "convex",
@@ -97,9 +98,9 @@ function refreshDisplayedProducts()
 								{
 									{ type = "checkBox", checked = cloningEnabled[i], id = "cloningProduct"..i.."CheckBox" },
 									{ type = "image", file = outputNodesConfig[1].icon or "/interface/wr/automation/output.png" },
-									{ type = "label", text = clipAtThousandth((timeMultiplier * product.count * productionRate)), inline = true },
+									{ type = "label", text = (cloningEnabled[i] and clipAtThousandth((timeMultiplier * product.count * productionRate))) or "0", inline = true },
 									{ type = "label", text = "/", inline = true },
-									{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)),                        inline = true },
+									{ type = "label", text = (cloningEnabled[i] and clipAtThousandth((timeMultiplier * product.count * maxProductionRate))) or "0",                        inline = true },
 									{ type = "label", text = timeLabel,                                                                 inline = true }
 								},
 
