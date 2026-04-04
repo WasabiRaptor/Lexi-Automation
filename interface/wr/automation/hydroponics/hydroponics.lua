@@ -33,6 +33,8 @@ function refreshDisplayedProducts()
 	end
 	local products
 	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
+	local productionRate = 0
+	local maxProductionRate = 0
 	if recipe then
 		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
@@ -41,15 +43,14 @@ function refreshDisplayedProducts()
 			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
 			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
 		)
-		local maxProductionRate = craftingSpeed / duration
-		local productionRate = 0
+		maxProductionRate = craftingSpeed / duration
 		local maxAmount = recipe.input[1].count * maxProductionRate
-		local timeMultiplier, timeLabel = timeScale(productionRate)
+		local timeMultiplier, timeLabel = timeScale(maxAmount)
 
 		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "liquidwater") then
 			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount) * maxProductionRate)
 			_ENV.inputAmountLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
-			_ENV.inputAmountLabel:setText(clipAtThousandth((inputs[1].count * timeMultiplier)))
+			_ENV.inputAmountLabel:setText(clipAtThousandth(inputs[1].count * timeMultiplier))
 		else
 			_ENV.inputAmountLabel.color = "FF0000"
 			_ENV.inputAmountLabel:setText("0")
