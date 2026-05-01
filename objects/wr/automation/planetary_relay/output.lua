@@ -16,6 +16,9 @@ function init()
 	end)
 	message.setHandler("setChannel", function(_, _, newChannel)
 		if newChannel == channel then return end
+		if channel ~= "" then
+			world.setProperty("wr_matterStreamOutputUUID."..channel, nil)
+		end
 		channel = newChannel
 		object.setConfigParameter("channel", channel)
 		world.setProperty("wr_matterStreamOutputUUID."..channel, entity.uniqueId())
