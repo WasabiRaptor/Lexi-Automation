@@ -39,6 +39,7 @@ end
 function die()
 	if channel == "" then return end
 	world.setProperty("wr_matterStreamOutput."..channel, nil)
+	world.setProperty("wr_matterStreamOutputUUID."..channel, nil)
 end
 function refreshOutput(force)
 	local inputUUID = world.getProperty("wr_matterStreamInputUUID."..channel)
