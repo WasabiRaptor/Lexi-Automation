@@ -1,18 +1,25 @@
 require("/scripts/util.lua")
 require("/interface/games/util.lua")
+require("/scripts/messageutil.lua")
 
 function uninit()
 end
 
 local channel
 local channelProperty = _ENV.metagui.inputData.channelProperty
+local swapper = {
+	["wr_matterStreamInputUUID."] = "wr_matterStreamOutputUUID.",
+	["wr_matterStreamOutputUUID."] = "wr_matterStreamInputUUID."
+}
+
+local promises = PromiseKeeper.new()
 function init()
     channel = world.getObjectParameter(pane.sourceEntity(), "channel") or ""
     _ENV.channelTextBox:setText(channel)
-	if world.getObjectParameter(pane.sourceEntity(), "fromExporter") then
-		_ENV.channelStatusLabel.color = "FFFF00"
-		_ENV.channelStatusLabel:setText("Cannot be downstream from an Exporter.")
-	end
+    if world.getObjectParameter(pane.sourceEntity(), "fromExporter") then
+        _ENV.channelStatusLabel.color = "FFFF00"
+        _ENV.channelStatusLabel:setText("Cannot be downstream from an Exporter.")
+    end
 end
 
 function _ENV.channelTextBox:onTextChanged()
@@ -23,10 +30,35 @@ function _ENV.channelTextBox:onTextChanged()
     elseif used and (world.entityUniqueId(pane.sourceEntity()) ~= used) then
         _ENV.channelStatusLabel.color = "FF0000"
         _ENV.channelStatusLabel:setText("Channel is already in use.")
+        promises:add(
+            world.findUniqueEntity(used),
+            function(pos) -- on success
+                _ENV.channelStatusLabel:setText(("^#FF0000; Channel is already in use at: [%d,%d]"):format(pos[1],pos[2]))
+            end,
+            function() -- on failure
+                world.setProperty(channelProperty .. self.text, nil)
+                _ENV.channelTextBox:onTextChanged()
+            end
+        )
     else
         channel = self.text
         _ENV.channelStatusLabel.color = "00FF00"
         _ENV.channelStatusLabel:setText("Channel is available.")
         world.sendEntityMessage(pane.sourceEntity(), "setChannel", channel)
+        local paired = world.getProperty(swapper[channelProperty] .. self.text)
+        if paired then
+            promises:add(
+                world.findUniqueEntity(paired),
+                function(pos) -- on success
+                    _ENV.channelStatusLabel:setText(("^#00FF00;Paired with ^#FFFF00;[%d,%d]"):format(pos[1],pos[2]))
+                end,
+                function() -- on failure
+                end
+            )
+        end
     end
+end
+
+function update()
+    promises:update()
 end
