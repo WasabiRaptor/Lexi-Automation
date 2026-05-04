@@ -48,7 +48,7 @@ function refreshOutput(force)
 	for _, _ in pairs(outputNodes) do
 		newOutputCount = newOutputCount + 1
 	end
-	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, recipe)
 	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
