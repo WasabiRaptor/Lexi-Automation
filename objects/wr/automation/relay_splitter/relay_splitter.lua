@@ -11,12 +11,16 @@ local leftState
 local rightState
 local prevLeftNodeValue
 local prevRightNodeValue
+local anyTargetOutput = jarray()
 function init()
 	wr_automation.init()
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	outputs = config.getParameter("matterStreamOutput")
 	leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()
 	rightTargetOutput = config.getParameter("rightTargetOutput") or jarray()
+	util.appendLists(anyTargetOutput, leftTargetOutput)
+	util.appendLists(anyTargetOutput, rightTargetOutput)
+
 	message.setHandler("refreshInputs", function (_,_,force)
 		refreshOutput(force)
 	end)
@@ -32,6 +36,9 @@ function init()
 			rightTargetOutput = right
 			forceRefresh = true
 		end
+		anyTargetOutput = jarray()
+		util.appendLists(anyTargetOutput, leftTargetOutput)
+		util.appendLists(anyTargetOutput, rightTargetOutput)
 		refreshOutput(forceRefresh)
 	end)
 	leftState = (object.direction() == 1) and "left" or "right"
@@ -87,7 +94,7 @@ function refreshOutput(force)
 		newDefaultOutputCount = newDefaultOutputCount + 1
 	end
 
-	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = anyTargetOutput, matchInputParameters = true})
 	if (not force)
 		and (fromExporter == config.getParameter("fromExporter"))
 		and (newDefaultOutputCount == defaultOutputCount)

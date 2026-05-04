@@ -2,6 +2,7 @@ require("/interface/games/util.lua")
 require("/scripts/poly.lua")
 require("/scripts/rect.lua")
 require("/scripts/vec2.lua")
+require("/scripts/util.lua")
 wr_automation = {}
 
 local stateAnimations

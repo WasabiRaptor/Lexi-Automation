@@ -23,6 +23,8 @@
       "imagePosition" : [0, -8],
       "animationPosition" : [0, -8],
 
+      "targetOffset" : [0,-1],
+
       "spaces" : [
         [0,0], [1,0]
       ]
@@ -34,6 +36,8 @@
 
       "imagePosition" : [0, -8],
       "animationPosition" : [0, -8],
+
+      "targetOffset" : [0,-1],
 
       "spaces" : [
         [0,0], [1,0]

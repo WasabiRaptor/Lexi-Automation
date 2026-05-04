@@ -3,14 +3,21 @@ require("/objects/wr/automation/wr_automation.lua")
 local inputs
 local outputEntity
 local objectPosition
+local targetPosition
 local delta
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
+	targetOutput = config.getParameter("targetOutput") or {}
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
 	local fromExporter = config.getParameter("fromExporter")
 
+	message.setHandler("setTargetOutputs", function(_, _, newOutputs)
+		targetOutput = newOutputs
+		object.setConfigParameter("targetOutput", targetOutput)
+		refreshOutput(true)
+	end)
 	message.setHandler("refreshInputs", function (_,_, force)
 		refreshOutput(force)
 	end)
@@ -42,7 +49,7 @@ function update(dt)
 		return
 	end
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
-		outputEntity = world.objectAt({ objectPosition[1] + object.direction(), objectPosition[2] })
+		exportEntity = world.objectAt(targetPosition)
 	end
 	if not outputEntity then
 		object.setOutputNodeLevel(0, false)
@@ -60,7 +67,11 @@ function update(dt)
 		if output.count > 0 then
 			attemptedInsert = true
 			-- containerAddItems returns leftovers it couldn't add to the container
-			insertedAny = (not world.containerAddItems(outputEntity, output)) or insertedAny
+			if output.slot then
+				insertedAny = (not world.containerPutItemsAt(outputEntity, output, output.slot)) or insertedAny
+			else
+				insertedAny = (not world.containerAddItems(outputEntity, output)) or insertedAny
+			end
 		end
 	end
 
@@ -93,11 +104,19 @@ function refreshOutput(force)
 		object.setOutputNodeLevel(0, false)
 		return
 	end
-	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
+	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = targetOutput, matchInputParameters = true})
 	if (not force) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
+	for _, output in ipairs(targetOutput) do
+		for _, input in ipairs(inputs) do
+			if root.itemDescriptorsMatch(input, output, true) then
+				input.slot = output.slot
+				break
+			end
+		end
+	end
 	local mode = config.getParameter("insertMode")
 	local best
 	if mode == "fast" then

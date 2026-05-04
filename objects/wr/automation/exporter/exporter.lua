@@ -5,13 +5,13 @@ local exportEntity
 local objectPosition
 local delta
 local efficency
+local targetPosition
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
 	outputs = config.getParameter("targetOutput")
 	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
 	efficency = config.getParameter("efficency")
-
 	message.setHandler("setTargetOutputs", function(_, _, newOutputs)
 		setOutputs(newOutputs)
 		refreshOutput()
@@ -39,8 +39,7 @@ function update(dt)
 		return
 	end
 	if (not exportEntity) or (not world.entityExists(exportEntity)) then
-		local position = object.position()
-		exportEntity = world.objectAt({ position[1], position[2] -1 })
+		exportEntity = world.objectAt(targetPosition)
 	end
 	if not exportEntity then
 		object.setOutputNodeLevel(0, false)
@@ -58,7 +57,17 @@ function update(dt)
 		-- check if we're actually consuming items this tick
 		if consume.count > 0 then
 			-- check if we can consume the desired amount of items or not
-			local available = world.containerAvailable(exportEntity, consume)
+			local available
+			if consume.slot then
+				local containerItem = world.containerItemAt(exportEntity, consume.slot)
+				if root.itemDescriptorsMatch(consume, containerItem, true) then
+					available = math.floor(containerItem.count/consume.count)
+				else
+					available = 0
+				end
+			else
+				available = world.containerAvailable(exportEntity, consume)
+			end
 			if not (available > 0) then
 				canConsume = false
 			else
@@ -70,7 +79,11 @@ function update(dt)
 	if canConsume then
 		animator.setAnimationState("output", "output", true)
 		for i, consume in ipairs(toConsume) do
-			if world.containerConsume(exportEntity, consume) then
+			if consume.slot then
+				if world.containerConsumeAt(exportEntity, consume.slot, consume.count) then
+					storage.leftovers[i] = consume.count - consume.totalAmount
+				end
+			elseif world.containerConsume(exportEntity, consume) then
 				storage.leftovers[i] = consume.count - consume.totalAmount
 			end
 		end
@@ -124,11 +137,11 @@ end
 
 function setOutputs(newOutputs)
 	outputs = newOutputs
+	object.setConfigParameter("targetOutput", outputs)
 	if not outputs then
 		script.setUpdateDelta(0)
 		return
 	end
-	object.setConfigParameter("targetOutput", outputs)
 	best = 0
 	for i, input in ipairs(outputs) do
 		storage.leftovers[i] = 0

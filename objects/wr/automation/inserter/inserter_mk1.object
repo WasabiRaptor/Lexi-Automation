@@ -23,6 +23,8 @@
       "imagePosition" : [-8, 0],
       "animationPosition" : [-8, 0],
 
+      "targetOffset" : [-1,0],
+
       "spaces" : [
         [0,0], [0,1]
       ]
@@ -34,6 +36,8 @@
 
       "imagePosition" : [0, 0],
       "animationPosition" : [0, 0],
+
+      "targetOffset" : [1,0],
 
       "spaces" : [
         [0,0], [0,1]
@@ -47,7 +51,7 @@
   },
 
   "interactAction" : "ScriptPane",
-  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:relay" },
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:inserter" },
 
   "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
 
