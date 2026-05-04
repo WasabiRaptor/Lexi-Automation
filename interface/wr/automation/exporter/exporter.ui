@@ -13,7 +13,7 @@
 	  	{"type":"panel","style":"convex","expandMode":[1,2],"children":[
 			{"mode" : "v"},
 			{"type":"label", "text" : "WARNING!", "color":"FFFF00", "align":"center"},
-			{"type":"label", "text" : "Streamed materials not consumed by machines are lost! Make sure to balance output rates accordingly."},
+			{"type":"label", "text" : "Streamed matter not consumed by machines is lost! Make sure to balance output rates accordingly."},
 			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
 				{"mode":"h"},
 				{"type":"label", "text" : "Efficency: ", "inline":true},

@@ -86,7 +86,7 @@ Magenta: Items not included in the recipe are being input.
 - wr/inserter_mk1
 - wr/inserter_mk2
 
-Inserts items into the attached inventory. Has a logic node which outputs positive if it inserted any items last tick.
+Inserts items into the attached inventory. Has a logic node which outputs positive if it inserted any items last tick. Can filter inserting specific items into specific inventory slots.
 MK1 Inserters will tick at the rate of their slowest input.
 MK2 Inserters will tick at the rate of their fastest input.
 
@@ -94,7 +94,7 @@ MK2 Inserters will tick at the rate of their fastest input.
 - wr/exporter_mk1
 - wr/exporter_mk2
 
-Exports items from the attached inventory, stops all output if any item count can't meet their filtered output rate. Exporters are inefficent at converting inventory contents to a matter stream, some materials will be lost in the conversion process. A logic input node can enable/disable the exporter.
+Exports items from the attached inventory, stops all output if any item count can't meet their filtered output rate. Exporters are inefficent at converting inventory contents to a matter stream, some materials will be lost in the conversion process. A logic input node can enable/disable the exporter. Can filter exporting specific items from specific inventory slots.
 MK1 Exporters are 50% efficent.
 MK2 Exporters are 75% efficent.
 

@@ -3,7 +3,7 @@
   "price" : 1,
   "maxStack" : 1,
   "rarity" : "common",
-  "description" : "Information manual for the matter logistics system.",
+  "description" : "Information manual for the Matter Logistics system.",
   "shortdescription" : "Matter Logistics Manual",
   "twoHanded" : true,
   "category" : "Tool",

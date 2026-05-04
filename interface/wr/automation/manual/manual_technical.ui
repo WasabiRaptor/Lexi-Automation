@@ -91,7 +91,7 @@
 			{"id":"inserter", "title":"Inserter", "icon":"/objects/wr/automation/inserter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				{"type":"image", "file":"/objects/wr/automation/inserter/animationParts/back.png:default"},
-				{"type":"label", "text":"Inserters are used to insert items from a matter stream into an inventory. It only occupies two tiles, the part sticking out to the side goes behind a container object to attach it."},
+				{"type":"label", "text":"Inserters attach to an inventory and insert items generated from a matter stream. It only occupies two tiles, the part sticking out to the side goes behind a container object to attach it."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"They have one matter stream input node, and one logic output node. The logic node will output positive if the inserter was able to insert any items into the inventory it was attached to the last time it ticked."},
 				{"type": "spacer", "size":3},
@@ -109,7 +109,7 @@
 			{"id":"exporter", "title":"Exporter", "icon":"/objects/wr/automation/exporter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				{"type":"image", "file":"/objects/wr/automation/exporter/animationParts/back.png:default"},
-				{"type":"label", "text":"Exporters are used to consume items from an inventory to output a matter stream. It only occupies two tiles, the part sticking out below goes behind a container object to attach it."},
+				{"type":"label", "text":"Exporters attach to inventories and consume items to output a matter stream. It only occupies two tiles, the part sticking out below goes behind a container object to attach it."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"They have one matter stream output node, and one logic input node. The logic input node can be used to enable or disable the exporter."},
 				{"type": "spacer", "size":3},
@@ -128,9 +128,9 @@
 				{"type":"image", "file":"/objects/wr/automation/assembler/animationParts/assembler.png:default"},
 				{"type":"label", "text":"Assemblers are used to craft any recipe in the game, including modded ones!"},
 				{"type": "spacer", "size":3},
+				{"type":"image", "file":"/interface/wr/automation/assembler/crafting.png"},
 				{"type":"label", "text":"By default they will have recipes from crafting anvil 2 available, however they can have their available recipes set to inherit from any crafting station that uses the vanilla crafting interface when that crafting station is placed into the slot in the top left of it's GUI"},
 				{"type": "spacer", "size":3},
-				{"type":"image", "file":"/interface/wr/automation/assembler/crafting.png"},
 				{"type":"label", "text":"If OpenStarbound is installed, then all currently available recipes will be listed, otherwise the desired result item must also be placed in the slot next to it for it's recipes to be listed. This is because in the retail build of starbound, one can get a list of recipes for a result item, but not all available recipes for a station."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Once a recipe is selected, the crafting station can be removed and the recipe will stay in that assembler until it is broken or changed to a different recipe. These recipes set on machines will not update themselves if the recipe for an item is changed between mod updates."},

@@ -12,7 +12,184 @@
 		{"type":"tabField", "layout" : "vertical", "tabs":[
 			{"id":"intro", "title":"Intro", "icon":"/items/wr/automation/manual/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
-				{"type":"label", "text":"TODO"}
+				{"type":"label", "text":"Matter Logistics User Manual"},
+				{"type":"label", "text":"By Lexi Bright"},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"The Matter Logistics system was concieved to solve the problem of inefficient practices used in large scale production. Each component is designed to be versatile and highly flexible for the needs of any up-and-coming industry in the galactic scene."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"The Matter Manipulator as well as the many forms of teleportation used across the universe all use the same principle, converting matter into a stream of energy, and then reconsituting it back into matter somewhere else. The technology here is largely the same but adjusting the process for industrial purposes."},
+				{"type": "spacer", "size":3},
+				[
+					{"mode":"h", "expandMode":[0,0]},
+					[
+						{"mode":"h", "expandMode":[0,0]},
+						{"type":"image", "file":"/interface/wr/automation/input.png"},
+						{"type":"label", "text":"Input", "inline":true}
+					],
+					[
+						{"mode":"h", "expandMode":[0,0]},
+						{"type":"image", "file":"/interface/wr/automation/output.png"},
+						{"type":"label", "text":"Output", "inline":true}
+					]
+				],
+				{"type":"label", "text":"With the proper module provided by the Open Star Bureau (OSB) installed to your wiring HUD client, compatible wiring components will be displayed with the above indicators."}
+			]}]}]},
+			{"id":"relay", "title":"Relay", "icon":"/objects/wr/automation/relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/relay/animationParts/back.png:default"},
+				{"type":"label", "text":"The Matter Relay is the core component in almost all matter streaming devices. To be used cheaply at an industrial scale, they have a rather short range before the streamed matter disperses into energy and is lost. However a relay can recieve the stream and re-focus it to extend it's range, this can also be used to combine multiple streams of matter into one."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"The output stream must be connected to another component capable of receiving it, or the matter will be lost. The matter will be split evenly between all valid outputs."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"When the output is connected to a device not capable of receiving a matter stream, the relay will simply send a positive logic signal while the relay is receiving any matter stream."}
+			]}]}]},
+			{"id":"relay_splitter", "title":"Relay Splitter", "icon":"/objects/wr/automation/relay_splitter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/relay_splitter/animationParts/back.png:default"},
+				{"type":"label", "text":"The Relay Splitter is a more advanced and purposed form of the Matter Relay. It can be used to split a stream containing multiple different forms of matter apart so they can be sent in specific amounts to other components."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A user can tune specific output rates for each form of matter to be output by the left and right antennas. A logic signal can be connected beneath the left and right antennas to control when their output is enabled."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"All matter not being sent to the left or right antenna will be sent through the central antenna."}
+			]}]}]},
+			{"id":"planetary_relay", "title":"P. Relay", "icon":"/objects/wr/automation/planetary_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				[
+					{"mode":"h", "expandMode":[0,0]},
+					{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back/input.png:default"},
+					{"type":"image", "file":"/objects/wr/automation/planetary_relay/animationParts/back/output.png:default"}
+				],
+				{"type":"label", "text":"Planetary Matter Relays have an integrated teleporter core to greatly extend the range they can stream matter to anywhere else on the same planet."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Traditional teleporter systems have an extreme range due to being able to build up a charge and then expel it all at once, sending a short powerful matter burst that will reach its destiation long before it would disperse. Comparitively having the core tuned for sending a constant stream of matter rather than in a short burst limits the range to be within a single planet."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A long range matter stream must be tightly focused to reach its destination without dispersing, therefore each input can only be paired with a single output."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Due to important safety measures, a Planetary Matter Relay Input will reject a matter stream received from a Matter Exporter. See page on Matter Exporter for details."}
+			]}]}]},
+			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				[
+					{"mode":"h", "expandMode":[0,0]},
+					{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back/input.png:default"},
+					{"type":"image", "file":"/objects/wr/automation/universal_relay/animationParts/back/output.png:default"}
+				],
+				{"type":"label", "text":"Universal Matter Relays use an artificial Black Hole and White Hole pair to instantly transport matter anywhere else in the universe."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A standard teleporter core is far too weak to send a constant stream of energy across the universe, as the power requirement begins to raise exponentially with the distance. The solution is to instead make a small hole in spacetime so the distance between the two locations is negligible. Using an entangled Black Hole and White Hole pair, all matter that enters the Black Hole will exit the paired White Hole with an effectively imperceptible temporal offset."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Each Black Hole and White Hole is entangled by a unique quantum signature that a conscious observer can entangle to create a paired input and output. However every conscious observer will observe a different signature, leading to every observer having an entirely unique network of quantum sinatures they can assign to their Black and White holes."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Due to varying quantum energy levels in the universe it may not be possible to safely create a suitable Black Hole and White Hole pair. It is required to have the requisite software modules from OSB installed to be able to monitor the quantum energy and safely create and pair a Black Hole and White Hole."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Due to important safety measures, a Universal Matter Relay Input will reject a matter stream received from a Matter Exporter. See page on Matter Exporter for details."}
+			]}]}]},
+			{"id":"inserter", "title":"Inserter", "icon":"/objects/wr/automation/inserter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/inserter/animationParts/back.png:default"},
+				{"type":"label", "text":"Matter Inserters attach to the side of a container and reconstitute streams of matter energy back into matter."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"This device fills a matter buffer until it can reconstitute the matter in as a complete unit, at which it will then insert the reconstituted matter into the container it is attached to. The device will output a logic signal reporting if the Inserter was successfully able to insert matter into the container on its last cycle."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"There are two varieties of inserter, MK1 and MK2."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"MK1 has a less advanced matter buffer, it must collect one unit of matter for all inputs before it can reconstitute any, causing a bottleneck. However the longer cycles allow it to be more energy effecient."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"MK2 upgrades the matter buffer to allow reconstituting any stream of matter as soon as there is enough for one unit, removing the bottleneck. This is only useful if the stream contains multiple forms of matter."},
+				{"type": "spacer", "size":5},
+				{"type":"label", "text":"All versions of the Matter Inserter are limited to a cycle speed of once per second, this does not lead to loss from faster matter streams, the matter buffer will simply fill and reconstitute multiple units at once. In the event a container has no space to reconsitute matter the device will enter a low power state and wait for a minute to pass before attempting to insert matter into the container again. Excess matter will disperse as energy if there is no space."}
+
+			]}]}]},
+			{"id":"exporter", "title":"Exporter", "icon":"/objects/wr/automation/exporter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/exporter/animationParts/back.png:default"},
+				{"type":"label", "text":"Matter Exporters attach to the top of containers and convert their contents into streams of matter energy."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Users will define what forms of matter in the attached container will be converted into energy to be streamed. Whole units of matter will be converted into energy stored in the matter buffer and streamed at the set rate. A logic signal can be used to enable and disable the device. "},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"There are two varieties of exporter, MK1 and MK2."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"MK1 has a lossy conversion rate due to energy leakage from the matter buffer overheating by being cycled constantly, leading it to only stream 50% of consumed matter."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"MK2 upgrades the device with a cooling system, bringing the effeciency rating up to 75%."},
+				{"type": "spacer", "size":5},
+				{"type":"label", "text":"The lossy nature of Matter Exporters when used at industrial scale leads to them being less than ideal. In addition to their sub par performance, they pose a real danger when left unsupervised. During the development period when testing Exporters at an industrial scale one overheated and had a complete failure of its control systems, causing it to consume matter uncontrollably and eat its way into the planet's crust. It was then (hopefully) destroyed by the high heat and pressure within the planet."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Due to the immense safety concerns, all Matter Exporters are fit with safety shutoff systems to prevent repeats of such events. Only allowing their operation while there is an approved overseer present and limiting their matter streaming operations to direct local recipients."}
+			]}]}]},
+			{"id":"assembler", "title":"Assembler", "icon":"/objects/wr/automation/assembler/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/assembler/animationParts/assembler.png:default"},
+				{"type":"label", "text":"Matter Assemblers can assemble a matter stream into any form."},
+				{"type": "spacer", "size":3},
+				{"type":"image", "file":"/interface/wr/automation/assembler/crafting.png"},
+				{"type":"label", "text":"A Matter Assembler is used to emulate the physical processes used to craft matter into other shapes. It is pre-programmed with the processes of a forge, but it can be programmed with the methods of any compatible machine or tool station by having an example for it to analyze."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"With updated analyzation software provided by OSB, all possible matter restructuring processes for the machine will be listed for selection. Without the software update, one will also need to provide the desired result for analyzation to find a suitable process for matter assembly."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Once a process is selected any provided examples can be removed as the Matter Assembler will now weave requisite input matter streams the desired output."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Make sure that input rates are balanced properly as excess unused matter will disperse and be lost."}
+			]}]}]},
+			{"id":"extractor", "title":"Extractor", "icon":"/objects/wr/automation/extractor/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				[
+					{"mode":"stack", "expandMode":[0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/extractor/animationParts/frame/back.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/extractor/animationParts/big_manipulator.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/extractor/animationParts/beam.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/extractor/animationParts/frame/front.png:default"}
+				],
+				{"type":"label", "text":"Matter Extractors are used to extract any naturally occuring ores from a planet."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"These machines are properly hardened for industrial purposes, using specialized hardware tuned to only extract veins of resources deep within a planet in a non destructive manner."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"They will extract resource veins found at their position, and trace amounts of veins deeper in their column. Veins become richer the deeper into the planet they are."},
+				{"type": "spacer", "size":3},
+				{"type":"image", "file":"/items/wr/automation/ore_scanner/ore_scanner.png"},
+				{"type":"label", "text":"The Resource Vein Scanner can be used to visualize the veins Matter Extractors can access, as well as search for veins of specific yeilds."}
+			]}]}]},
+			{"id":"ground_pump", "title":"Ground Pump", "icon":"/objects/wr/automation/ground_pump/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				[
+					{"mode":"stack", "expandMode":[0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/ground_pump/animationParts/frame/back.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/ground_pump/animationParts/big_manipulator.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/ground_pump/animationParts/beam.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/ground_pump/animationParts/frame/front.png:default"}
+				],
+				{"type":"label", "text":"Ground Pumps are used to extract any naturally occuring fluids from a planet."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Fluids extracted depend on the biomes present at the depth the pump is placed at within a planet. The pump will be able to extract far more liquid in areas that are flooded."}
+			]}]}]},
+			{"id":"hydroponics", "title":"Hydroponics", "icon":"/objects/wr/automation/hydroponics/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				[
+					{"mode":"manual", "expandMode":[0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/hydroponics/animationParts/pipe.png:default", "position" : [0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/hydroponics/animationParts/plants/default.png:0.1", "position" : [0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/hydroponics/animationParts/plants/default.png:0.2", "position" : [16,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/hydroponics/animationParts/water.png:default", "position" : [0,0]}
+				],
+				{"type":"label", "text":"Hydroponics are used to grow any farmable crop seed with a supply of water."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"With a steady supply of water to grow crops in a controlled manner, harvested resources will be produced at a constant rate."}
+			]}]}]},
+			{"id":"cloning_vat", "title":"Cloning Vat", "icon":"/objects/wr/automation/cloning_vat/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/cloning_vat/cloning_vat.png:default"},
+				{"type":"label", "text":"The Cloning Vat is used to produce biological materials from a supply of nutrient paste."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A template life form is used as a blueprint to clone desired materials that can be harvested from its body. A percentage of the body that doesn't contain any desired materials can be exluded from the cloning process to save on nutrients used."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Specialized software provided by OSB is required to analyze a template's genome to isolate desired materials to clone. The vat is useless without this software."}
+			]}]}]},
+			{"id":"nutrient_processor", "title":"Nutrient Proc.", "icon":"/objects/wr/automation/nutrient_processor/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/nutrient_processor/nutrient_processor.png:default"},
+				{"type":"label", "text":"The Nutrient Processor converts food into nutrient paste."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"More nutritious food will yeild more nutrient paste. But inputting too much food will clog the machine."}
 			]}]}]}
 		]}
 	]
