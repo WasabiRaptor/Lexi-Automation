@@ -52,6 +52,7 @@ function die()
 	end
 end
 function refreshOutput(force)
+	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
 		inputs = nil
 		object.setConfigParameter("matterStreamInput", nil)

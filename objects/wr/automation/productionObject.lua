@@ -13,18 +13,23 @@ function init()
 	message.setHandler("setProducts", function(_, _, newProducts)
 		if compare(products, newProducts) then return end
 		products = newProducts
-		object.setConfigParameter("products", products)
+		wr_automation.setProducts(newProducts)
 		refreshOutput(true)
-    end)
+	end)
 
 	if products then
 		object.setConfigParameter("status", "on")
+		wr_automation.setProducts(products)
 		wr_automation.playAnimations("on")
 	end
 end
 
+function die()
+	wr_automation.setProducts(nil)
+end
 
 function refreshOutput(force)
+	wr_automation.usePower()
 	if not products then
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "off")

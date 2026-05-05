@@ -131,3 +131,97 @@ function wr_automation.playAnimations(state)
 		animator.setAnimationState(k, table.unpack(v))
 	end
 end
+
+function wr_automation.checkPowered()
+	return (world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0)
+end
+
+function wr_automation.usePower()
+	local powerConsumption = config.getParameter("powerConsumption") or 0
+	local powerConsumed = config.getParameter("powerConsumed") or 0
+	local powerChanged = powerConsumption - powerConsumed
+	if powerChanged == 0 then return end
+	local globalPowerConsumption = world.getProperty("wr_powerConsumption") or 0
+	object.setConfigParameter("powerConsumed", powerConsumption + powerChanged)
+	world.setProperty("wr_powerConsumption", globalPowerConsumption + powerChanged)
+end
+
+function wr_automation.producePower()
+	local powerProduction = config.getParameter("powerProduction") or 0
+	local powerProduced = config.getParameter("powerProduced") or 0
+	local powerChanged = powerProduction - powerProduced
+	if powerChanged == 0 then return end
+	local globalPowerProduction = world.getProperty("wr_powerProduction") or 0
+	object.setConfigParameter("powerConsumed", powerProduction + powerChanged)
+	world.setProperty("wr_powerProduction", globalPowerProduction + powerChanged)
+end
+
+function wr_automation.setProducts(products)
+	local oldProducts = config.getParameter("products")
+	if not config.getParameter("productsReported") then oldProducts = nil end
+	if compare(oldProducts, products) then return end
+
+	local productsChanged = {}
+	for node, items in ipairs(oldProducts or {}) do
+		for _, item in ipairs(items) do
+			local found = false
+			for _, changedItem in ipairs(productsChanged) do
+				if root.itemDescriptorsMatch(item, changedItem, true) do
+					found = true
+					changedItem = changedItem - item.count
+					break
+				end
+			end
+			if not found then
+				changedItem = copy(item)
+				changedItem.count = -item.count
+			end
+		end
+	end
+	for node, items in ipairs(products or {}) do
+		for _, item in ipairs(items) do
+			local found = false
+			for _, changedItem in ipairs(productsChanged) do
+				if root.itemDescriptorsMatch(item, changedItem, true) do
+					found = true
+					changedItem = changedItem + item.count
+				end
+			end
+			if not found then
+				changedItem = copy(item)
+			end
+		end
+	end
+
+	local productKeys = world.getProperty("wr_productKeys") or {}
+	local productionChanged = false
+	for _, changedItem in ipairs(productsChanged) do
+		if changedItem.count ~= 0 then
+			productionChanged = true
+			local itemConfig = root.itemConfig(changedItem)
+			local mergedConfig = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+			-- we want to take parameters into account for differentiating variations of items, however iterating over a list to find a unique matching entry might take too long
+			-- instead we make an assumption based on if the shortdescription for variations to be good enough to differentiate different products for the production report
+			local productKey = (changedItem.name or changedItem.item).."."..mergedConfig.shortdescription or (input.name or input.item)
+			local producing = math.max(0,(world.getProperty("wr_productProduced."..productKey) or 0) + changedItem.count)
+			local exampleProduct = world.getProperty("wr_product."..productKey)
+
+			world.setProperty("wr_productProduced."..productKey, producing)
+			if producing == 0 then
+				world.setProperty("wr_product."..productKey, nil)
+			else
+				if not productKeys[productKey] then
+					productKeys[productKey] = true
+				end
+				if not exampleProduct then
+					world.setProperty("wr_product."..productKey, changedItem)
+				end
+			end
+		end
+	end
+	object.setConfigParameter("productsReported", true)
+	object.setConfigParameter("products", products)
+	if not productionChanged then return end
+	-- this only sends update packets if the value actually changed, and while it will get larger for each new product, it only needs to update once for each new product added
+	world.setProperty("wr_productKeys", productKeys)
+end

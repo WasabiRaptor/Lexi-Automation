@@ -32,10 +32,14 @@ function init()
 	end
 end
 
+function die()
+	wr_automation.setProducts(nil)
+end
 
 function refreshOutput(force)
+	wr_automation.usePower()
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		object.setConfigParameter("products", nil)
+		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", ((not recipe) and "noRecipe") or "missingInput")
@@ -116,11 +120,11 @@ function refreshOutput(force)
 				product.count = productionRate * (product.count or 1)
 				addProduct(products[1], product)
 			end
-			object.setConfigParameter("products", { realProdcuts })
+			wr_automation.setProducts({ realProdcuts })
 		else
 			local product = copy(recipe.output)
 			product.count = productionRate * (product.count or 1)
-			object.setConfigParameter("products", { { product } })
+			wr_automation.setProducts({ { product } })
 			addProduct(products[1], product)
 		end
 		object.setConfigParameter("status", "on")
@@ -128,7 +132,7 @@ function refreshOutput(force)
 	elseif passthrough then
 		products[1] = copy(inputs)
 	else
-		object.setConfigParameter("products", nil)
+		wr_automation.setProducts(nil)
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "missingInput")
 		wr_automation.playAnimations("off")

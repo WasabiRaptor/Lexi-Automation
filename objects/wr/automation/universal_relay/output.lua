@@ -65,7 +65,8 @@ function die()
 end
 
 function refreshOutput(force, newInputs)
-	if (not inputTarget) or (not newInputs) or (channel == "") then
+	wr_automation.usePower()
+	if (not wr_automation.checkPowered()) or (not inputTarget) or (not newInputs) or (channel == "") then
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")

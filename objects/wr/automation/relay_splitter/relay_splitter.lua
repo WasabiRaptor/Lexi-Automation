@@ -63,6 +63,7 @@ function uninit()
 
 end
 function refreshOutput(force)
+	wr_automation.usePower()
 	local leftNodeValue = object.getInputNodeLevel(1) or not object.isInputNodeConnected(1)
 	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 

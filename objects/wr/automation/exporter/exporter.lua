@@ -41,7 +41,7 @@ function update(dt)
 	if (not exportEntity) or (not world.entityExists(exportEntity)) then
 		exportEntity = world.objectAt(targetPosition)
 	end
-	if not exportEntity then
+	if (not exportEntity) or (not wr_automation.checkPowered()) then
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("output", "off")
 		wr_automation.clearAllOutputs()
@@ -111,6 +111,7 @@ function onNodeConnectionChange()
 end
 
 function refreshOutput()
+	wr_automation.usePower()
 	if not object.isOutputNodeConnected(0) then
 		script.setUpdateDelta(0)
 		return

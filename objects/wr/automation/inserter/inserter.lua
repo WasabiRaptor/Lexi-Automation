@@ -51,7 +51,7 @@ function update(dt)
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
 		exportEntity = world.objectAt(targetPosition)
 	end
-	if not outputEntity then
+	if (not outputEntity) or (not wr_automation.checkPowered()) then
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("input", "off")
 		return
@@ -97,6 +97,7 @@ function uninit()
 	storage.uninitTime = world.time()
 end
 function refreshOutput(force)
+	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		inputs = nil
 		object.setConfigParameter("matterStreamInput", nil)

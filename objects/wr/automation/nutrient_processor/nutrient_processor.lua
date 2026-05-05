@@ -17,10 +17,13 @@ function init()
 	end)
 end
 
+function die()
+	wr_automation.setProducts(nil)
+end
 
 function refreshOutput(force)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		object.setConfigParameter("products", nil)
+		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		inputs = nil
@@ -72,7 +75,7 @@ function refreshOutput(force)
 		item = "wr/nutrient_paste",
 		count = nutrientValue
 	}
-	object.setConfigParameter("products", {{product}})
+	wr_automation.setProducts({{product}})
 	wr_automation.setOutputs({{product}})
 end
 

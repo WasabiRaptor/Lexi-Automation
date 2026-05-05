@@ -21,6 +21,7 @@ function uninit()
 
 end
 function refreshOutput(force)
+	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
