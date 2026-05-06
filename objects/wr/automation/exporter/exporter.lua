@@ -9,6 +9,7 @@ local targetPosition
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
+	targetPosition = vec2.add(objectPosition, config.getParameter("targetOffset"))
 	outputs = config.getParameter("targetOutput")
 	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
 	efficency = config.getParameter("efficency")

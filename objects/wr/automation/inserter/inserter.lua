@@ -8,6 +8,7 @@ local delta
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
+	targetPosition = vec2.add(objectPosition, config.getParameter("targetOffset"))
 	targetOutput = config.getParameter("targetOutput") or {}
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
