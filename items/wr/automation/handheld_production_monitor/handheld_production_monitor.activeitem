@@ -1,0 +1,17 @@
+{
+  "itemName" : "wr/handheld_production_monitor",
+  "price" : 1,
+  "maxStack" : 1,
+  "rarity" : "common",
+  "description" : "For overseeing global production of resources on a planet.",
+  "shortdescription" : "Handheld Production Monitor",
+  "twoHanded" : true,
+  "category" : "Tool",
+  "itemTags" : ["tool"],
+
+  "inventoryIcon" : "icon.png",
+
+  "ui" : "wr_automation:production_monitor",
+  "scripts" : ["/items/wr/automation/open_gui.lua"],
+  "scriptDelta" : 0
+}

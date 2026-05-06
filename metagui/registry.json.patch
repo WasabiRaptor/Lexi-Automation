@@ -16,6 +16,7 @@
 		"relay" : "/interface/wr/automation/relay/build.lua",
 		"crafting" : "/interface/wr/automation/crafting/build.lua",
 		"manual" : "/interface/wr/automation/manual/manual.ui",
-		"manual_technical" : "/interface/wr/automation/manual/manual_technical.ui"
+		"manual_technical" : "/interface/wr/automation/manual/manual_technical.ui",
+		"production_monitor" : "/interface/wr/automation/production_monitor/production_monitor.ui"
 	}}
 ]
