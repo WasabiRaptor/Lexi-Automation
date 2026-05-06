@@ -19,7 +19,6 @@ function init()
 
 	if products then
 		object.setConfigParameter("status", "on")
-		wr_automation.setProducts(products)
 		wr_automation.playAnimations("on")
 	end
 end

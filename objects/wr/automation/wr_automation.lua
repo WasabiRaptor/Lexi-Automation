@@ -14,6 +14,7 @@ function wr_automation.init()
 	local position = object.position()
 	local size = vec2.add(rect.size(poly.boundBox(object.spaces())), 1)
 	isOffset = (position[2] % (size[2] * 2)) < size[2]
+	wr_automation.setProducts(config.getParameter("products"))
 end
 function wr_automation.countInputs(nodeIndex, recipe)
 	local recipe = recipe or {matchInputParameters = true, input = {}}
@@ -21,6 +22,16 @@ function wr_automation.countInputs(nodeIndex, recipe)
 	local inputs = {}
 	local totalItems = 0
 	local fromExporter = false
+	local function sortInputs(a, b)
+		if a.used == b.used then
+			return (a.name or a.item) < (b.name or b.item)
+		else
+			return a.used
+		end
+	end
+	for _, recipeItem in ipairs(recipe.input) do
+		wr_automation.binaryInsert(inputs, sb.jsonMerge(recipeItem, {count = 0, used = true}), sortInputs)
+	end
 	for eid, index in pairs(inputNodes) do
 		if world.entityExists(eid) then
 			for i, newInput in ipairs((world.getObjectParameter(eid, "matterStreamOutput") or {})[index + 1] or {}) do
@@ -37,39 +48,29 @@ function wr_automation.countInputs(nodeIndex, recipe)
 				end
 				if isNew then
 					newInput.used = false
-					for _, input in ipairs(recipe.input) do
-						if root.itemDescriptorsMatch(input, newInput, recipe.matchInputParameters) then
-							newInput.used = true
-							break
-						end
-					end
-					table.insert(inputs, newInput)
+					wr_automation.binaryInsert(inputs, newInput, sortInputs)
 				end
 			end
 		end
 	end
-	for _, recipeItem in ipairs(recipe.input) do
-		local recieved = false
-		for _, inputItem in ipairs(inputs) do
-			if root.itemDescriptorsMatch(recipeItem, inputItem, recipe.matchInputParameters) then
-				recieved = true
-				break
-			end
+	return inputs, totalItems, fromExporter
+end
+
+function wr_automation.binaryInsert(t, v, comp)
+	local upperBounds = #t + 1
+	local lowerBounds = 1
+	while true do
+		if (upperBounds == lowerBounds) then
+			table.insert(t, upperBounds, v)
+			return
 		end
-		if not recieved then
-			table.insert(inputs, sb.jsonMerge(recipeItem, {count = 0, used = true}))
+		local index = math.floor((upperBounds - lowerBounds) / 2) + lowerBounds
+		if comp(t[index], v) then
+			lowerBounds = index + 1
+		else
+			upperBounds = index
 		end
 	end
-
-	table.sort(inputs, function(a, b)
-		if a.used == b.used then
-			return (a.name or a.item) < (b.name or b.item)
-		else
-			return a.used
-		end
-	end)
-
-	return inputs, totalItems, fromExporter
 end
 
 function wr_automation.setOutputs(products, forceRefresh)
@@ -158,23 +159,31 @@ end
 
 function wr_automation.setProducts(products)
 	local oldProducts = config.getParameter("products")
-	if not config.getParameter("productsReported") then oldProducts = nil end
+	local resetTime = world.getProperty("wr_productionResetTime")
+	local reportedTime = config.getParameter("productsReportedTime")
+	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
+		oldProducts = nil
+	end
 	if compare(oldProducts, products) then return end
+
+	object.setConfigParameter("productsReportedTime", os.time())
+	object.setConfigParameter("products", products)
 
 	local productsChanged = {}
 	for node, items in ipairs(oldProducts or {}) do
 		for _, item in ipairs(items) do
 			local found = false
 			for _, changedItem in ipairs(productsChanged) do
-				if root.itemDescriptorsMatch(item, changedItem, true) do
+				if root.itemDescriptorsMatch(item, changedItem, true) then
 					found = true
-					changedItem = changedItem - item.count
+					changedItem.count = changedItem.count - item.count
 					break
 				end
 			end
 			if not found then
-				changedItem = copy(item)
+				local changedItem = copy(item)
 				changedItem.count = -item.count
+				table.insert(productsChanged, changedItem)
 			end
 		end
 	end
@@ -182,22 +191,21 @@ function wr_automation.setProducts(products)
 		for _, item in ipairs(items) do
 			local found = false
 			for _, changedItem in ipairs(productsChanged) do
-				if root.itemDescriptorsMatch(item, changedItem, true) do
+				if root.itemDescriptorsMatch(item, changedItem, true) then
 					found = true
-					changedItem = changedItem + item.count
+					changedItem.count = changedItem.count + item.count
+					break
 				end
 			end
 			if not found then
-				changedItem = copy(item)
+				table.insert(productsChanged, copy(item))
 			end
 		end
 	end
-
 	local productKeys = world.getProperty("wr_productKeys") or {}
-	local productionChanged = false
+	local productKeysUpdated = false
 	for _, changedItem in ipairs(productsChanged) do
 		if changedItem.count ~= 0 then
-			productionChanged = true
 			local itemConfig = root.itemConfig(changedItem)
 			local mergedConfig = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
 			-- we want to take parameters into account for differentiating variations of items, however iterating over a list to find a unique matching entry might take too long
@@ -211,6 +219,7 @@ function wr_automation.setProducts(products)
 				world.setProperty("wr_product."..productKey, nil)
 			else
 				if not productKeys[productKey] then
+					productKeysUpdated = true
 					productKeys[productKey] = true
 				end
 				if not exampleProduct then
@@ -219,9 +228,9 @@ function wr_automation.setProducts(products)
 			end
 		end
 	end
-	object.setConfigParameter("productsReported", true)
-	object.setConfigParameter("products", products)
-	if not productionChanged then return end
-	-- this only sends update packets if the value actually changed, and while it will get larger for each new product, it only needs to update once for each new product added
-	world.setProperty("wr_productKeys", productKeys)
+	if productKeysUpdated then
+		-- this only sends update packets if the value actually changed, and while it will get larger for each new product, it only needs to update once for each new product added
+		-- and its better to only attempt to set it if we actually updated it
+		world.setProperty("wr_productKeys", productKeys)
+	end
 end
