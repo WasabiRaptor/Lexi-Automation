@@ -12,6 +12,6 @@
   "inventoryIcon" : "icon.png",
 
   "ui" : "wr_automation:manual_technical",
-  "scripts" : ["manual.lua"],
+  "scripts" : ["/items/wr/automation/open_gui.lua"],
   "scriptDelta" : 0
 }
