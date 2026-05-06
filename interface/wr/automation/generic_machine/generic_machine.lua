@@ -6,6 +6,7 @@ end
 
 local products
 function init()
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	products = world.getObjectParameter(pane.sourceEntity(), "products")
 	local status = world.getObjectParameter(pane.sourceEntity(), "status")
 	local statusLabels = world.getObjectParameter(pane.sourceEntity(), "statusLabels")

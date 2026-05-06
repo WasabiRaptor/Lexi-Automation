@@ -8,6 +8,7 @@ local products
 local visitableParameters
 local celestialCoords, isCelestial
 function init()
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
 	products = world.getObjectParameter(pane.sourceEntity(), "products")
 	if celestialCoords and (isCelestial > 0) and world.terrestrial() then

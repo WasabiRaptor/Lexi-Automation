@@ -10,6 +10,7 @@ local products
 local visitableParameters
 local celestialCoords, isCelestial
 function init()
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	celestialCoords, isCelestial = player.worldId():gsub("^CelestialWorld%:", "")
 	materialList = root.assetJson("/interface/wr/automation/extractor/materialList.config")
 	products = world.getObjectParameter(pane.sourceEntity(), "products")

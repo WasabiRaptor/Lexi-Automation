@@ -1,9 +1,5 @@
 require("/interface/wr/automation/labels.lua")
-local outputNodesConfig
 function displayProducts(products, noProducts, noNodeProducts)
-	if not outputNodesConfig then
-		outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
-	end
 	_ENV.productsScrollArea:clearChildren()
 	if products and #products > 0 then
 		for nodeIndex, nodeProducts in ipairs(products) do
@@ -23,7 +19,7 @@ function displayProducts(products, noProducts, noNodeProducts)
 								{
 									{ type = "label", text = (merged.shortdescription or product.name or product.item or "") },
 									{
-										{ type = "image", file = outputNodesConfig[nodeIndex].icon or "/interface/wr/automation/output.png" },
+										{ type = "image", file = ((_ENV.outputNodesConfig or {})[nodeIndex] or {}).icon or "/interface/wr/automation/output.png" },
 										{ type = "label", text = clipAtThousandth((timeMultiplier * product.count)), inline = true },
 										{ type = "label", text = timeLabel,            inline = true }
 									},

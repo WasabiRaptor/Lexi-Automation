@@ -6,6 +6,7 @@ end
 
 local products
 function init()
+	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	products = world.getObjectParameter(pane.sourceEntity(), "matterStreamInput")
 	displayProducts(products, {
 		type = "label",
