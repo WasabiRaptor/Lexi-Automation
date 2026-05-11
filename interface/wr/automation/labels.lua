@@ -78,10 +78,32 @@ function clipAtThousandth(n)
 	if n < 0.001 then
 		return "< 0.001"
 	end
-    local printNumber = math.floor(n * 1000) / 1000
-    local floored = math.floor(printNumber)
+	local printNumber = math.floor(n * 1000) / 1000
+	local floored = math.floor(printNumber)
 	if floored == printNumber then
 		return ("%s"):format(floored)
 	end
 	return ("%s"):format(printNumber)
+end
+
+function kilowattScale(power)
+	local shortLabel = "kW"
+	local longLabel = "kilowatt"
+	local multiplier = 1
+	if power == 0 then
+	elseif (power * multiplier) >= 1000 then
+		shortLabel = "MW"
+		longLabel = "Megawatt"
+		multiplier = multiplier / 1000
+		if (power * multiplier) >= 1000 then
+			shortLabel = "GW"
+			longLabel = "Gigawatt"
+			multiplier = multiplier / 1000
+		end
+	elseif (power * multiplier) <= 1 then
+		shortLabel = "W"
+		longLabel = "Watt"
+		multiplier = multiplier * 1000
+	end
+	return multiplier, shortLabel
 end
