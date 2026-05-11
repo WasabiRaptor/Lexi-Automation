@@ -142,7 +142,7 @@ function wr_automation.playAnimations(state)
 end
 
 function wr_automation.checkPowered()
-	return (world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0)
+	return world.getProperty("wr_powerStorageAvailable") or ((world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0))
 end
 
 function wr_automation.usePower(powerConsumption)
@@ -175,6 +175,22 @@ function wr_automation.producePower(powerProduction)
 	object.setConfigParameter("powerProduction", powerProduction)
 	object.setConfigParameter("powerProducedTime", os.time())
 	world.setProperty("wr_powerProduction", globalPowerProduction + powerChanged)
+end
+
+function wr_automation.addPowerStorage(powerStorage)
+	local resetTime = world.getProperty("wr_productionResetTime")
+	local reportedTime = config.getParameter("powerStorageTime")
+	local powerStored = config.getParameter("powerStorage") or 0
+	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
+		powerStored = 0
+	end
+
+	local powerChanged = (powerStorage or 0) - powerStored
+	if powerChanged == 0 then return end
+	local globalPowerStorage = world.getProperty("wr_powerStorage") or 0
+	object.setConfigParameter("powerStorage", powerStorage)
+	object.setConfigParameter("powerStorageTime", os.time())
+	world.setProperty("wr_powerStorage", globalPowerStorage + powerChanged)
 end
 
 function wr_automation.setProducts(products)

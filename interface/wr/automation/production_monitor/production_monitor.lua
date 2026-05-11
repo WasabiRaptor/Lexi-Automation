@@ -56,6 +56,7 @@ function _ENV.resetButton:onClick()
 	end
 	world.setProperty("wr_powerProduction",0)
 	world.setProperty("wr_powerConsumption",0)
+	world.setProperty("wr_powerStorage",0)
 	world.setProperty("wr_productKeys", {})
 	world.setProperty("wr_productionResetTime", os.time())
 end

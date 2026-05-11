@@ -1,4 +1,3 @@
-local pendingMessages = {}
 function init()
 	world.setExpiryTime(math.max(1, world.expiryTime()))
 	message.setHandler("wr_keepAlive", function(_, _, expireTime)
@@ -11,21 +10,19 @@ function init()
 	message.setHandler("wr_refreshOutput", function(_, _, uniqueId, ...)
 		world.sendEntityMessage(uniqueId, "refreshOutput", ...)
 	end)
+
+	storage.powerStorage = storage.powerStorage or 0
 end
 
 function update(dt)
-	local i = 1
-	while i <= #pendingMessages do
-		local message = pendingMessages[i]
-		if universe.isWorldActive(message[1]) then
-			universe.sendWorldMessage(table.unpack(message))
-			table.remove(pendingMessages, i)
-		else
-			universe.sendWorldMessage(message[1], "wr_keepAlive", 5)
-			i = i + 1
-		end
-	end
+	local powerProduction = world.getProperty("wr_powerProduction") or 0
+	local powerConsumption = world.getProperty("wr_powerConsumption") or 0
+	local powerStorage = world.getProperty("wr_powerStorage") or 0
+
+	storage.powerStorage = math.max(0,math.min(powerStorage, storage.powerStorage + (dt * (powerProduction - powerConsumption))))
+	world.setProperty("wr_powerStorageAvailable", storage.powerStorage > 0)
 end
+
 function uninit()
 
 end
