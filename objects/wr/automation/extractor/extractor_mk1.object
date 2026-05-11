@@ -71,6 +71,7 @@
 
   "multiplier" : 1, // for ores mined at the position it's placed at
   "columnMultiplier": 0.01, // for all ores in the column beneath it
+  "activePowerConsumption": 30,
 
   "outputNodes" : [ [0, 0] ],
   "outputNodesConfig" : [{

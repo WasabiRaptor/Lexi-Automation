@@ -57,6 +57,7 @@
 
   "isExporter" : true, // marks this object as an exporter so inserters will disable when attached to the same inventory
   "fromExporter" : true, // marks this matter stream is from an exporter, and therefore must have been loaded to function
+  "activePowerConsumption": 30,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

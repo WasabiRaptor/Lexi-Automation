@@ -45,6 +45,7 @@
     "back" : "animationParts/back/input.png",
     "fullbright" : "animationParts/fullbright/input.png"
   },
+  "activePowerConsumption": 1000,
 
   "inputNodes" : [ [0, 2] ],
   "inputNodesConfig" : [{

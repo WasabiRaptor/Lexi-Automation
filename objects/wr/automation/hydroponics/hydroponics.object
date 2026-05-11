@@ -136,6 +136,7 @@
   "minimumDuration" : 1, // the minimum duration to craft a recipe
   "craftingSpeed" : 24, // the amount of times it crafts a recipe per cycle
   "passthrough" : true, // passes unused ingrredients through it's output
+  "activePowerConsumption": 5,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

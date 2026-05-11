@@ -48,6 +48,8 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:relay" },
 
+  "activePowerConsumption": 1,
+
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{
     "color" : "#1c8eff",

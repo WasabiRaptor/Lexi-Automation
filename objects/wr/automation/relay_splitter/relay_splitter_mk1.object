@@ -53,6 +53,8 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:splitter" },
 
+  "activePowerConsumption": 3,
+
   "inputNodes" : [
     [0, 0], // matter stream input
     [-1, 0], // logic node to diable left matter output
