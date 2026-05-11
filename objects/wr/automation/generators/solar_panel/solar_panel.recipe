@@ -1,7 +1,9 @@
 {
   "input" : [
+    { "item" : "glass", "count" : 10 },
     { "item" : "copperbar", "count" : 10 },
     { "item" : "ironbar", "count" : 1 },
+    { "item" : "goldbar", "count" : 1 },
     { "item" : "stickofram", "count" : 1 }
   ],
   "output" : {

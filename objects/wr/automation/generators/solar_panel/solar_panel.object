@@ -50,7 +50,7 @@
   "peakPower" : 120,
   "lowPower" : 42,
 
-  "animation" : "/objects/wr/automation/solar_panel/solar_panel.animation",
+  "animation" : "solar_panel.animation",
   "animationParts" : {
     "sensor" : "solar_panel.png"
   },
