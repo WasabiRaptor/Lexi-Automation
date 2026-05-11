@@ -12,6 +12,7 @@ local rightState
 local prevLeftNodeValue
 local prevRightNodeValue
 local anyTargetOutput = jarray()
+local powered
 function init()
 	wr_automation.init()
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
@@ -45,7 +46,7 @@ function init()
 	rightState = (object.direction() == 1) and "right" or "left"
 	prevLeftNodeValue = object.getInputNodeLevel(1)
 	prevRightNodeValue = object.getInputNodeLevel(2)
-	local powered = wr_automation.checkPowered()
+	powered = wr_automation.checkPowered()
 	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
 		animator.setAnimationState("input", powered and "on" or "off", true)
 		if outputs then
@@ -66,7 +67,7 @@ function uninit()
 
 end
 function refreshOutput(force)
-	local powered = wr_automation.checkPowered()
+	local newPowered = wr_automation.checkPowered()
 	local leftNodeValue = object.getInputNodeLevel(1) or not object.isInputNodeConnected(1)
 	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 
@@ -79,6 +80,7 @@ function refreshOutput(force)
 		animator.setAnimationState("left", "off")
 		animator.setAnimationState("right", "off")
 		inputs = nil
+		powered = newPowered
 		return
 	end
 	animator.setAnimationState("input", powered and "on" or "off", true)
@@ -101,6 +103,7 @@ function refreshOutput(force)
 
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = anyTargetOutput, matchInputParameters = true})
 	if (not force)
+		and (powered = newPowered)
 		and (fromExporter == config.getParameter("fromExporter"))
 		and (newDefaultOutputCount == defaultOutputCount)
 		and (newLeftOutputCount == leftOutputCount)
@@ -120,6 +123,7 @@ function refreshOutput(force)
 	defaultOutputCount = newDefaultOutputCount
 	prevLeftNodeValue = leftNodeValue
 	prevRightNodeValue = rightNodeValue
+	powered = newPowered
 
 	local defaultOutput = copy(inputs)
 

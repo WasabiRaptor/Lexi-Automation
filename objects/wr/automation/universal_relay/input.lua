@@ -3,6 +3,7 @@ require("/objects/wr/automation/wr_automation.lua")
 local inputs
 local channel
 local outputTarget
+local powered
 function init()
 	wr_automation.init()
 	if not entity.uniqueId() then
@@ -41,7 +42,8 @@ function init()
 	message.setHandler("remove", function (_,_)
 		object.smash()
 	end)
-	if inputs and (not config.getParameter("fromExporter")) and object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
+	powered = wr_automation.checkPowered()
+	if inputs and powered and (not config.getParameter("fromExporter")) and object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
 		animator.setAnimationState("input", "on", true)
 	end
 
@@ -68,7 +70,9 @@ function die()
 	wr_automation.producePower(0)
 end
 function refreshOutput(force)
-	if (not wr_automation.checkPowered()) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
+	local newPowered = wr_automation.checkPowered()
+	if (not powered) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
+		powered = newPowered
 		inputs = nil
 		wr_automation.usePower(0)
 		object.setConfigParameter("matterStreamInput", nil)
@@ -80,11 +84,12 @@ function refreshOutput(force)
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	animator.setAnimationState("input", fromExporter and "off" or "on", true)
-	if (not force) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
+	if (not force) and (powered == newPowered) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
 	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
+	powered = newPowered
 	if fromExporter then
 		if outputTarget and selfTarget then
 			world.callScriptContext("wr_automation", "refreshInputs", outputTarget, force, false, selfTarget)

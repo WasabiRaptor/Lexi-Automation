@@ -9,6 +9,7 @@ local recipe
 local outputCount
 local inputs
 local passthrough
+local powered
 function init()
 	old.init()
 	wr_automation.init()
@@ -26,8 +27,9 @@ function init()
 		refreshOutput(force)
 	end)
 
+	powered = wr_automation.checkPowered()
 	if products then
-		if wr_automation.checkPowered() then
+		if powered then
 			object.setConfigParameter("status", "on")
 			wr_automation.playAnimations("on")
 		else
@@ -55,17 +57,19 @@ function refreshOutput(force)
 		inputs = nil
 		return
 	end
+	local newPowered = wr_automation.checkPowered()
 	local outputNodes = object.getOutputNodeIds(0)
 	local newOutputCount = 0
 	for _, _ in pairs(outputNodes) do
 		newOutputCount = newOutputCount + 1
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, recipe)
-	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	if (not force) and (newPowered == powered) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
 	outputCount = newOutputCount
+	powered = newPowered
 	if not recipe then
 		wr_automation.usePower(0)
 		wr_automation.producePower(0)
@@ -140,7 +144,7 @@ function refreshOutput(force)
 		end
 		wr_automation.producePower((recipe.producePower or 0) * productionRate)
 
-		if wr_automation.checkPowered() then
+		if powered then
 			object.setConfigParameter("status", "on")
 			wr_automation.playAnimations("on")
 		else
