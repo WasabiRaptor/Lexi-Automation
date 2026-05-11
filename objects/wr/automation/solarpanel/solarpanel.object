@@ -1,0 +1,51 @@
+{
+  "objectName" : "wr/solarpanel",
+  "colonyTags" : ["space","wired"],
+  "rarity" : "Uncommon",
+  "price" : 200,
+  "description" : "Must be placed above ground with view of the sky. Supplies power to the local Matter Logistics Network",
+  "shortdescription" : "Solar Panel",
+  "race" : "generic",
+  "category" : "wire",
+  "printable" : false,
+
+  "inventoryIcon" : "solarpanelicon.png",
+
+  "orientations" : [
+    {
+      "image" : "solarpanel.png:default.min",
+      "imagePosition" : [-16, 0],
+
+      "direction" : "left",
+      "flipImages" : true,
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
+    },
+    {
+      "image" : "solarpanel.png:default.min",
+      "imagePosition" : [-16, 0],
+
+      "direction" : "right",
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
+    }
+  ],
+
+  "scripts" : [ "solarpanel.lua" ],
+  "scriptDelta" : 1800,
+
+  "activeTimeRange" : [0,0.5],
+  "peakPower" : 60,
+  "lowPower" : 15,
+
+  "animation" : "/objects/wr/automation/solarpanel/solarpanel.animation",
+  "animationParts" : {
+    "sensor" : "solarpanel.png"
+  },
+  "animationPosition" : [-16, 0],
+
+  "outputNodes" : [ [0, 0] ]
+
+}

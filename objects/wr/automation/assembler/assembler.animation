@@ -12,10 +12,23 @@
     },
 
     "parts" : {
-      "assembler" : {
+      "back" : {
         "properties" : {
           "centered" : false,
           "zLevel" : 0
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
+          }
+        }
+      },
+      "ring" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 1
         },
         "partStates" : {
           "producing" : {
@@ -25,11 +38,24 @@
           }
         }
       },
+      "front" : {
+        "properties" : {
+          "centered" : false,
+          "zLevel" : 2
+        },
+        "partStates" : {
+          "producing" : {
+            "off" : {"properties" : {"image" : "<partImage>:off.1"}},
+            "on" : {"properties" : {"image" : "<partImage>:on.1"}},
+            "on_offset" : {"properties" : {"image" : "<partImage>:on.1"}}
+          }
+        }
+      },
       "beam" : {
         "properties" : {
           "centered" : false,
           "fullbright" : true,
-          "zLevel" : 1
+          "zLevel" : 3
         },
         "partStates" : {
           "producing" : {

@@ -16,7 +16,11 @@
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
-      "image" : "animationParts/assembler.png:default",
+      "imageLayers" : [
+        {"image":"animationParts/frame/back.png:default"},
+        {"image":"animationParts/ring.png:default"},
+        {"image":"animationParts/frame/front.png:default"}
+      ],
       "direction" : "left",
       "flipImages" : true,
 
@@ -28,7 +32,11 @@
       "collision" : "platform"
     },
     {
-      "image" : "animationParts/assembler.png:default",
+      "imageLayers" : [
+        {"image":"animationParts/frame/back.png:default"},
+        {"image":"animationParts/ring.png:default"},
+        {"image":"animationParts/frame/front.png:default"}
+      ],
       "direction" : "right",
 
       "imagePosition" : [-16, 0],
@@ -42,7 +50,9 @@
   "animation" : "assembler.animation",
   "forceFinishAnimationsInInit" : false,
   "animationParts" : {
-    "assembler" : "animationParts/assembler.png",
+    "front" : "animationParts/frame/front.png",
+    "back" : "animationParts/frame/back.png",
+    "ring" : "animationParts/ring.png",
     "beam" : "animationParts/beam.png"
   },
   "stateAnimations" : {
