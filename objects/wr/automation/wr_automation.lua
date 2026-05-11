@@ -157,8 +157,8 @@ function wr_automation.usePower(powerConsumption)
 	if powerChanged == 0 then return end
 	local globalPowerConsumption = world.getProperty("wr_powerConsumption") or 0
 	object.setConfigParameter("powerConsumption", powerConsumption)
-	object.setConfigParameter("powerConsumedTime", os.time())
-	world.setProperty("wr_powerConsumption", globalPowerConsumption + powerChanged)
+	object.setConfigParameter("powerConsumedTime", world.time())
+	world.setProperty("wr_powerConsumption", math.max(0,globalPowerConsumption + powerChanged))
 end
 
 function wr_automation.producePower(powerProduction)
@@ -173,8 +173,8 @@ function wr_automation.producePower(powerProduction)
 	if powerChanged == 0 then return end
 	local globalPowerProduction = world.getProperty("wr_powerProduction") or 0
 	object.setConfigParameter("powerProduction", powerProduction)
-	object.setConfigParameter("powerProducedTime", os.time())
-	world.setProperty("wr_powerProduction", globalPowerProduction + powerChanged)
+	object.setConfigParameter("powerProducedTime", world.time())
+	world.setProperty("wr_powerProduction", math.max(0,globalPowerProduction + powerChanged))
 end
 
 function wr_automation.addPowerStorage(powerStorage)
@@ -189,8 +189,8 @@ function wr_automation.addPowerStorage(powerStorage)
 	if powerChanged == 0 then return end
 	local globalPowerStorage = world.getProperty("wr_powerStorage") or 0
 	object.setConfigParameter("powerStorage", powerStorage)
-	object.setConfigParameter("powerStorageTime", os.time())
-	world.setProperty("wr_powerStorage", globalPowerStorage + powerChanged)
+	object.setConfigParameter("powerStorageTime", world.time())
+	world.setProperty("wr_powerStorage", math.max(0,globalPowerStorage + powerChanged))
 end
 
 function wr_automation.setProducts(products)
@@ -202,7 +202,7 @@ function wr_automation.setProducts(products)
 	end
 	if compare(oldProducts, products) then return end
 
-	object.setConfigParameter("productsReportedTime", os.time())
+	object.setConfigParameter("productsReportedTime", world.time())
 	object.setConfigParameter("products", products)
 
 	local productsChanged = {}
