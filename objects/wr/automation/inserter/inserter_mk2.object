@@ -55,7 +55,8 @@
 
   "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
   "insertMode" : "fast",
-  "activePowerConsumption": 10,
+  "activePowerConsumption": 35,
+  "idlePowerConsumption": 5,
 
   "inputNodes" : [ [0, 1] ],
   "inputNodesConfig" : [{

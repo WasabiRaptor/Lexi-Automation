@@ -57,7 +57,7 @@
   "cloningPrecision" : 0.25, // percentage of drops that can be excluded
   "cloningCountMultiplier" : 10, // multiplier for nutrient cost per count of item produced
   "cloningPriceInefficency" : 1, // multiplier for nutrient cost per price of items produced
-  "activePowerConsumption": 15,
+  "activePowerConsumption": 250,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

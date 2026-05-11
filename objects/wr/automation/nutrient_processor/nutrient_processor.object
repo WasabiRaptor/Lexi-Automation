@@ -56,7 +56,7 @@
   },
   "craftingSpeed" : 10,
   "machineDescription" : "Accepts any item with a food value.\nNon food items will clog the machine.\nInputting more than 10 items per second will clog the machine.",
-  "activePowerConsumption": 5,
+  "activePowerConsumption": 30,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{

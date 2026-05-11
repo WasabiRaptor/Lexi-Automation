@@ -54,7 +54,8 @@
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:inserter" },
 
   "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
-  "activePowerConsumption": 5,
+  "activePowerConsumption": 15,
+  "idlePowerConsumption": 1,
 
   "inputNodes" : [ [0, 1] ],
   "inputNodesConfig" : [{

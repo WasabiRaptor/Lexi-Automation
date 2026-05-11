@@ -45,7 +45,8 @@
     "back" : "animationParts/back/output.png",
     "fullbright" : "animationParts/fullbright/output.png"
   },
-  "activePowerConsumption": 1000,
+  "activePowerConsumption": 1210000,
+  "idlePowerConsumption": 1000,
 
   // this isn't harmful being here when there's no input nodes, and the gui script uses it
   "inputNodesConfig" : [{

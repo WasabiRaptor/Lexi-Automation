@@ -48,7 +48,8 @@
   "interactAction" : "ScriptPane",
   "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:planetary_relay", "data":{"channelProperty":"wr_matterStreamInputUUID."} },
 
-  "activePowerConsumption": 10,
+  "activePowerConsumption": 500,
+  "idlePowerConsumption": 10,
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{
