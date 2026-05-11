@@ -1,5 +1,5 @@
 {
-  "objectName" : "wr/solarpanel",
+  "objectName" : "wr/solar_panel",
   "colonyTags" : ["space","wired"],
   "rarity" : "Uncommon",
   "price" : 200,
@@ -9,11 +9,11 @@
   "category" : "wire",
   "printable" : false,
 
-  "inventoryIcon" : "solarpanelicon.png",
+  "inventoryIcon" : "solar_panelicon.png",
 
   "orientations" : [
     {
-      "image" : "solarpanel.png:default.min",
+      "image" : "solar_panel.png:default.min",
       "imagePosition" : [-16, 0],
 
       "direction" : "left",
@@ -28,7 +28,7 @@
       "fgAnchors" : [ [-1, -1], [0, -1],[1, -1] ]
     },
     {
-      "image" : "solarpanel.png:default.min",
+      "image" : "solar_panel.png:default.min",
       "imagePosition" : [-16, 0],
 
       "direction" : "right",
@@ -43,16 +43,16 @@
     }
   ],
 
-  "scripts" : [ "solarpanel.lua" ],
+  "scripts" : [ "solar_panel.lua" ],
   "scriptDelta" : 1800,
 
   "activeTimeRange" : [0,0.5],
   "peakPower" : 120,
   "lowPower" : 42,
 
-  "animation" : "/objects/wr/automation/solarpanel/solarpanel.animation",
+  "animation" : "/objects/wr/automation/solar_panel/solar_panel.animation",
   "animationParts" : {
-    "sensor" : "solarpanel.png"
+    "sensor" : "solar_panel.png"
   },
   "animationPosition" : [-16, 0],
 
