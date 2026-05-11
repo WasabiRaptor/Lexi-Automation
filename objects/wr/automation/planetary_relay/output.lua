@@ -37,6 +37,8 @@ function uninit()
 
 end
 function die()
+	wr_automation.usePower(0)
+	wr_automation.producePower(0)
 	if channel == "" then return end
 	world.setProperty("wr_matterStreamOutput."..channel, nil)
 	world.setProperty("wr_matterStreamOutputUUID."..channel, nil)

@@ -45,14 +45,17 @@ function init()
 	rightState = (object.direction() == 1) and "right" or "left"
 	prevLeftNodeValue = object.getInputNodeLevel(1)
 	prevRightNodeValue = object.getInputNodeLevel(2)
+	local powered = wr_automation.checkPowered()
 	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
-		animator.setAnimationState("input", "on", true)
+		animator.setAnimationState("input", powered and "on" or "off", true)
 		if outputs then
-			animator.setAnimationState("center", (#outputs[1] > 0) and "on" or "off", true)
-			animator.setAnimationState(leftState, (#outputs[2] > 0) and "on" or "off", true)
-			animator.setAnimationState(rightState, (#outputs[3] > 0) and "on" or "off", true)
+			animator.setAnimationState("center", powered and (#outputs[1] > 0) and "on" or "off", true)
+			animator.setAnimationState(leftState, powered and (#outputs[2] > 0) and "on" or "off", true)
+			animator.setAnimationState(rightState, powered and (#outputs[3] > 0) and "on" or "off", true)
 		end
 	end
+	animator.setAnimationState(leftState.."Logic", (prevLeftNodeValue) and "on" or "off")
+	animator.setAnimationState(rightState.."Logic", (prevRightNodeValue) and "on" or "off")
 end
 
 function update(dt)
@@ -63,11 +66,12 @@ function uninit()
 
 end
 function refreshOutput(force)
-	wr_automation.usePower()
+	local powered = wr_automation.checkPowered()
 	local leftNodeValue = object.getInputNodeLevel(1) or not object.isInputNodeConnected(1)
 	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.usePower(0)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
@@ -77,7 +81,7 @@ function refreshOutput(force)
 		inputs = nil
 		return
 	end
-	animator.setAnimationState("input", "on", true)
+	animator.setAnimationState("input", powered and "on" or "off", true)
 
 	local leftOutputNodes = object.getOutputNodeIds(1)
 	local newLeftOutputCount = 0
@@ -107,6 +111,7 @@ function refreshOutput(force)
 	then
 		return
 	end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
@@ -159,9 +164,9 @@ function refreshOutput(force)
 		end
 	end
 	outputs = wr_automation.setOutputs({defaultOutput, leftOutput, rightOutput})
-	animator.setAnimationState("center", (#outputs[1] > 0) and "on" or "off")
-	animator.setAnimationState(leftState, (#outputs[2] > 0) and "on" or "off")
-	animator.setAnimationState(rightState, (#outputs[3] > 0) and "on" or "off")
+	animator.setAnimationState("center", powered and (#outputs[1] > 0) and "on" or "off")
+	animator.setAnimationState(leftState, powered and (#outputs[2] > 0) and "on" or "off")
+	animator.setAnimationState(rightState, powered and (#outputs[3] > 0) and "on" or "off")
 	animator.setAnimationState(leftState.."Logic", (leftNodeValue) and "on" or "off")
 	animator.setAnimationState(rightState.."Logic", (rightNodeValue) and "on" or "off")
 end

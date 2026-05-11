@@ -62,6 +62,8 @@ function onInteraction(request)
 	return {"ScriptPane", { gui = { }, scripts = {"/metagui.lua"}, ui = "wr_automation:universal_relay", data = {channelProperty = "output", supported = world.callScriptContext ~= nil} }}
 end
 function die()
+	wr_automation.usePower(0)
+	wr_automation.producePower(0)
 end
 
 function refreshOutput(force, newInputs)

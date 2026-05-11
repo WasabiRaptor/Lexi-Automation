@@ -53,7 +53,8 @@
   },
   "stateAnimations" : {
     "on" : { "animations" : {"producing": ["on"]}},
-    "off" : { "animations" : {"producing": ["off"]}}
+    "off" : { "animations" : {"producing": ["off"]}},
+    "lowPower" : { "animations" : {"producing": ["off"]}}
   },
   "plantImages" : {
     "pearlpeaseed" : {

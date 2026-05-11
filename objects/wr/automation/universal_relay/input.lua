@@ -64,6 +64,8 @@ function onInteraction(request)
 end
 
 function die()
+	wr_automation.usePower(0)
+	wr_automation.producePower(0)
 end
 function refreshOutput(force)
 	if (not wr_automation.checkPowered()) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then

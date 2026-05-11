@@ -30,6 +30,8 @@ end
 
 function die()
 	wr_automation.setProducts(nil)
+	wr_automation.usePower(0)
+	wr_automation.producePower(0)
 end
 
 function refreshOutput(force)
