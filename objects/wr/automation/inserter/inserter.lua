@@ -87,8 +87,10 @@ function update(dt)
 		if (not insertedAny) and (not wasFull) then
 			wasFull = true
 			script.setUpdateDelta(math.max(3600, delta))
+			wr_automation.usePower(0)
 		elseif insertedAny and wasFull then
 			wasFull = false
+			wr_automation.usePower(config.getParameter("activePowerConsumption"))
 			script.setUpdateDelta(delta)
 		end
 	end
@@ -98,12 +100,12 @@ function uninit()
 	storage.uninitTime = world.time()
 end
 function refreshOutput(force)
-	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		inputs = nil
 		object.setConfigParameter("matterStreamInput", nil)
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
+		wr_automation.usePower(0)
 		return
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = targetOutput, matchInputParameters = true})
@@ -145,6 +147,7 @@ function refreshOutput(force)
 	delta = math.max(1 / best, 1) * 60
 	script.setUpdateDelta(delta)
 	object.setConfigParameter("scriptDelta", delta)
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 end
 
 function onInputNodeChange()

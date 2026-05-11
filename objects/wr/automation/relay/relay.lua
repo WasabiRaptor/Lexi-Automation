@@ -9,7 +9,7 @@ function init()
 		refreshOutput(force)
 	end)
 	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
-		animator.setAnimationState("input", "on", true)
+		animator.setAnimationState("input", wr_automation.checkPowered() and "on" or "off", true)
 	end
 end
 
@@ -21,15 +21,15 @@ function uninit()
 
 end
 function refreshOutput(force)
-	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.usePower(0)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
 		inputs = nil
 		return
 	end
-	animator.setAnimationState("input", "on", true)
+	animator.setAnimationState("input", wr_automation.checkPowered() and "on" or "off", true)
 	local outputNodes = object.getOutputNodeIds(0)
 	local newOutputCount = 0
 	for _, _ in pairs(outputNodes) do
@@ -37,6 +37,7 @@ function refreshOutput(force)
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs

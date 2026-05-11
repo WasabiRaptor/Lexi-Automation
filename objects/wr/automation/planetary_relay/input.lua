@@ -52,9 +52,9 @@ function die()
 	end
 end
 function refreshOutput(force)
-	wr_automation.usePower()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
 		inputs = nil
+		wr_automation.usePower(0)
 		object.setConfigParameter("matterStreamInput", nil)
 		animator.setAnimationState("input", "off")
 		return
@@ -62,6 +62,7 @@ function refreshOutput(force)
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	animator.setAnimationState("input", fromExporter and "off" or "on", true)
 	if (not force) and (fromExporter == config.getParameter("fromExporter")) and compare(newInputs, inputs) then return end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs

@@ -65,8 +65,8 @@ function die()
 end
 
 function refreshOutput(force, newInputs)
-	wr_automation.usePower()
 	if (not wr_automation.checkPowered()) or (not inputTarget) or (not newInputs) or (channel == "") then
+		wr_automation.usePower(0)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
@@ -81,8 +81,7 @@ function refreshOutput(force, newInputs)
 		newOutputCount = newOutputCount + 1
 	end
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-
-
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount

@@ -42,7 +42,6 @@ function die()
 	world.setProperty("wr_matterStreamOutputUUID."..channel, nil)
 end
 function refreshOutput(force)
-	wr_automation.usePower()
 	local inputUUID = world.getProperty("wr_matterStreamInputUUID."..channel)
 	local newInputs = world.getProperty("wr_matterStreamOutput."..channel)
 
@@ -50,6 +49,7 @@ function refreshOutput(force)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
+		wr_automation.usePower(0)
 		inputs = nil
 		return
 	end
@@ -60,6 +60,7 @@ function refreshOutput(force)
 		newOutputCount = newOutputCount + 1
 	end
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount

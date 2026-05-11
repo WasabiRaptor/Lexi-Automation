@@ -91,11 +91,13 @@ function update(dt)
 		if not isOutputting then
 			isOutputting = true
 			wr_automation.setOutputs({outputs})
+			wr_automation.usePower(config.getParameter("activePowerConsumption"))
 		end
 	else
 		animator.setAnimationState("output", "on")
 		isOutputting = false
 		wr_automation.clearAllOutputs()
+		wr_automation.usePower(0)
 	end
 end
 
@@ -112,15 +114,18 @@ function onNodeConnectionChange()
 end
 
 function refreshOutput()
-	wr_automation.usePower()
 	if not object.isOutputNodeConnected(0) then
+		wr_automation.usePower(0)
 		script.setUpdateDelta(0)
 		return
 	end
 	if object.isInputNodeConnected(0) then
 		if object.getInputNodeLevel(0) then
 			if isOutputting then
+				wr_automation.usePower(config.getParameter("activePowerConsumption"))
 				wr_automation.setOutputs({ outputs })
+			else
+				wr_automation.usePower(0)
 			end
 			script.setUpdateDelta(delta)
 		else
@@ -128,10 +133,14 @@ function refreshOutput()
 			isOutputting = false
 			wr_automation.clearAllOutputs()
 			script.setUpdateDelta(0)
+			wr_automation.usePower(0)
 		end
 	else
 		if isOutputting then
+			wr_automation.usePower(config.getParameter("activePowerConsumption"))
 			wr_automation.setOutputs({ outputs })
+		else
+			wr_automation.usePower(0)
 		end
 		script.setUpdateDelta(delta)
 	end

@@ -153,10 +153,13 @@ The recipe object uses the same spec for it's recipes as starbound's own recipes
 		{"item":"copperbar", "count":1, "parameters":{}}
 	],
 	"duration" : 1, // how long it takes to craft this recipe
-	"matchInputParameters" : false
+	"matchInputParameters" : false, // do the input item parameters need to exactly match
+	"producePower": 0 // recipes can produces power for the Matter Logistics Network
 },
 ```
 In that recipes can support a list of output items, rather than one single output! However in this case, you should also give this recipe a `"recipeName"` so it can get listed nicely in the assembler GUI. Be aware, such recipes should ONLY ever be defined within the config parameters for objects using these scripts, and not in a standard `.recipe` file because it's not supported by the base game's recipe spec!
+
+An additional thing to note, is that recipes can also have a `"producePower"` parameter, which can have the recipe supply power to the matter logistics network. It's reccommended to not use this in standard crafting recipes, but for objects with a preset recipe the player cannot change, such as a generator that burns fuel to produce power, and could also produce an item byproduct.
 
 This script has the `"setRecipe"` message handler, which sets the recipe on the object and refreshes the outputs if it needs to change.
 

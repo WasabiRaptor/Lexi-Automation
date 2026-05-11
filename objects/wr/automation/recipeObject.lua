@@ -27,8 +27,13 @@ function init()
 	end)
 
 	if products then
-		object.setConfigParameter("status", "on")
-		wr_automation.playAnimations( "on")
+		if wr_automation.checkPowered() then
+			object.setConfigParameter("status", "on")
+			wr_automation.playAnimations("on")
+		else
+			object.setConfigParameter("status", "lowPower")
+			wr_automation.playAnimations("lowPower")
+		end
 	end
 end
 
@@ -37,8 +42,9 @@ function die()
 end
 
 function refreshOutput(force)
-	wr_automation.usePower()
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.usePower(0)
+		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
@@ -59,11 +65,14 @@ function refreshOutput(force)
 	inputs = newInputs
 	outputCount = newOutputCount
 	if not recipe then
+		wr_automation.usePower(0)
+		wr_automation.producePower(0)
 		wr_automation.setOutputs({inputs})
 		object.setConfigParameter("status", "noRecipe")
 		wr_automation.playAnimations("off")
 		return
 	end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 
 	local products = jarray()
 	products[1] = jarray()
@@ -121,17 +130,25 @@ function refreshOutput(force)
 				addProduct(products[1], product)
 			end
 			wr_automation.setProducts({ realProdcuts })
-		else
+		elseif recipe.output then
 			local product = copy(recipe.output)
 			product.count = productionRate * (product.count or 1)
 			wr_automation.setProducts({ { product } })
 			addProduct(products[1], product)
 		end
-		object.setConfigParameter("status", "on")
-		wr_automation.playAnimations("on")
+		wr_automation.producePower((recipe.producePower or 0) * productionRate)
+
+		if wr_automation.checkPowered() then
+			object.setConfigParameter("status", "on")
+			wr_automation.playAnimations("on")
+		else
+			object.setConfigParameter("status", "lowPower")
+			wr_automation.playAnimations("lowPower")
+		end
 	elseif passthrough then
 		products[1] = copy(inputs)
 	else
+		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "missingInput")

@@ -15,6 +15,8 @@ function wr_automation.init()
 	local size = vec2.add(rect.size(poly.boundBox(object.spaces())), 1)
 	isOffset = (position[2] % (size[2] * 2)) < size[2]
 	wr_automation.setProducts(config.getParameter("products"))
+	wr_automation.usePower(config.getParameter("powerConsumption"))
+	wr_automation.producePower(config.getParameter("powerProduction"))
 end
 function wr_automation.countInputs(nodeIndex, recipe)
 	local recipe = recipe or {matchInputParameters = true, input = {}}
@@ -137,23 +139,35 @@ function wr_automation.checkPowered()
 	return (world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0)
 end
 
-function wr_automation.usePower()
-	local powerConsumption = config.getParameter("powerConsumption") or 0
-	local powerConsumed = config.getParameter("powerConsumed") or 0
-	local powerChanged = powerConsumption - powerConsumed
+function wr_automation.usePower(powerConsumption)
+	local resetTime = world.getProperty("wr_productionResetTime")
+	local reportedTime = config.getParameter("powerConsumedTime")
+	local powerConsumed = config.getParameter("powerConsumption") or 0
+	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
+		powerConsumed = 0
+	end
+
+	local powerChanged = (powerConsumption or 0) - powerConsumed
 	if powerChanged == 0 then return end
 	local globalPowerConsumption = world.getProperty("wr_powerConsumption") or 0
-	object.setConfigParameter("powerConsumed", powerConsumption + powerChanged)
+	object.setConfigParameter("powerConsumption", powerConsumption)
+	object.setConfigParameter("powerConsumedTime", os.time())
 	world.setProperty("wr_powerConsumption", globalPowerConsumption + powerChanged)
 end
 
-function wr_automation.producePower()
-	local powerProduction = config.getParameter("powerProduction") or 0
-	local powerProduced = config.getParameter("powerProduced") or 0
-	local powerChanged = powerProduction - powerProduced
+function wr_automation.producePower(powerProduction)
+	local resetTime = world.getProperty("wr_productionResetTime")
+	local reportedTime = config.getParameter("powerProducedTime")
+	local powerProduced = config.getParameter("powerProduction") or 0
+	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
+		powerProduced = 0
+	end
+
+	local powerChanged = (powerProduction or 0) - powerProduced
 	if powerChanged == 0 then return end
 	local globalPowerProduction = world.getProperty("wr_powerProduction") or 0
-	object.setConfigParameter("powerConsumed", powerProduction + powerChanged)
+	object.setConfigParameter("powerProduction", powerProduction)
+	object.setConfigParameter("powerProducedTime", os.time())
 	world.setProperty("wr_powerProduction", globalPowerProduction + powerChanged)
 end
 

@@ -1,6 +1,8 @@
 # Lexi Automation
 Lag friendly automation mod for starbound
 
+Consider supporting me on [Patreon](https://patreon.com/LexiVulpix) so I can spend more time developing mods like this.
+
 ## Requirements
 - [Stardust Core Lite](https://steamcommunity.com/sharedfiles/filedetails/?id=2512589532) or [Stardust Core](https://steamcommunity.com/sharedfiles/filedetails/?id=764887546)
 - [OpenStarbound](https://github.com/OpenStarbound/OpenStarbound) Nightly of 2/6/2026 or forward, some machines will not function without certain functions inaccsessible in retail Starbound.

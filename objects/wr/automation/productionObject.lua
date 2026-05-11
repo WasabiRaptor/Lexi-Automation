@@ -18,8 +18,13 @@ function init()
 	end)
 
 	if products then
-		object.setConfigParameter("status", "on")
-		wr_automation.playAnimations("on")
+		if wr_automation.checkPowered() then
+			object.setConfigParameter("status", "on")
+			wr_automation.playAnimations("on")
+		else
+			object.setConfigParameter("status", "lowPower")
+			wr_automation.playAnimations("lowPower")
+		end
 	end
 end
 
@@ -28,15 +33,22 @@ function die()
 end
 
 function refreshOutput(force)
-	wr_automation.usePower()
 	if not products then
+		wr_automation.usePower(0)
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "off")
 		wr_automation.playAnimations("off")
 		return
 	end
-	object.setConfigParameter("status", "on")
-	wr_automation.playAnimations("on")
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+
+	if wr_automation.checkPowered() then
+		object.setConfigParameter("status", "on")
+		wr_automation.playAnimations("on")
+	else
+		object.setConfigParameter("status", "lowPower")
+		wr_automation.playAnimations("lowPower")
+	end
 
 	local outputNodes = object.getOutputNodeIds(0)
 	local newOutputCount = 0
