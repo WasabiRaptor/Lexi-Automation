@@ -1,0 +1,112 @@
+{
+  "objectName" : "wr/magmatic_generator",
+  "colonyTags" : ["foundry","mechanical"],
+  "rarity" : "Common",
+  "category" : "decorative",
+  "price" : 420,
+  "description" : "Generates power by using lava to boil water.",
+  "shortdescription" : "Magmatic Engine",
+  "race" : "generic",
+
+  "inventoryIcon" : "magmatic_generator_icon.png",
+  "orientations" : [
+    {
+      "imageLayers" : [ { "image" : "magmatic_generator.png:default" } ],
+      "imagePosition" : [-24, 0],
+      "animationPosition" : [-24, 0],
+
+      "direction" : "left",
+      "flipImages" : true,
+      "lightPosition" : [1, 4],
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
+    },
+    {
+      "imageLayers" : [ { "image" : "magmatic_generator.png:default" } ],
+      "imagePosition" : [-24, 0],
+      "animationPosition" : [-24, 0],
+
+      "direction" : "right",
+      "lightPosition" : [-1,4],
+
+      "spaceScan" : 0.1,
+      "anchors" : [ "bottom" ]
+    }
+  ],
+  "animation" : "magmatic_generator.animation",
+  "animationParts" : {
+    "tank" : "magmatic_generator.png",
+    "lava" : "magmatic_generator_fullbright.png"
+  },
+  "stateAnimations" : {
+    "on" : {
+        "animations" : {"producing": ["on"]},
+        "lights":{"producing":true},
+        "particleEmitters" : {
+            "smoke" : true,
+            "small_poof" : true,
+            "fire" : true
+        }
+    },
+    "off" : {
+        "animations" : {"producing": ["off"]},
+        "lights":{"producing":false},
+        "particleEmitters" : {
+            "smoke" : false,
+            "small_poof" : false,
+            "fire" : false
+        }
+    },
+    "lowPower" : {
+        "animations" : {"producing": ["on"]},
+        "lights":{"producing":true},
+        "particleEmitters" : {
+            "smoke" : true,
+            "small_poof" : true,
+            "fire" : true
+        }
+    }
+  },
+  "interactAction" : "ScriptPane",
+  "interactData" : { "gui" : { }, "scripts" : ["/metagui.lua"], "ui" : "wr_automation:generic_recipe" },
+
+  "scriptDelta":0,
+  "scripts" : ["/objects/wr/automation/recipeObject.lua"],
+  "recipe" :{
+	"recipeName" : "Magmatic Power Generation",
+	"input":[
+		{"item":"liquidlava", "count":50, "parameters":{}}
+	],
+	"duration" : 1, // how long it takes to craft this recipe
+	"matchInputParameters" : false, // do the input item parameters need to exactly match
+	"producePower": 500 // recipes can produces power for the Matter Logistics Network
+  },
+
+  "npcToy" : {
+    "influence" : [
+      "lavatank"
+    ],
+    "defaultReactions" : {
+      "lavatank" : [
+        [1.0, "punch"],
+        [1.0, "annoyed"]
+      ]
+    }
+  },
+
+  "inputNodes" : [ [0, 0] ],
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }],
+  "matterStreamReciever" : [
+    true
+  ],
+  "outputNodes" : [ [0, 1] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }]
+
+}

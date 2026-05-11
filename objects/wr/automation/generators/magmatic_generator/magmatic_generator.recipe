@@ -1,0 +1,14 @@
+{
+  "input" : [
+    { "item" : "glass", "count" : 10 },
+    { "item" : "durasteelbar", "count" : 20 },
+    { "item" : "corefragmentore", "count" : 1 },
+    { "item" : "goldbar", "count" : 1 }
+  ],
+  "output" : {
+    "item" : "wr/magmatic_generator",
+    "count" : 1
+  },
+  "duration" : 5,
+  "groups" : [ "wr_logistics_station", "power", "all" ]
+}

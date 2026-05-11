@@ -139,10 +139,13 @@ function wr_automation.playAnimations(state)
 	for k, v in pairs(animationData.lightColors or {}) do
 		animator.setLightColor(k,v)
 	end
+	for k, v in pairs(animationData.particleEmitters or {}) do
+		animator.setParticleEmitterActive(k,v)
+	end
 end
 
 function wr_automation.checkPowered()
-	return world.getProperty("wr_powerStorageAvailable") or ((world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0))
+	return world.getProperty("wr_powerStorageAvailable") or ((config.getParameter("powerConsumption") or 0) == 0) or ((world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0))
 end
 
 function wr_automation.usePower(powerConsumption)

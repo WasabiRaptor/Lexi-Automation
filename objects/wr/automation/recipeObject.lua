@@ -129,18 +129,20 @@ function refreshOutput(force)
 			end
 		end
 
-		if recipe.output[1] then
-			local realProdcuts = copy(recipe.output)
-			for _, product in ipairs(realProdcuts) do
+		if recipe.output then
+			if recipe.output[1] then
+				local realProdcuts = copy(recipe.output)
+				for _, product in ipairs(realProdcuts) do
+					product.count = productionRate * (product.count or 1)
+					addProduct(products[1], product)
+				end
+				wr_automation.setProducts({ realProdcuts })
+			else
+				local product = copy(recipe.output)
 				product.count = productionRate * (product.count or 1)
+				wr_automation.setProducts({ { product } })
 				addProduct(products[1], product)
 			end
-			wr_automation.setProducts({ realProdcuts })
-		elseif recipe.output then
-			local product = copy(recipe.output)
-			product.count = productionRate * (product.count or 1)
-			wr_automation.setProducts({ { product } })
-			addProduct(products[1], product)
 		end
 		wr_automation.producePower((recipe.producePower or 0) * productionRate)
 
