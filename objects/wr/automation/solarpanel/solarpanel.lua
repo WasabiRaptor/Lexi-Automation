@@ -27,3 +27,7 @@ function update(dt)
 		wr_automation.producePower(config.getParameter("lowPower"))
 	end
 end
+
+function die()
+	wr_automation.producePower(0)
+end
