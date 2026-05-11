@@ -97,7 +97,7 @@ function update(dt)
 		animator.setAnimationState("output", "on")
 		isOutputting = false
 		wr_automation.clearAllOutputs()
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 	end
 end
 
@@ -125,7 +125,7 @@ function refreshOutput()
 				wr_automation.usePower(config.getParameter("activePowerConsumption"))
 				wr_automation.setOutputs({ outputs })
 			else
-				wr_automation.usePower(0)
+				wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 			end
 			script.setUpdateDelta(delta)
 		else
@@ -133,14 +133,14 @@ function refreshOutput()
 			isOutputting = false
 			wr_automation.clearAllOutputs()
 			script.setUpdateDelta(0)
-			wr_automation.usePower(0)
+			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		end
 	else
 		if isOutputting then
 			wr_automation.usePower(config.getParameter("activePowerConsumption"))
 			wr_automation.setOutputs({ outputs })
 		else
-			wr_automation.usePower(0)
+			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		end
 		script.setUpdateDelta(delta)
 	end

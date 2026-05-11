@@ -67,14 +67,13 @@ end
 
 function die()
 	wr_automation.usePower(0)
-	wr_automation.producePower(0)
 end
 function refreshOutput(force)
 	local newPowered = wr_automation.checkPowered()
 	if (not powered) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
 		powered = newPowered
 		inputs = nil
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		animator.setAnimationState("input", "off")
 		if outputTarget and selfTarget then

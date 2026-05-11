@@ -44,7 +44,6 @@ function uninit()
 end
 function die()
 	wr_automation.usePower(0)
-	wr_automation.producePower(0)
 	if channel == "" then return end
 	world.setProperty("wr_matterStreamInputUUID."..channel, nil)
 	world.setProperty("wr_matterStreamOutput."..channel, nil)
@@ -56,7 +55,7 @@ end
 function refreshOutput(force)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
 		inputs = nil
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		animator.setAnimationState("input", "off")
 		return

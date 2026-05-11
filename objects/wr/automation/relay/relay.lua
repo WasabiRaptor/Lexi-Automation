@@ -22,10 +22,14 @@ end
 function uninit()
 
 end
+function die()
+	wr_automation.usePower(0)
+end
+
 function refreshOutput(force)
 	local newPowered = wr_automation.checkPowered()
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")

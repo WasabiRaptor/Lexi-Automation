@@ -87,7 +87,7 @@ function update(dt)
 		if (not insertedAny) and (not wasFull) then
 			wasFull = true
 			script.setUpdateDelta(math.max(3600, delta))
-			wr_automation.usePower(0)
+			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		elseif insertedAny and wasFull then
 			wasFull = false
 			wr_automation.usePower(config.getParameter("activePowerConsumption"))
@@ -105,7 +105,7 @@ function refreshOutput(force)
 		object.setConfigParameter("matterStreamInput", nil)
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		return
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = targetOutput, matchInputParameters = true})

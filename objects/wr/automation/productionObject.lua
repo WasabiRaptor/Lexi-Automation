@@ -36,7 +36,7 @@ end
 
 function refreshOutput(force)
 	if not products then
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "off")
 		wr_automation.playAnimations("off")

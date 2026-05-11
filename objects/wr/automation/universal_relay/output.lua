@@ -63,12 +63,11 @@ function onInteraction(request)
 end
 function die()
 	wr_automation.usePower(0)
-	wr_automation.producePower(0)
 end
 
 function refreshOutput(force, newInputs)
 	if (not wr_automation.checkPowered()) or (not inputTarget) or (not newInputs) or (channel == "") then
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")

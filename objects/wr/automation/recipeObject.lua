@@ -47,7 +47,7 @@ end
 
 function refreshOutput(force)
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
@@ -71,7 +71,7 @@ function refreshOutput(force)
 	outputCount = newOutputCount
 	powered = newPowered
 	if not recipe then
-		wr_automation.usePower(0)
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.producePower(0)
 		wr_automation.setOutputs({inputs})
 		object.setConfigParameter("status", "noRecipe")

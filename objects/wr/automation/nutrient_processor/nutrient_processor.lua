@@ -25,6 +25,7 @@ end
 
 function refreshOutput(force)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
@@ -39,6 +40,7 @@ function refreshOutput(force)
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	if (not force) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
