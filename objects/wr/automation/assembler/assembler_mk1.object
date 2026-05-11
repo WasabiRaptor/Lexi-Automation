@@ -82,7 +82,7 @@
   "filter" : ["craftinganvil", "plain"],
 
   "minimumDuration" : 1, // the minimum duration to craft a recipe
-  "craftingSpeed" : 1, // the amount of times it crafts a recipe per cycle
+  "craftingSpeed" : 0.25, // the amount of times it crafts a recipe per cycle
   "activePowerConsumption": 75,
   "idlePowerConsumption": 2.5,
 
