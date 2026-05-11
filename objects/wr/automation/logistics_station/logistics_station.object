@@ -30,6 +30,7 @@
   "filter" : ["wr_logistics_station", "wr_logistics_station_osb"],
   "recipeTabs" : [
     {"icon" : "/interface/crafting/tabicon_mechanics.png", "filter" : ["production"], "id" : "production"},
+    {"icon" : "/interface/crafting/tabicon_lights.png", "filter" : ["power"], "id" : "power"},
     {"icon" : "/interface/crafting/tabicon_logic.png", "filter" : ["logistics"], "id": "logistics"},
     {"icon" : "/interface/crafting/tabicon_equipment.png", "filter" : ["equipment"], "id": "equipment"}
   ],
