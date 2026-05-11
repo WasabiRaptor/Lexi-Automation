@@ -8,12 +8,18 @@ local products
 function init()
 	local powerProduction = world.getProperty("wr_powerProduction") or 0
 	local powerConsumption = world.getProperty("wr_powerConsumption") or 0
-	_ENV.powerProductionLabel:setText(tostring(clipAtThousandth(powerProduction)))
-	_ENV.powerConsumptionLabel:setText(tostring(clipAtThousandth(powerConsumption)))
+	local powerScale, shortLabel, longLabel = kilowattScale(powerProduction)
 
 	if powerProduction > 0 then
-		_ENV.powerConsumptionPercentageLabel:setText(("%d%%"):format(math.ceil((powerConsumption / powerProduction) * 100)))
+		local percentage = (powerConsumption / powerProduction)
+		local color = ("%02x%02x%02x"):format(hsv2rgb(util.lerp(percentage,.25,0),1,1))
+		_ENV.powerConsumptionPercentageLabel.color = color
+		_ENV.powerConsumptionLabel.color = color
+		_ENV.powerConsumptionPercentageLabel:setText(("%d%%"):format(math.ceil( percentage * 100)))
 	end
+	_ENV.powerProductionLabel:setText(tostring(clipAtThousandth(powerProduction * powerScale)))
+	_ENV.powerConsumptionLabel:setText(tostring(clipAtThousandth(powerConsumption * powerScale)))
+	_ENV.powerScaleLabel:setText(shortLabel)
 
 	products = {}
 	-- foreseeing this becoming very large later so doing a binary sort insert for better performance
@@ -58,5 +64,30 @@ function _ENV.resetButton:onClick()
 	world.setProperty("wr_powerConsumption",0)
 	world.setProperty("wr_powerStorage",0)
 	world.setProperty("wr_productKeys", {})
-	world.setProperty("wr_productionResetTime", os.time())
+	world.setProperty("wr_productionResetTime", world.time())
+end
+
+function hsv2rgb(h, s, v)
+	local C = v * s
+	local m = v - C
+	local r, g, b = m, m, m
+	if h == h then
+		local h_ = (h % 1.0) * 6
+		local X = C * (1 - math.abs(h_ % 2 - 1))
+		C, X = C + m, X + m
+		if h_ < 1 then
+			r, g, b = C, X, m
+		elseif h_ < 2 then
+			r, g, b = X, C, m
+		elseif h_ < 3 then
+			r, g, b = m, C, X
+		elseif h_ < 4 then
+			r, g, b = m, X, C
+		elseif h_ < 5 then
+			r, g, b = X, m, C
+		else
+			r, g, b = C, m, X
+		end
+	end
+	return math.ceil(r * 255), math.ceil(g * 255), math.ceil(b *255)
 end

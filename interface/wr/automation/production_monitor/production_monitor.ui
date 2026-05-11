@@ -15,13 +15,16 @@
 			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
 				{"mode" : "v"},
 				[
+					{"mode" : "h", "expandMode":[0,0]},
 					{"type":"label","text":"Power Consumption: ","inline":true},
-					{"type":"label", "id":"powerConsumptionPercentageLabel", "text":"0%", "align":"left","inline":true}
+					{"type":"label", "id":"powerConsumptionPercentageLabel", "text":"0%","inline":true}
 				],
 				[
-					{"type":"label", "id":"powerConsumptionLabel", "text":"0","align":"right"},
+					{"mode" : "h", "expandMode":[0,0]},
+					{"type":"label", "id":"powerConsumptionLabel", "text":"0","inline":true},
 					{"type":"label","text":"/","inline":true},
-					{"type":"label", "id":"powerProductionLabel", "text":"0","align":"left"}
+					{"type":"label", "id":"powerProductionLabel", "color":"00FFFF", "text":"0","inline":true},
+					{"type":"label", "id":"powerScaleLabel","text":"kW","inline":true}
 				]
 			]},
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
