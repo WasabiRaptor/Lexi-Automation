@@ -19,7 +19,6 @@
       "imageLayers" : [
         {"image":"animationParts/frame/back.png:default"},
         {"image":"animationParts/big_manipulator.png:default"},
-        {"image":"animationParts/beam.png:default", "fullbright":true},
         {"image":"animationParts/frame/front.png:default"}
       ],
       "direction" : "left",
@@ -36,7 +35,6 @@
       "imageLayers" : [
         {"image":"animationParts/frame/back.png:default"},
         {"image":"animationParts/big_manipulator.png:default"},
-        {"image":"animationParts/beam.png:default", "fullbright":true},
         {"image":"animationParts/frame/front.png:default"}
       ],
       "direction" : "right",
@@ -58,10 +56,25 @@
     "front" : "animationParts/frame/front.png"
   },
   "stateAnimations" : {
-    "on" : { "animations" : {"producing": ["on"]}},
-    "on_offset" : { "animations" : {"producing": ["on_offset"]}},
-    "off" : { "animations" : {"producing": ["off"]}},
-    "lowPower" : { "animations" : {"producing": ["off"]}}
+    "on" : {
+        "animations" : {"producing": ["on"]},
+        "lights":{"producing":true},
+        "lightColors":{"producing":[116, 159, 191]}
+    },
+    "on_offset" : {
+        "animations" : {"producing": ["on_offset"]},
+        "lights":{"producing":true},
+        "lightColors":{"producing":[116, 159, 191]}
+    },
+    "off" : {
+        "animations" : {"producing": ["off"]},
+        "lights":{"producing":false}
+    },
+    "lowPower" : {
+        "animations" : {"producing": ["lowPower"]},
+        "lights":{"producing":true},
+        "lightColors":{"producing":[78, 106, 128]}
+    }
   },
 
   "interactAction" : "ScriptPane",

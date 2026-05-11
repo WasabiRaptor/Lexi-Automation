@@ -56,10 +56,25 @@
     "beam" : "animationParts/beam.png"
   },
   "stateAnimations" : {
-    "on" : { "animations" : {"producing": ["on"]}},
-    "on_offset" : { "animations" : {"producing": ["on_offset"]}},
-    "off" : { "animations" : {"producing": ["off"]}},
-    "lowPower" : { "animations" : {"producing": ["off"]}}
+    "on" : {
+        "animations" : {"producing": ["on"]},
+        "lights":{"node_a":true,"node_b":true},
+        "lightColors":{"node_a":[116, 159, 191],"node_b":[116, 159, 191]}
+    },
+    "on_offset" : {
+        "animations" : {"producing": ["on_offset"]},
+        "lights":{"node_a":true,"node_b":true},
+        "lightColors":{"node_a":[116, 159, 191],"node_b":[116, 159, 191]}
+    },
+    "off" : {
+        "animations" : {"producing": ["off"]},
+        "lights":{"node_a":false,"node_b":false}
+    },
+    "lowPower" : {
+        "animations" : {"producing": ["lowPower"]},
+        "lights":{"node_a":true,"node_b":true},
+        "lightColors":{"node_a":[78, 106, 128],"node_b":[78, 106, 128]}
+    }
   },
 
   "interactAction" : "ScriptPane",

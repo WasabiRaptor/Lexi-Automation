@@ -133,6 +133,12 @@ function wr_automation.playAnimations(state)
 	for k, v in pairs(animationData.animations or {}) do
 		animator.setAnimationState(k, table.unpack(v))
 	end
+	for k, v in pairs(animationData.lights or {}) do
+		animator.setLightActive(k,v)
+	end
+	for k, v in pairs(animationData.lightColors or {}) do
+		animator.setLightColor(k,v)
+	end
 end
 
 function wr_automation.checkPowered()
