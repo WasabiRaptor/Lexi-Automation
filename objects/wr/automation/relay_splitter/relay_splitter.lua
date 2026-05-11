@@ -106,7 +106,7 @@ function refreshOutput(force)
 
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0, {input = anyTargetOutput, matchInputParameters = true})
 	if (not force)
-		and (powered = newPowered)
+		and (powered == newPowered)
 		and (fromExporter == config.getParameter("fromExporter"))
 		and (newDefaultOutputCount == defaultOutputCount)
 		and (newLeftOutputCount == leftOutputCount)

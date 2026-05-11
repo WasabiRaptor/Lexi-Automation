@@ -44,7 +44,7 @@ function refreshOutput(force)
 		newOutputCount = newOutputCount + 1
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
-	if (not force) and (powered = newPowered) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
+	if (not force) and (powered == newPowered) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
 	wr_automation.usePower(config.getParameter("activePowerConsumption"))
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
