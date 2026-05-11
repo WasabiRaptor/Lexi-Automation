@@ -6,6 +6,15 @@ end
 
 local products
 function init()
+	local powerProduction = world.getProperty("wr_powerProduction") or 0
+	local powerConsumption = world.getProperty("wr_powerConsumption") or 0
+	_ENV.powerProductionLabel:setText(tostring(clipAtThousandth(powerProduction)))
+	_ENV.powerConsumptionLabel:setText(tostring(clipAtThousandth(powerConsumption)))
+
+	if powerProduction > 0 then
+		_ENV.powerConsumptionPercentageLabel:setText(("%d%%"):format(math.ceil((powerConsumption / powerProduction) * 100)))
+	end
+
 	products = {}
 	-- foreseeing this becoming very large later so doing a binary sort insert for better performance
 	local function insertProduct(product)
@@ -45,6 +54,8 @@ function _ENV.resetButton:onClick()
 		world.setProperty("wr_product."..productKey, nil)
 		world.setProperty("wr_productProduced."..productKey, nil)
 	end
-    world.setProperty("wr_productKeys", {})
-    world.setProperty("wr_productionResetTime", os.time())
+	world.setProperty("wr_powerProduction",0)
+	world.setProperty("wr_powerConsumption",0)
+	world.setProperty("wr_productKeys", {})
+	world.setProperty("wr_productionResetTime", os.time())
 end

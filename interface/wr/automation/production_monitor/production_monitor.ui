@@ -12,6 +12,18 @@
 		{"mode" : "v"},
 		{"type":"panel","style":"convex","expandMode":[1,2],"children":[
 			{"mode" : "v"},
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode" : "v"},
+				[
+					{"type":"label","text":"Power Consumption: ","inline":true},
+					{"type":"label", "id":"powerConsumptionPercentageLabel", "text":"0%", "align":"left","inline":true}
+				],
+				[
+					{"type":"label", "id":"powerConsumptionLabel", "text":"0","align":"right"},
+					{"type":"label","text":"/","inline":true},
+					{"type":"label", "id":"powerProductionLabel", "text":"0","align":"left"}
+				]
+			]},
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
 				{"mode" : "v"},
 				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
