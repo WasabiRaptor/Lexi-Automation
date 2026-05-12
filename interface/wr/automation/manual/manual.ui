@@ -32,7 +32,13 @@
 						{"type":"label", "text":"Output", "inline":true}
 					]
 				],
-				{"type":"label", "text":"With the proper module provided by the Open Star Bureau (OSB) installed to your wiring HUD client, compatible wiring components will be displayed with the above indicators."}
+				{"type":"label", "text":"With the proper module provided by the Open Star Bureau (OSB) installed to your wiring HUD client, compatible wiring components will be displayed with the above indicators."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Matter Logistics components do not have to be manually hooked up to electrical power, they will automatically be connected to a planetary power grid to consume or produce power."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Reported production of materials as well as the state of the network's power can be conveniently viewed via a Handheld Production Monitor."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"In low power conditions the integrity of matter being streamed looses cohesion, making it unable to be reconsituted. Matter Streaming components will still report the rates they would be streaming in ideal power conditions. This allows the network to prioritize machines that are feeding into power generators for kickstarting a network."}
 			]}]}]},
 			{"id":"relay", "title":"Relay", "icon":"/objects/wr/automation/relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
@@ -65,6 +71,8 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"A long range matter stream must be tightly focused to reach its destination without dispersing, therefore each input can only be paired with a single output."},
 				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions the matter stream breaks apart long before it reaches its destination."},
+				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Due to important safety measures, a Planetary Matter Relay Input will reject a matter stream received from a Matter Exporter. See page on Matter Exporter for details."}
 			]}]}]},
 			{"id":"universal_relay", "title":"U. Relay", "icon":"/objects/wr/automation/universal_relay/input_icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
@@ -82,6 +90,8 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Due to varying quantum energy levels in the universe it may not be possible to safely create a suitable Black Hole and White Hole pair. It is required to have the requisite software modules from OSB installed to be able to monitor the quantum energy and safely create and pair a Black Hole and White Hole."},
 				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions the the Black and White Hole pair becomes unstable, making it unsafe to send anything through."},
+				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Due to important safety measures, a Universal Matter Relay Input will reject a matter stream received from a Matter Exporter. See page on Matter Exporter for details."}
 			]}]}]},
 			{"id":"inserter", "title":"Inserter", "icon":"/objects/wr/automation/inserter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
@@ -97,7 +107,9 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"MK2 upgrades the matter buffer to allow reconstituting any stream of matter as soon as there is enough for one unit, removing the bottleneck. This is only useful if the stream contains multiple forms of matter."},
 				{"type": "spacer", "size":5},
-				{"type":"label", "text":"All versions of the Matter Inserter are limited to a cycle speed of once per second, this does not lead to loss from faster matter streams, the matter buffer will simply fill and reconstitute multiple units at once. In the event a container has no space to reconsitute matter the device will enter a low power state and wait for a minute to pass before attempting to insert matter into the container again. Excess matter will disperse as energy if there is no space."}
+				{"type":"label", "text":"All versions of the Matter Inserter are limited to a cycle speed of once per second, this does not lead to loss from faster matter streams, the matter buffer will simply fill and reconstitute multiple units at once. In the event a container has no space to reconsitute matter the device will enter a low power state and wait for a minute to pass before attempting to insert matter into the container again. Excess matter will disperse as energy if there is no space."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions matter is unable to be reconstituted at all."}
 
 			]}]}]},
 			{"id":"exporter", "title":"Exporter", "icon":"/objects/wr/automation/exporter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
@@ -115,7 +127,9 @@
 				{"type": "spacer", "size":5},
 				{"type":"label", "text":"The lossy nature of Matter Exporters when used at industrial scale leads to them being less than ideal. In addition to their sub par performance, they pose a real danger when left unsupervised. During the development period when testing Exporters at an industrial scale one overheated and had a complete failure of its control systems, causing it to consume matter uncontrollably and eat its way into the planet's crust. It was then (hopefully) destroyed by the high heat and pressure within the planet."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"Due to the immense safety concerns, all Matter Exporters are fit with safety shutoff systems to prevent repeats of such events. Only allowing their operation while there is an approved overseer present and limiting their matter streaming operations to direct local recipients."}
+				{"type":"label", "text":"Due to the immense safety concerns, all Matter Exporters are fit with safety shutoff systems to prevent repeats of such events. Only allowing their operation while there is an approved overseer present and limiting their matter streaming operations to direct local recipients."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions matter is unable to be converted into a stream."}
 			]}]}]},
 			{"id":"assembler", "title":"Assembler", "icon":"/objects/wr/automation/assembler/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},

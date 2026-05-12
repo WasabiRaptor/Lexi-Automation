@@ -19,8 +19,8 @@ function update(dt)
 	local powerConsumption = world.getProperty("wr_powerConsumption") or 0
 	local powerStorage = world.getProperty("wr_powerStorage") or 0
 
-	storage.powerStorage = math.max(0,math.min(powerStorage, storage.powerStorage + (dt * (powerProduction - powerConsumption))))
-	world.setProperty("wr_powerStorageAvailable", storage.powerStorage > 0)
+	-- storage.powerStorage = math.max(0,math.min(powerStorage, storage.powerStorage + (dt * (powerProduction - powerConsumption))))
+	-- world.setProperty("wr_powerStorageAvailable", storage.powerStorage > 0)
 end
 
 function uninit()
