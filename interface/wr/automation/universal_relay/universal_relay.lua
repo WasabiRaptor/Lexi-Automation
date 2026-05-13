@@ -62,13 +62,19 @@ function _ENV.channelTextBox:onTextChanged()
 			if serverChannels[serverUuid][self.text][swapper[channelProperty]] then
 				local celestialCoords, isCelestial = serverChannels[serverUuid][self.text][swapper[channelProperty]].worldId:gsub("^CelestialWorld%:", "")
 				if isCelestial > 0 then
-					_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..celestial.planetName(celestialCoords))
+					_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..celestial.planetName(celestialCoords)..(
+						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
+					))
 				else
-					_ENV.channelStatusLabel:setText("Paired")
+					_ENV.channelStatusLabel:setText("Paired"..(
+						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
+					))
 				end
 			else
 				_ENV.channelStatusLabel.color = "00FF00"
-				_ENV.channelStatusLabel:setText("Channel is available.")
+				_ENV.channelStatusLabel:setText("Channel is available."..(
+						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
+					))
 			end
 			world.sendEntityMessage(
 				pane.sourceEntity(),
@@ -90,4 +96,13 @@ function _ENV.removeButton:onClick()
 	player.setProperty("wr_serverRelayChannels", serverChannels)
 	world.sendEntityMessage(pane.sourceEntity(), "remove")
 	pane.dismiss()
+end
+
+function checkPowered()
+	local activePowerConsumption = world.getObjectParameter(pane.sourceEntity(), "activePowerConsumption") or 0
+	local powerConsumption = world.getObjectParameter(pane.sourceEntity(), "powerConsumption") or 0
+	local powerChanged = activePowerConsumption - powerConsumption
+	return world.getProperty("wr_powerStorageAvailable")
+	or ((powerConsumption == 0) and (newPowerConsumption == 0))
+	or ((world.getProperty("wr_powerProduction") or 0) >= ((world.getProperty("wr_powerConsumption") or 0) + powerChanged))
 end
