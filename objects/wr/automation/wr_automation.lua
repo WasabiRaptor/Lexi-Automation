@@ -144,8 +144,12 @@ function wr_automation.playAnimations(state)
 	end
 end
 
-function wr_automation.checkPowered()
-	return world.getProperty("wr_powerStorageAvailable") or ((config.getParameter("powerConsumption") or 0) == 0) or ((world.getProperty("wr_powerProduction") or 0) >= (world.getProperty("wr_powerConsumption") or 0))
+function wr_automation.checkPowered(newPowerConsumption)
+	local powerConsumption = config.getParameter("powerConsumption") or 0
+	local powerChanged = newPowerConsumption - powerConsumption
+	return world.getProperty("wr_powerStorageAvailable")
+	or ((powerConsumption == 0) and (newPowerConsumption or 0) == 0)
+	or ((world.getProperty("wr_powerProduction") or 0) >= ((world.getProperty("wr_powerConsumption") or 0) + powerChanged))
 end
 
 function wr_automation.usePower(powerConsumption)

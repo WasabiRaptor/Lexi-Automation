@@ -27,7 +27,7 @@ function init()
 		refreshOutput(force)
 	end)
 
-	powered = wr_automation.checkPowered()
+	powered = wr_automation.checkPowered(config.getParameter("activePowerConsumption"))
 	if products then
 		if powered then
 			object.setConfigParameter("status", "on")
@@ -57,7 +57,8 @@ function refreshOutput(force)
 		inputs = nil
 		return
 	end
-	local newPowered = wr_automation.checkPowered()
+	local activePowerConsumption = config.getParameter("activePowerConsumption")
+	local newPowered = wr_automation.checkPowered(activePowerConsumption)
 	local outputNodes = object.getOutputNodeIds(0)
 	local newOutputCount = 0
 	for _, _ in pairs(outputNodes) do
@@ -78,7 +79,7 @@ function refreshOutput(force)
 		wr_automation.playAnimations("off")
 		return
 	end
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+	wr_automation.usePower(activePowerConsumption)
 
 	local products = jarray()
 	products[1] = jarray()

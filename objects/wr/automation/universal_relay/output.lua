@@ -41,7 +41,7 @@ function init()
 	message.setHandler("remove", function (_,_)
 		object.smash()
 	end)
-	if inputs and (#inputs > 0) then
+	if inputs and (#inputs > 0) and wr_automation.checkPowered(config.getParameter("activePowerConsumption")) then
 		animator.setAnimationState("input", "on", true)
 	end
 end
@@ -66,7 +66,8 @@ function die()
 end
 
 function refreshOutput(force, newInputs)
-	if (not wr_automation.checkPowered()) or (not inputTarget) or (not newInputs) or (channel == "") then
+	local activePowerConsumption = config.getParameter("activePowerConsumption")
+	if (not wr_automation.checkPowered(activePowerConsumption)) or (not inputTarget) or (not newInputs) or (channel == "") then
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
@@ -82,7 +83,7 @@ function refreshOutput(force, newInputs)
 		newOutputCount = newOutputCount + 1
 	end
 	if (not force) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+	wr_automation.usePower(activePowerConsumption)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount

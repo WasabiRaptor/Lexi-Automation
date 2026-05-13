@@ -18,7 +18,7 @@ function init()
 	end)
 
 	if products then
-		if wr_automation.checkPowered() then
+		if wr_automation.checkPowered(config.getParameter("activePowerConsumption")) then
 			object.setConfigParameter("status", "on")
 			wr_automation.playAnimations("on")
 		else
@@ -42,9 +42,9 @@ function refreshOutput(force)
 		wr_automation.playAnimations("off")
 		return
 	end
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
-
-	if wr_automation.checkPowered() then
+	local activePowerConsumption = config.getParameter("activePowerConsumption")
+	wr_automation.usePower(activePowerConsumption)
+	if wr_automation.checkPowered(activePowerConsumption) then
 		object.setConfigParameter("status", "on")
 		wr_automation.playAnimations("on")
 	else

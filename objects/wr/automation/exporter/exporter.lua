@@ -6,6 +6,7 @@ local objectPosition
 local delta
 local efficency
 local targetPosition
+local activePowerConsumption
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
@@ -17,7 +18,7 @@ function init()
 		setOutputs(newOutputs)
 		refreshOutput()
 	end)
-
+    activePowerConsumption = config.getParameter("activePowerConsumption")
 	storage.leftovers = storage.leftovers or {}
 
 	if not outputs then
@@ -42,7 +43,7 @@ function update(dt)
 	if (not exportEntity) or (not world.entityExists(exportEntity)) then
 		exportEntity = world.objectAt(targetPosition)
 	end
-	if (not exportEntity) or (not wr_automation.checkPowered()) then
+	if (not exportEntity) or (not wr_automation.checkPowered(activePowerConsumption)) then
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("output", "off")
 		wr_automation.clearAllOutputs()
@@ -91,7 +92,7 @@ function update(dt)
 		if not isOutputting then
 			isOutputting = true
 			wr_automation.setOutputs({outputs})
-			wr_automation.usePower(config.getParameter("activePowerConsumption"))
+			wr_automation.usePower(activePowerConsumption)
 		end
 	else
 		animator.setAnimationState("output", "on")
@@ -119,10 +120,11 @@ function refreshOutput()
 		script.setUpdateDelta(0)
 		return
 	end
+	activePowerConsumption = config.getParameter("activePowerConsumption")
 	if object.isInputNodeConnected(0) then
 		if object.getInputNodeLevel(0) then
 			if isOutputting then
-				wr_automation.usePower(config.getParameter("activePowerConsumption"))
+				wr_automation.usePower(activePowerConsumption)
 				wr_automation.setOutputs({ outputs })
 			else
 				wr_automation.usePower(config.getParameter("idlePowerConsumption"))
@@ -137,7 +139,7 @@ function refreshOutput()
 		end
 	else
 		if isOutputting then
-			wr_automation.usePower(config.getParameter("activePowerConsumption"))
+			wr_automation.usePower(activePowerConsumption)
 			wr_automation.setOutputs({ outputs })
 		else
 			wr_automation.usePower(config.getParameter("idlePowerConsumption"))

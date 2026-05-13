@@ -46,7 +46,7 @@ function init()
 	rightState = (object.direction() == 1) and "right" or "left"
 	prevLeftNodeValue = object.getInputNodeLevel(1)
 	prevRightNodeValue = object.getInputNodeLevel(2)
-	powered = wr_automation.checkPowered()
+	powered = wr_automation.checkPowered(config.getParameter("activePowerConsumption"))
 	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
 		animator.setAnimationState("input", powered and "on" or "off", true)
 		if outputs then
@@ -70,7 +70,8 @@ function die()
 	wr_automation.usePower(0)
 end
 function refreshOutput(force)
-	local newPowered = wr_automation.checkPowered()
+	local activePowerConsumption = config.getParameter("activePowerConsumption")
+	local newPowered = wr_automation.checkPowered(activePowerConsumption)
 	local leftNodeValue = object.getInputNodeLevel(1) or not object.isInputNodeConnected(1)
 	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 
@@ -117,7 +118,7 @@ function refreshOutput(force)
 	then
 		return
 	end
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+	wr_automation.usePower(activePowerConsumption)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs

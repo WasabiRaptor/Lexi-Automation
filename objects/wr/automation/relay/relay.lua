@@ -9,7 +9,7 @@ function init()
 	message.setHandler("refreshInputs", function (_,_,force)
 		refreshOutput(force)
 	end)
-	powered =  wr_automation.checkPowered()
+	powered =  wr_automation.checkPowered(config.getParameter("activePowerConsumption"))
 	if object.isInputNodeConnected(0) and object.getInputNodeLevel(0) then
 		animator.setAnimationState("input", powered and "on" or "off", true)
 	end
@@ -27,7 +27,8 @@ function die()
 end
 
 function refreshOutput(force)
-	local newPowered = wr_automation.checkPowered()
+	local activePowerConsumption = config.getParameter("activePowerConsumption")
+	local newPowered = wr_automation.checkPowered(activePowerConsumption)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
@@ -45,7 +46,7 @@ function refreshOutput(force)
 	end
 	local newInputs, totalItems, fromExporter = wr_automation.countInputs(0)
 	if (not force) and (powered == newPowered) and (fromExporter == config.getParameter("fromExporter")) and (newOutputCount == outputCount) and compare(newInputs, inputs) then return end
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+	wr_automation.usePower(activePowerConsumption)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs

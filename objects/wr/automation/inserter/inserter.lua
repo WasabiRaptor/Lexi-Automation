@@ -5,6 +5,7 @@ local outputEntity
 local objectPosition
 local targetPosition
 local delta
+local activePowerConsumption
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
@@ -13,7 +14,7 @@ function init()
 	inputs = (config.getParameter("matterStreamInput") or {})[1]
 	delta = math.max(config.getParameter("scriptDelta") or 0, 60)
 	local fromExporter = config.getParameter("fromExporter")
-
+	activePowerConsumption = config.getParameter("activePowerConsumption")
 	message.setHandler("setTargetOutputs", function(_, _, newOutputs)
 		targetOutput = newOutputs
 		object.setConfigParameter("targetOutput", targetOutput)
@@ -52,7 +53,7 @@ function update(dt)
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
 		exportEntity = world.objectAt(targetPosition)
 	end
-	if (not outputEntity) or (not wr_automation.checkPowered()) then
+	if (not outputEntity) or (not wr_automation.checkPowered(activePowerConsumption)) then
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("input", "off")
 		return
@@ -147,7 +148,8 @@ function refreshOutput(force)
 	delta = math.max(1 / best, 1) * 60
 	script.setUpdateDelta(delta)
 	object.setConfigParameter("scriptDelta", delta)
-	wr_automation.usePower(config.getParameter("activePowerConsumption"))
+	activePowerConsumption = config.getParameter("activePowerConsumption")
+	wr_automation.usePower(activePowerConsumption)
 end
 
 function onInputNodeChange()
