@@ -20,7 +20,15 @@ function init()
 	leftTargetOutput = config.getParameter("leftTargetOutput") or jarray()
 	rightTargetOutput = config.getParameter("rightTargetOutput") or jarray()
 	util.appendLists(anyTargetOutput, leftTargetOutput)
-	util.appendLists(anyTargetOutput, rightTargetOutput)
+	local function appendRightTargetOutput()
+		for i, newItem in ipairs(rightTargetOutput) do
+			local isNew = true
+			for j, input in ipairs(inputs) do
+				if root.itemDescriptorsMatch(input, newItem, recipe.matchInputParameters) then isNew = false break end
+			end
+			if isNew then table.insert(anyTargetOutput, newItem) end
+		end
+	end
 
 	message.setHandler("refreshInputs", function (_,_,force)
 		refreshOutput(force)
@@ -37,9 +45,10 @@ function init()
 			rightTargetOutput = right
 			forceRefresh = true
 		end
+		if not forceRefresh then return end
 		anyTargetOutput = jarray()
 		util.appendLists(anyTargetOutput, leftTargetOutput)
-		util.appendLists(anyTargetOutput, rightTargetOutput)
+		appendRightTargetOutput()
 		refreshOutput(forceRefresh)
 	end)
 	leftState = (object.direction() == 1) and "left" or "right"
