@@ -9,6 +9,8 @@ function uninit()
 end
 
 function init()
+	_ENV.lowPowerLabel:setVisible(not checkPowered())
+
 	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
 	targetOutput = world.getObjectParameter(pane.sourceEntity(), "targetOutput") or jarray()
 	prevOutput = copy(targetOutput)
@@ -160,4 +162,13 @@ function setTargetOutputs()
 	table.sort(targetOutputSorted, sortTargetOutputs)
 
 	world.sendEntityMessage(pane.sourceEntity(), "setTargetOutputs", targetOutputSorted)
+end
+
+function checkPowered()
+	local activePowerConsumption = world.getObjectParameter(pane.sourceEntity(), "activePowerConsumption") or 0
+	local powerConsumption = world.getObjectParameter(pane.sourceEntity(), "powerConsumption") or 0
+	local powerChanged = activePowerConsumption - powerConsumption
+	return world.getProperty("wr_powerStorageAvailable")
+	or ((powerConsumption == 0) and (newPowerConsumption == 0))
+	or ((world.getProperty("wr_powerProduction") or 0) >= ((world.getProperty("wr_powerConsumption") or 0) + powerChanged))
 end
