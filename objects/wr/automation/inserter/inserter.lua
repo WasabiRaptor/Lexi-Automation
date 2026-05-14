@@ -48,6 +48,7 @@ function update(dt)
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("input", "off")
+		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		return
 	end
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
@@ -114,14 +115,6 @@ function refreshOutput(force)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	object.setConfigParameter("fromExporter", fromExporter)
 	inputs = newInputs
-	for _, output in ipairs(targetOutput) do
-		for _, input in ipairs(inputs) do
-			if root.itemDescriptorsMatch(input, output, true) then
-				input.slot = output.slot
-				break
-			end
-		end
-	end
 	local mode = config.getParameter("insertMode")
 	local best
 	if mode == "fast" then
