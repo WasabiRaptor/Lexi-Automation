@@ -98,6 +98,10 @@ function wr_automation.setOutputs(products, forceRefresh)
 			local outputItem = copy(v)
 			totalItems = totalItems + outputItem.count
 			outputItem.count = outputItem.count / math.max(1, outputCount)
+			-- sterilize these values
+			outputItem.used = nil
+			outputItem.slot = nil
+			-- only output if the count is above 0
 			if outputItem.count > 0 then
 				table.insert(output, outputItem)
 			end
@@ -146,7 +150,7 @@ end
 
 function wr_automation.checkPowered(newPowerConsumption)
 	local powerConsumption = config.getParameter("powerConsumption") or 0
-	local powerChanged = newPowerConsumption - powerConsumption
+	local powerChanged = (newPowerConsumption or 0) - powerConsumption
 	return world.getProperty("wr_powerStorageAvailable")
 	or ((powerConsumption == 0) and (newPowerConsumption or 0) == 0)
 	or ((world.getProperty("wr_powerProduction") or 0) >= ((world.getProperty("wr_powerConsumption") or 0) + powerChanged))
