@@ -45,7 +45,7 @@
 				{"type":"image", "file":"/objects/wr/automation/relay/animationParts/back.png:default"},
 				{"type":"label", "text":"The Matter Relay is the core component in almost all matter streaming devices. To be used cheaply at an industrial scale, they have a rather short range before the streamed matter disperses into energy and is lost. However, a relay can recieve the stream and re-focus it to extend it's range, and can also be used to combine multiple streams of matter into one."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"The output stream must be connected to another component capable of receiving it, or the matter will be lost. The matter will be split evenly between all valid outputs."},
+				{"type":"label", "text":"The output stream must be connected to another component capable of receiving it, or the matter will be lost as radiation. The matter will be split evenly between all valid outputs."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"When the output is connected to a device not capable of receiving a matter stream, the relay will simply send a positive logic signal while the relay is receiving any matter stream."}
 			]}]}]},
