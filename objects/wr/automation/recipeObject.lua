@@ -119,6 +119,7 @@ function refreshOutput(force)
 			end
 		end
 	end
+	local wasteRadiation = 0
 	if productionRate > minimumProductionRate then
 		if passthrough then
 			products[1] = copy(inputs)
@@ -128,6 +129,20 @@ function refreshOutput(force)
 						product.count = product.count - (recipeItem.count * productionRate)
 						break
 					end
+				end
+			end
+		else
+			for _, input in ipairs(inputs) do
+				local used = false
+				for _, recipeItem in ipairs(recipe.input) do
+					if root.itemDescriptorsMatch(recipeItem, input, recipe.matchInputParameters) then
+						wasteRadiation = wasteRadiation + input.count - (recipeItem.count * productionRate)
+						used = true
+						break
+					end
+				end
+				if not used then
+					wasteRadiation = wasteRadiation + input.count
 				end
 			end
 		end
@@ -159,6 +174,7 @@ function refreshOutput(force)
 	elseif passthrough then
 		products[1] = copy(inputs)
 	else
+		wasteRadiation = totalItems
 		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
 		wr_automation.clearAllOutputs()
@@ -166,8 +182,8 @@ function refreshOutput(force)
 		wr_automation.playAnimations("off")
 		return
 	end
-	local outputs, totalItems = wr_automation.setOutputs(products)
-	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
+	local outputs, totalOutputItems = wr_automation.setOutputs(products)
+	wr_automation.addWasteRadiation((outputCount == 0 and totalOutputItems or wasteRadiation) + (config.getParameter("activeWasteRadiation") or 0))
 end
 function onInputNodeChange(...)
 	old.onInputNodeChange(...)
