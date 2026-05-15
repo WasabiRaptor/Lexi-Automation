@@ -21,6 +21,8 @@ function init()
 	_ENV.powerConsumptionLabel:setText(tostring(clipAtThousandth(powerConsumption * powerScale)))
 	_ENV.powerScaleLabel:setText(shortLabel)
 
+	_ENV.resetButton:setVisible(player.isAdmin())
+
 	products = {}
 	-- foreseeing this becoming very large later so doing a binary sort insert for better performance
 	local function insertProduct(product)

@@ -33,7 +33,7 @@
 
 				]}
 			]},
-			{"type":"button", "color" : "FF0000", "id" : "resetButton", "caption" : "Reset", "toolTip" : "Reset calculated global production rate for this planet.\nWill require reloading all machines afterwards to take effect.\nThis may be wise to do if floating point errors have accumulated or item names have changed."}
+			{"type":"button", "color" : "FF0000", "id" : "resetButton", "visible" : false, "caption" : "Reset", "toolTip" : "(Admin Only) Reset calculated global production rate for this planet.\nWill require reloading all machines afterwards to take effect.\nThis may be wise to do if floating point errors have accumulated or item names have changed."}
 
 		]}
 	]
