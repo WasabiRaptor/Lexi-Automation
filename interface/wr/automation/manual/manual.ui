@@ -131,9 +131,31 @@
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Under low power conditions matter is unable to be converted into a stream."}
 			]}]}]},
+			{"id":"storage_relay", "title":"Storage Relay", "icon":"/objects/wr/automation/storage_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/storage_relay/storage_relay.png:default.0"},
+				{"type":"label", "text":"Storage relays are used to store materials from a matter stream, as well as relay the stream."},
+				{"type":"label", "text":"As they are made using a Matter Inserter MK2, they will insert items as soon as they are available."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"They can be configured to have an output rate for each material being input, any excess of that amount will be placed within their storage. Once no more of that item can fit within its storage, the relay will then send the full amount to the output."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Storage relays will not consume their contents to produce a stream if their input becomes cutoff, they are merely for building a buffer of resources one can grab."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A convenient design is to daisy chain a number of storage relays together, without any extra configuration needed it will fill one's storage until its full and then move on to the next."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"They consume less power than the Matter Inserter MK2 because of the specialized container to reconstitute matter within, this also makes its hibernation period to be on par with if not superior to the MK1 Inserter's."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions matter is unable to be reconstituted at all."}
+			]}]}]},
 			{"id":"assembler", "title":"Assembler", "icon":"/objects/wr/automation/assembler/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
-				{"type":"image", "file":"/objects/wr/automation/assembler/animationParts/assembler.png:default"},
+				[
+					{"mode":"stack", "expandMode":[0,0]},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/assembler/animationParts/frame/back.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/assembler/animationParts/ring.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/assembler/animationParts/frame/front.png:default"},
+					{"type":"image", "noAutoCrop":true, "file":"/objects/wr/automation/assembler/animationParts/beam.png:default"}
+				],
 				{"type":"label", "text":"Matter Assemblers can assemble a matter stream into any related form."},
 				{"type": "spacer", "size":3},
 				{"type":"image", "file":"/interface/wr/automation/assembler/crafting.png"},

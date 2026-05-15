@@ -1,0 +1,13 @@
+{
+  "input" : [
+    { "item" : "wr/inserter_mk2", "count" : 3 },
+    { "item" : "durasteelbar", "count" : 1 },
+    { "item" : "silverbar", "count" : 1 }
+  ],
+  "output" : {
+    "item" : "wr/storage_relay_mk1",
+    "count" : 1
+  },
+  "duration" : 5,
+  "groups" : [ "wr_logistics_station", "logistics", "all" ]
+}

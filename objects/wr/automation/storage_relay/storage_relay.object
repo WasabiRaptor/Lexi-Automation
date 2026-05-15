@@ -1,0 +1,52 @@
+{
+  "objectName" : "wr/storage_relay_mk1",
+  "colonyTags" : ["industrial","storage"],
+  "rarity" : "Uncommon",
+  "category" : "storage",
+  "price" : 225,
+  "objectType" : "container",
+  "tooltipKind" : "container",
+  "description" : "Stores and relays items from a matter stream. Will relay the full amount once storage has been filled.",
+  "shortdescription" : "Matter Storage Relay",
+  "race" : "generic",
+  "health" : 1.5,
+
+  "inventoryIcon" : "icon.png",
+  "orientations" : [
+    {
+      "image" : "storage_relay.png:<color>.<key>",
+      "imagePosition" : [-16, -8],
+      "spaceScan" : 0.1,
+      "anchors" : [ "background" ]
+    }
+  ],
+  "isInserter" : true, // marks this object as an inserter so exporters will disable when attached to the same inventory
+  "activePowerConsumption": 20,
+  "idlePowerConsumption": 1,
+
+  "inputNodes" : [ [-1, 0] ],
+  "inputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/input.png"
+  }],
+  "matterStreamReciever" : [
+    true
+  ],
+  "outputNodes" : [ [0, 0], [-1,-1] ],
+  "outputNodesConfig" : [{
+    "color" : "#1c8eff",
+    "icon" : "/interface/wr/automation/output.png"
+  }],
+  "scripts" : ["storage_relay.lua"],
+  "scriptDelta" : 0,
+
+  "openSounds" : [ "/sfx/objects/gunchest_open.ogg" ],
+  "closeSounds" : [ "/sfx/objects/gunchest_close.ogg" ],
+  "ageItemsEvery" : 9999999999999999,
+  "itemAgeMultiplier" : 0,
+  "slotCount" : 24,
+  "frameCooldown" : 5,
+  "openFrameIndex" : 4,
+  "autoCloseCooldown" : 3600,
+  "uiConfig" : "/metagui/container.config", "ui" : "wr_automation:storage_relay"
+}

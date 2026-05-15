@@ -18,6 +18,7 @@
 		"manual" : "/interface/wr/automation/manual/manual.ui",
 		"manual_technical" : "/interface/wr/automation/manual/manual_technical.ui",
 		"production_monitor" : "/interface/wr/automation/production_monitor/production_monitor.ui",
-		"generic_recipe" : "/interface/wr/automation/generic_recipe/build.lua"
+		"generic_recipe" : "/interface/wr/automation/generic_recipe/build.lua",
+		"storage_relay" : "/interface/wr/automation/storage_relay/build.lua"
 	}}
 ]

@@ -100,6 +100,11 @@ Exports items from the attached inventory, stops all output if any item count ca
 MK1 Exporters are 50% efficent.
 MK2 Exporters are 75% efficent.
 
+### Stroage Relay
+- wr/storage_relay_mk1
+
+Inserts items into its own inventory in the same manner as the Inserter MK2, items that don't fit are relayed to the output.
+
 ### Relay
 - wr/relay_mk1
 
@@ -126,4 +131,4 @@ Similar to the Planetary relay with a few differences. Channels are player speci
 ### Infinity Crate
 - wr/infinity_crate
 
-An unobtainable debug item that must be spawned in. Simply outputs its contents as an infinite matter stream. Does not split its outputs evenly.
+An almost unobtainable debug item that must be spawned in. Simply outputs its contents as an infinite matter stream. Does not split its outputs evenly.

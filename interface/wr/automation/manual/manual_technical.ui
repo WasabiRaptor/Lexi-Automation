@@ -114,8 +114,6 @@
 				{"type":"label", "text":"Another very cool feature of constant production rates, is these can even 'function' while they're not loaded in! They simply save the world time when they were unloaded, and then the next time they load in they will insert as many items as they would have from the difference in time! As long as they weren't recieving a stream from an exporter at least."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Inserters will not insert items when there isn't enough power."}
-
-
 			]}]}]},
 			{"id":"exporter", "title":"Exporter", "icon":"/objects/wr/automation/exporter/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
@@ -135,6 +133,22 @@
 				{"type":"label", "text":"The reason for the ineffecient conversion rates for these is an intentional decision to de-incentivize their use. Because of the fact that these cannot be relied on to produce a constant unchanging matter stream, and the fact that they have to be loaded in for their inventory contents to be consumed, these and any machines downstream from their output are deined from connecting to a Planetary or Universal relay."},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Exporters will not consume items when there isn't enough power."}
+			]}]}]},
+			{"id":"storage_relay", "title":"Storage Relay", "icon":"/objects/wr/automation/storage_relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"image", "file":"/objects/wr/automation/storage_relay/storage_relay.png:default.0"},
+				{"type":"label", "text":"Storage relays are used to store materials from a matter stream, as well as relay the stream."},
+				{"type":"label", "text":"As they are made using a Matter Inserter MK2, they will insert items as soon as they are available."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"They can be configured to have an output rate for each material being input, any excess of that amount will be placed within their storage. Once no more of that item can fit within its storage, the relay will then send the full amount to the output."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Storage relays will not consume their contents to produce a stream if their input becomes cutoff, they are merely for building a buffer of resources one can grab."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"A convenient design is to daisy chain a number of storage relays together, without any extra configuration needed it will fill one's storage until its full and then move on to the next."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"These are ever so slightly more performant than Matter Inserters MK2 that are attached to an inventory, as instead of going into the hibernation minute long tick state when the inventory becomes full, it is able to entirely stop ticking and just wait until something modifies its inventory, which triggers a part of its script."},
+				{"type": "spacer", "size":3},
+				{"type":"label", "text":"Under low power conditions matter is unable to be reconstituted at all."}
 			]}]}]},
 			{"id":"assembler", "title":"Assembler", "icon":"/objects/wr/automation/assembler/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},

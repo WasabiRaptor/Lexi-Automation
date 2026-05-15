@@ -44,6 +44,14 @@ end
 
 function displayInputs()
 	_ENV.inserterScrollArea:clearChildren()
+	if (not targetOutput) or (#targetOutput == 0) then
+		_ENV.inserterScrollArea:addChild({
+			type = "label",
+			align = "center",
+			text = "Recieving no items.",
+		})
+		return
+	end
 	local rand = sb.makeRandomSource()
 	for _, target in ipairs(targetOutput) do
 
