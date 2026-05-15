@@ -36,6 +36,7 @@ end
 
 function refreshOutput(force)
 	if not products then
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.clearAllOutputs()
 		object.setConfigParameter("status", "off")
@@ -59,7 +60,8 @@ function refreshOutput(force)
 	end
 	if (not force) and (newOutputCount == outputCount) then return end
 	outputCount = newOutputCount
-	wr_automation.setOutputs(products)
+	local outputs, totalItems = wr_automation.setOutputs(products)
+	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
 end
 
 function onNodeConnectionChange(...)

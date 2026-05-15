@@ -105,6 +105,7 @@ function refreshInput(force)
 		object.setOutputNodeLevel(0, false)
 		object.setOutputNodeLevel(1, false)
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		return
 	end
 	local outputNodes = object.getOutputNodeIds(0)
@@ -162,8 +163,8 @@ function refreshOutput(force)
 			table.insert(streamItems, inputCopy)
 		end
 	end
-	wr_automation.setOutputs({streamItems})
-	sb.logInfo(sb.printJson(streamItems))
+	local outputs, totalItems = wr_automation.setOutputs({streamItems})
+	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
 	if #insertItems == 0 then
 		wasFull = true
 		script.setUpdateDelta(0)

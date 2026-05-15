@@ -7,6 +7,7 @@ local delta
 local efficency
 local targetPosition
 local activePowerConsumption
+local activeWasteRadiation
 function init()
 	wr_automation.init()
 	objectPosition = object.position()
@@ -18,7 +19,8 @@ function init()
 		setOutputs(newOutputs)
 		refreshOutput()
 	end)
-    activePowerConsumption = config.getParameter("activePowerConsumption")
+	activePowerConsumption = config.getParameter("activePowerConsumption")
+	activeWasteRadiation = config.getParameter("efficencyWasteRadiation") + config.getParameter("activeWasteRadiation")
 	storage.leftovers = storage.leftovers or {}
 
 	if not outputs then
@@ -91,7 +93,8 @@ function update(dt)
 		end
 		if not isOutputting then
 			isOutputting = true
-			wr_automation.setOutputs({outputs})
+			local outputs, totalItems = wr_automation.setOutputs({outputs})
+			wr_automation.addWasteRadiation(activeWasteRadiation)
 			wr_automation.usePower(activePowerConsumption)
 		end
 	else
@@ -99,6 +102,7 @@ function update(dt)
 		isOutputting = false
 		wr_automation.clearAllOutputs()
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 	end
 end
 
@@ -121,13 +125,19 @@ function refreshOutput()
 		return
 	end
 	activePowerConsumption = config.getParameter("activePowerConsumption")
+
 	if object.isInputNodeConnected(0) then
 		if object.getInputNodeLevel(0) then
 			if isOutputting then
 				wr_automation.usePower(activePowerConsumption)
-				wr_automation.setOutputs({ outputs })
+				local outputs, totalItems = wr_automation.setOutputs({ outputs })
+				local efficencyWasteRadiation = math.max(0,(totalItems / efficency) - totalItems)
+				object.setConfigParameter("efficencyWasteRadiation", efficencyWasteRadiation)
+				activeWasteRadiation = efficencyWasteRadiation + (config.getParameter("activeWasteRadiation") or 0)
+				wr_automation.addWasteRadiation(activeWasteRadiation)
 			else
 				wr_automation.usePower(config.getParameter("idlePowerConsumption"))
+				wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 			end
 			script.setUpdateDelta(delta)
 		else
@@ -136,13 +146,19 @@ function refreshOutput()
 			wr_automation.clearAllOutputs()
 			script.setUpdateDelta(0)
 			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
+			wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		end
 	else
 		if isOutputting then
 			wr_automation.usePower(activePowerConsumption)
-			wr_automation.setOutputs({ outputs })
+			local outputs, totalItems = wr_automation.setOutputs({ outputs })
+			local efficencyWasteRadiation = math.max(0,(totalItems / efficency) - totalItems)
+			object.setConfigParameter("efficencyWasteRadiation", efficencyWasteRadiation)
+			activeWasteRadiation = efficencyWasteRadiation + (config.getParameter("activeWasteRadiation") or 0)
+			wr_automation.addWasteRadiation(activeWasteRadiation)
 		else
 			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
+			wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiation"))
 		end
 		script.setUpdateDelta(delta)
 	end

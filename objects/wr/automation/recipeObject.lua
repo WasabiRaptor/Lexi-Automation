@@ -47,6 +47,7 @@ end
 
 function refreshOutput(force)
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
@@ -74,9 +75,10 @@ function refreshOutput(force)
 	if not recipe then
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.producePower(0)
-		wr_automation.setOutputs({inputs})
+		local outputs, totalItems = wr_automation.setOutputs({inputs})
 		object.setConfigParameter("status", "noRecipe")
 		wr_automation.playAnimations("off")
+		wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("idleWasteRadiation") or 0))
 		return
 	end
 	wr_automation.usePower(activePowerConsumption)
@@ -164,7 +166,8 @@ function refreshOutput(force)
 		wr_automation.playAnimations("off")
 		return
 	end
-	wr_automation.setOutputs(products)
+	local outputs, totalItems = wr_automation.setOutputs(products)
+	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
 end
 function onInputNodeChange(...)
 	old.onInputNodeChange(...)

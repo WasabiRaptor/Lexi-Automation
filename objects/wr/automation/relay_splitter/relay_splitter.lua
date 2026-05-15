@@ -6,7 +6,7 @@ local defaultOutputCount
 local inputs
 local leftTargetOutput
 local rightTargetOutput
-local outputs
+local outputs, totalItems, nodeItemCounts
 local leftState
 local rightState
 local prevLeftNodeValue
@@ -85,6 +85,7 @@ function refreshOutput(force)
 	local rightNodeValue = object.getInputNodeLevel(2) or not object.isInputNodeConnected(2)
 
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
@@ -180,12 +181,18 @@ function refreshOutput(force)
 			end
 		end
 	end
-	outputs = wr_automation.setOutputs({defaultOutput, leftOutput, rightOutput})
+	outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({defaultOutput, leftOutput, rightOutput})
 	animator.setAnimationState("center", powered and (#outputs[1] > 0) and "on" or "off")
 	animator.setAnimationState(leftState, powered and (#outputs[2] > 0) and "on" or "off")
 	animator.setAnimationState(rightState, powered and (#outputs[3] > 0) and "on" or "off")
 	animator.setAnimationState(leftState.."Logic", (leftNodeValue) and "on" or "off")
 	animator.setAnimationState(rightState.."Logic", (rightNodeValue) and "on" or "off")
+	wr_automation.addWasteRadiation(
+		(config.getParameter("activeWasteRadiation") or 0)
+		+ (defaultOutputCount == 0 and nodeItemCounts[1] or 0)
+		+ (leftOutputCount == 0 and nodeItemCounts[2] or 0)
+		+ (rightOutputCount == 0 and nodeItemCounts[3] or 0)
+	)
 end
 
 function onInputNodeChange()

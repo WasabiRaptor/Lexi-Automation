@@ -30,6 +30,7 @@ function refreshOutput(force)
 	local activePowerConsumption = config.getParameter("activePowerConsumption")
 	local newPowered = wr_automation.checkPowered(activePowerConsumption)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
@@ -52,7 +53,8 @@ function refreshOutput(force)
 	inputs = newInputs
 	outputCount = newOutputCount
 	powered = newPowered
-	wr_automation.setOutputs({inputs})
+	local outputs, totalItems = wr_automation.setOutputs({inputs})
+	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
 end
 
 function onInputNodeChange()

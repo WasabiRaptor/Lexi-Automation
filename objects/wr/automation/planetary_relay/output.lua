@@ -47,6 +47,7 @@ function refreshOutput(force)
 	local newInputs = world.getProperty("wr_matterStreamOutput."..channel)
 
 	if (not inputUUID) or (not newInputs) or (channel == "") then
+		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
 		object.setConfigParameter("matterStreamInput", nil)
 		wr_automation.clearAllOutputs()
 		animator.setAnimationState("input", "off")
@@ -65,7 +66,8 @@ function refreshOutput(force)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
-	wr_automation.setOutputs({inputs})
+	local outputs, totalItems = wr_automation.setOutputs({inputs})
+	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
 end
 
 function onInputNodeChange()

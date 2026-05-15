@@ -79,6 +79,7 @@ function wr_automation.setOutputs(products, forceRefresh)
 	local outputs = jarray()
 	local outputNodes = {}
 	local totalItems = 0
+	local nodeItemCounts = {}
 	local fromExporter = config.getParameter("fromExporter")
 	for nodeIndex, nodeProducts in ipairs(products) do
 		-- count the number of entities the output is connected to so it's split evenly between them
@@ -93,10 +94,12 @@ function wr_automation.setOutputs(products, forceRefresh)
 				nodes[eid] = nil -- remove it from the table so we're not sending it a message later
 			end
 		end
+		nodeItemCounts[nodeIndex] = 0
 		local output = jarray()
 		for _, v in ipairs(nodeProducts) do
 			local outputItem = copy(v)
 			totalItems = totalItems + outputItem.count
+			nodeItemCounts[nodeIndex] = nodeItemCounts[nodeIndex] + outputItem.count
 			outputItem.count = outputItem.count / math.max(1, outputCount)
 			-- sterilize these values
 			outputItem.used = nil
@@ -118,7 +121,7 @@ function wr_automation.setOutputs(products, forceRefresh)
 			world.sendEntityMessage(eid, "refreshInputs")
 		end
 	end
-	return outputs, totalItems
+	return outputs, totalItems, nodeItemCounts
 end
 
 function wr_automation.clearAllOutputs()
@@ -202,6 +205,21 @@ function wr_automation.addPowerStorage(powerStorage)
 	object.setConfigParameter("powerStorage", powerStorage)
 	object.setConfigParameter("powerStorageTime", world.time())
 	world.setProperty("wr_powerStorageCapacity", math.max(0,globalPowerStorage + powerChanged))
+end
+function wr_automation.addWasteRadiation(newRadiation)
+	local resetTime = world.getProperty("wr_productionResetTime")
+	local reportedTime = config.getParameter("wasteRadiationTime")
+	local wasteRadiation = config.getParameter("wasteRadiation") or 0
+	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
+		wasteRadiation = 0
+	end
+
+	local changed = (newRadiation or 0) - wasteRadiation
+	if changed == 0 then return end
+	local globalRadiation = world.getProperty("wr_wasteRadiation") or 0
+	object.setConfigParameter("wasteRadiation", newRadiation)
+	object.setConfigParameter("wasteRadiationTime", world.time())
+	world.setProperty("wr_wasteRadiation", math.max(0,globalRadiation + changed))
 end
 
 function wr_automation.setProducts(products)

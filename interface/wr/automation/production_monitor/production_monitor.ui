@@ -27,6 +27,15 @@
 					{"type":"label", "id":"powerScaleLabel","text":"kW","inline":true}
 				]
 			]},
+			{"type":"panel","style":"flat","expandMode":[1,0],"children":[
+				{"mode" : "v"},
+				[
+					{"mode" : "h", "expandMode":[0,0]},
+					{"type":"label","text":"Waste Radiation: ","inline":true},
+					{"type":"label", "id":"radiationLabel", "text":"0","inline":true}
+				]
+			]},
+
 			{"type":"panel","style":"concave","expandMode":[1,1],"children":[
 				{"mode" : "v"},
 				{ "type" : "scrollArea", "id" : "productsScrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
