@@ -198,10 +198,10 @@ function wr_automation.addPowerStorage(powerStorage)
 
 	local powerChanged = (powerStorage or 0) - powerStored
 	if powerChanged == 0 then return end
-	local globalPowerStorage = world.getProperty("wr_powerStorage") or 0
+	local globalPowerStorage = world.getProperty("wr_powerStorageCapacity") or 0
 	object.setConfigParameter("powerStorage", powerStorage)
 	object.setConfigParameter("powerStorageTime", world.time())
-	world.setProperty("wr_powerStorage", math.max(0,globalPowerStorage + powerChanged))
+	world.setProperty("wr_powerStorageCapacity", math.max(0,globalPowerStorage + powerChanged))
 end
 
 function wr_automation.setProducts(products)
