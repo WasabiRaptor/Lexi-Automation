@@ -31,8 +31,8 @@
 				{"mode" : "v"},
 				[
 					{"mode" : "h", "expandMode":[0,0]},
-					{"type":"label","text":"Waste Radiation: ","inline":true},
-					{"type":"label", "id":"radiationLabel", "text":"0","inline":true}
+					{"type":"label","text":"Pollution: ","inline":true},
+					{"type":"label", "id":"pollutionLabel", "text":"0","inline":true}
 				]
 			]},
 

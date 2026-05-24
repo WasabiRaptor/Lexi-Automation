@@ -8,7 +8,7 @@ local products
 function init()
 	local powerProduction = world.getProperty("wr_powerProduction") or 0
 	local powerConsumption = world.getProperty("wr_powerConsumption") or 0
-	local wasteRadiation = world.getProperty("wr_wasteRadiation") or 0
+	local pollution = world.getProperty("wr_pollution") or 0
 	local powerScale, shortLabel, longLabel = kilowattScale(powerProduction)
 
 	if powerProduction > 0 then
@@ -22,7 +22,7 @@ function init()
 	_ENV.powerConsumptionLabel:setText(tostring(clipAtThousandth(powerConsumption * powerScale)))
 	_ENV.powerScaleLabel:setText(shortLabel)
 
-	_ENV.radiationLabel:setText(tostring(clipAtThousandth(wasteRadiation)))
+	_ENV.pollutionLabel:setText(tostring(clipAtThousandth(pollution)))
 	_ENV.resetButton:setVisible(player.isAdmin())
 
 	products = {}
@@ -64,7 +64,7 @@ function _ENV.resetButton:onClick()
 		world.setProperty("wr_product."..productKey, nil)
 		world.setProperty("wr_productProduced."..productKey, nil)
 	end
-	world.setProperty("wr_wasteRadiation",0)
+	world.setProperty("wr_pollution",0)
 	world.setProperty("wr_powerProduction",0)
 	world.setProperty("wr_powerConsumption",0)
 	world.setProperty("wr_powerStorage",0)

@@ -74,7 +74,7 @@ function refreshOutput(force)
 	if (not powered) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) or (channel == "") then
 		powered = newPowered
 		inputs = nil
-		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
+		wr_automation.addPollution(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		object.setConfigParameter("matterStreamInput", nil)
 		animator.setAnimationState("input", "off")

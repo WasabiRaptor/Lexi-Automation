@@ -47,7 +47,7 @@ end
 
 function refreshOutput(force)
 	if (not recipe and not passthrough) or (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
+		wr_automation.addPollution(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
@@ -78,7 +78,7 @@ function refreshOutput(force)
 		local outputs, totalItems = wr_automation.setOutputs({inputs})
 		object.setConfigParameter("status", "noRecipe")
 		wr_automation.playAnimations("off")
-		wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("idleWasteRadiation") or 0))
+		wr_automation.addPollution((outputCount == 0 and totalItems or 0) + (config.getParameter("idlePollution") or 0))
 		return
 	end
 	wr_automation.usePower(activePowerConsumption)
@@ -119,7 +119,7 @@ function refreshOutput(force)
 			end
 		end
 	end
-	local wasteRadiation = 0
+	local pollution = 0
 	if productionRate > minimumProductionRate then
 		if passthrough then
 			products[1] = copy(inputs)
@@ -136,13 +136,13 @@ function refreshOutput(force)
 				local used = false
 				for _, recipeItem in ipairs(recipe.input) do
 					if root.itemDescriptorsMatch(recipeItem, input, recipe.matchInputParameters) then
-						wasteRadiation = wasteRadiation + input.count - (recipeItem.count * productionRate)
+						pollution = pollution + input.count - (recipeItem.count * productionRate)
 						used = true
 						break
 					end
 				end
 				if not used then
-					wasteRadiation = wasteRadiation + input.count
+					pollution = pollution + input.count
 				end
 			end
 		end
@@ -174,7 +174,7 @@ function refreshOutput(force)
 	elseif passthrough then
 		products[1] = copy(inputs)
 	else
-		wasteRadiation = totalItems
+		pollution = totalItems
 		wr_automation.producePower(0)
 		wr_automation.setProducts(nil)
 		wr_automation.clearAllOutputs()
@@ -183,7 +183,7 @@ function refreshOutput(force)
 		return
 	end
 	local outputs, totalOutputItems = wr_automation.setOutputs(products)
-	wr_automation.addWasteRadiation((outputCount == 0 and totalOutputItems or wasteRadiation) + (config.getParameter("activeWasteRadiation") or 0))
+	wr_automation.addPollution((outputCount == 0 and totalOutputItems or pollution) + (config.getParameter("activePollution") or 0))
 end
 function onInputNodeChange(...)
 	old.onInputNodeChange(...)

@@ -49,7 +49,7 @@ function update(dt)
 		object.setOutputNodeLevel(0, false)
 		animator.setAnimationState("input", "off")
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
-		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
+		wr_automation.addPollution(config.getParameter("idleWasteRadiaton"))
 		return
 	end
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
@@ -91,7 +91,7 @@ function update(dt)
 			wasFull = true
 			script.setUpdateDelta(math.max(3600, delta))
 			wr_automation.usePower(config.getParameter("idlePowerConsumption"))
-			wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
+			wr_automation.addPollution(config.getParameter("idleWasteRadiaton"))
 		elseif insertedAny and wasFull then
 			wasFull = false
 			wr_automation.usePower(config.getParameter("activePowerConsumption"))

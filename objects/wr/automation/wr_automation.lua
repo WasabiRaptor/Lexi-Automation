@@ -206,20 +206,20 @@ function wr_automation.addPowerStorage(powerStorage)
 	object.setConfigParameter("powerStorageTime", world.time())
 	world.setProperty("wr_powerStorageCapacity", math.max(0,globalPowerStorage + powerChanged))
 end
-function wr_automation.addWasteRadiation(newRadiation)
+function wr_automation.addPollution(newPollution)
 	local resetTime = world.getProperty("wr_productionResetTime")
-	local reportedTime = config.getParameter("wasteRadiationTime")
-	local wasteRadiation = config.getParameter("wasteRadiation") or 0
+	local reportedTime = config.getParameter("pollutionTime")
+	local pollution = config.getParameter("pollution") or 0
 	if (not reportedTime) or (resetTime and (resetTime > reportedTime)) then
-		wasteRadiation = 0
+		pollution = 0
 	end
 
-	local changed = (newRadiation or 0) - wasteRadiation
+	local changed = (newPollution or 0) - pollution
 	if changed == 0 then return end
-	local globalRadiation = world.getProperty("wr_wasteRadiation") or 0
-	object.setConfigParameter("wasteRadiation", newRadiation)
-	object.setConfigParameter("wasteRadiationTime", world.time())
-	world.setProperty("wr_wasteRadiation", math.max(0,globalRadiation + changed))
+	local globalPollution = world.getProperty("wr_pollution") or 0
+	object.setConfigParameter("pollution", newPollution)
+	object.setConfigParameter("pollutionTime", world.time())
+	world.setProperty("wr_pollution", math.max(0,globalPollution + changed))
 end
 
 function wr_automation.setProducts(products)

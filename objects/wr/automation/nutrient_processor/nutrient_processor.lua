@@ -25,7 +25,7 @@ end
 
 function refreshOutput(force)
 	if (not object.isInputNodeConnected(0)) or (not object.getInputNodeLevel(0)) then
-		wr_automation.addWasteRadiation(config.getParameter("idleWasteRadiaton"))
+		wr_automation.addPollution(config.getParameter("idleWasteRadiaton"))
 		wr_automation.usePower(config.getParameter("idlePowerConsumption"))
 		wr_automation.setProducts(nil)
 		object.setConfigParameter("matterStreamInput", nil)
@@ -82,7 +82,7 @@ function refreshOutput(force)
 	}
 	wr_automation.setProducts({{product}})
 	local outputs, totalItems = wr_automation.setOutputs({{product}})
-	wr_automation.addWasteRadiation((outputCount == 0 and totalItems or 0) + (config.getParameter("activeWasteRadiation") or 0))
+	wr_automation.addPollution((outputCount == 0 and totalItems or 0) + (config.getParameter("activePollution") or 0))
 end
 
 
