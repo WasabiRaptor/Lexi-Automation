@@ -41,6 +41,13 @@
 
 
 			]}]}]},
+			{"id":"pollution", "title":"Pollution", "icon":"/items/wr/automation/manual/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
+				{"mode":"v"},
+				{"type":"label", "text":"It very bad."},
+				{"type": "spacer", "size":30},
+				{"type":"label", "text":"Try to avoid sending materials into machines that don't use them to reduce pollution."},
+				{"type":"label", "text":"This mechanic isn't finished yet and thus the negative side effects from producing a lot of pollution have yet to be implemented."}
+			]}]}]},
 			{"id":"relay", "title":"Relay", "icon":"/objects/wr/automation/relay/icon.png","contents":[{"type":"panel","style":"convex","expandMode":[1,2],"children":[{ "type" : "scrollArea", "expandMode" : [2,2], "scrollDirections" : [0, 1], "children" : [
 				{"mode":"v"},
 				{"type":"image", "file":"/objects/wr/automation/relay/animationParts/back.png:default"},
