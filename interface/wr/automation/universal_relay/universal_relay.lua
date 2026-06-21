@@ -39,7 +39,7 @@ function update()
 end
 
 function checkPairPlanetName()
-	local planetName = celestial.planetName(celestialCoords)
+	local planetName = celestial.planetName(pairedWithPlanet)
 	if not planetName then return end
 	_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..planetName..(
 		checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
