@@ -31,7 +31,24 @@ function init()
 	end
 end
 
+local pairedWithPlanet
+function update()
+	if pairedWithPlanet then
+		checkPairPlanetName()
+	end
+end
+
+function checkPairPlanetName()
+	local planetName = celestial.planetName(celestialCoords)
+	if not planetName then return end
+	_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..planetName..(
+		checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
+	))
+	pairedWithPlanet = nil
+end
+
 function _ENV.channelTextBox:onTextChanged()
+	pairedWithPlanet = nil
 	if (not _ENV.metagui.inputData.supported) or not world.terrestrial() then
 		return
 	end
@@ -62,9 +79,10 @@ function _ENV.channelTextBox:onTextChanged()
 			if serverChannels[serverUuid][self.text][swapper[channelProperty]] then
 				local celestialCoords, isCelestial = serverChannels[serverUuid][self.text][swapper[channelProperty]].worldId:gsub("^CelestialWorld%:", "")
 				if isCelestial > 0 then
-					_ENV.channelStatusLabel:setText("^#00FF00;Paired With:^reset; "..celestial.planetName(celestialCoords)..(
+					_ENV.channelStatusLabel:setText("^#00FF00;Paired"(
 						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
 					))
+					pairedWithPlanet = celestialCoords
 				else
 					_ENV.channelStatusLabel:setText("Paired"..(
 						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
