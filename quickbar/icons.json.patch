@@ -1,0 +1,10 @@
+[
+	{ "op" : "add", "path" : "/items/wr_automation:production_monitor",
+		"value" : {
+			"label" : "Production Monitor",
+			"weight" : 0,
+			"icon" : "/items/wr/automation/handheld_production_monitor/icon.png",
+			"action" : [ "ui", "wr_automation:production_monitor" ]
+		}
+	}
+]
