@@ -8,6 +8,7 @@ wr_automation = {}
 local stateAnimations
 local isOffset
 local matterStreamOutput
+local needsPower
 function wr_automation.init()
 	stateAnimations = config.getParameter("stateAnimations") or {}
 	matterStreamOutput = config.getParameter("matterStreamOutput")
@@ -17,6 +18,7 @@ function wr_automation.init()
 	wr_automation.setProducts(config.getParameter("products"))
 	wr_automation.usePower(config.getParameter("powerConsumption"))
 	wr_automation.producePower(config.getParameter("powerProduction"))
+	needsPower = root.assetJson("/wr_automation.config:powerConsumptionEnabled")
 end
 function wr_automation.countInputs(nodeIndex, recipe)
 	local recipe = recipe or {matchInputParameters = true, input = {}}
@@ -152,6 +154,7 @@ function wr_automation.playAnimations(state)
 end
 
 function wr_automation.checkPowered(newPowerConsumption)
+	if not needsPower then return true end
 	local powerConsumption = config.getParameter("powerConsumption") or 0
 	local powerChanged = (newPowerConsumption or 0) - powerConsumption
 	return world.getProperty("wr_powerStorageAvailable")
