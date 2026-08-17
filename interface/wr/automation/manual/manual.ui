@@ -34,7 +34,7 @@
 				],
 				{"type":"label", "text":"With the proper module provided by the Open Star Bureau (OSB) installed to your wiring HUD client, compatible wiring components will be displayed with the above indicators."},
 				{"type": "spacer", "size":3},
-				{"type":"label", "text":"Matter Logistics components do not have to be manually hooked up to electrical power, they will automatically be connected to a planetary power grid to consume or produce power."},
+				{"type":"label", "text":"Matter Logistics components do not have to be manually hooked up to electrical power, they will automatically be connected to a planetary power grid to consume or produce power.\n^yellow;(This feature is incomplete, machines will still consume power but do not care if there isn't enough production currently)"},
 				{"type": "spacer", "size":3},
 				{"type":"label", "text":"Reported production of materials as well as the state of the network's power can be conveniently viewed via a Handheld Production Monitor."},
 				{"type": "spacer", "size":3},
