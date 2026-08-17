@@ -53,7 +53,7 @@ function update(dt)
 		return
 	end
 	if (not outputEntity) or (not world.entityExists(outputEntity)) then
-		exportEntity = world.objectAt(targetPosition)
+		outputEntity = world.objectAt(targetPosition)
 	end
 	if (not outputEntity) or (not wr_automation.checkPowered(activePowerConsumption)) then
 		object.setOutputNodeLevel(0, false)
