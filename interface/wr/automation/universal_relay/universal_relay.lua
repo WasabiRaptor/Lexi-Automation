@@ -79,7 +79,7 @@ function _ENV.channelTextBox:onTextChanged()
 			if serverChannels[serverUuid][self.text][swapper[channelProperty]] then
 				local celestialCoords, isCelestial = serverChannels[serverUuid][self.text][swapper[channelProperty]].worldId:gsub("^CelestialWorld%:", "")
 				if isCelestial > 0 then
-					_ENV.channelStatusLabel:setText("^#00FF00;Paired"(
+					_ENV.channelStatusLabel:setText("^#00FF00;Paired"..(
 						checkPowered() and "" or "\n^#FF0000;Not enough power available to transport matter."
 					))
 					pairedWithPlanet = celestialCoords
