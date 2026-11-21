@@ -23,7 +23,7 @@ function init()
 		storage.fuel = math.max(0, storage.fuel - timePassed)
 		for i, product in ipairs(products[1]) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (product.count * timePassed)
-			if storage.leftover[i] >= 1 then
+			if storage.leftovers[i] >= 1 then
 				hasLeftovers = true
 			end
 		end
