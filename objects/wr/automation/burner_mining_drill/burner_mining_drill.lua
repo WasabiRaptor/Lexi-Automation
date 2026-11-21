@@ -1,8 +1,6 @@
 require("/interface/games/util.lua")
 require("/objects/wr/automation/wr_automation.lua")
 local products
-local initTick = false
-local wasFull
 local active
 
 function init()
@@ -17,18 +15,25 @@ function init()
 
 	storage.leftovers = storage.leftovers or {}
 	storage.fuel = storage.fuel or 0
-
+	local hasLeftovers = false
 	if products and products[1] and storage.uninitTime and (not (world.type() == "unknown")) then
-		if storage.fuel > 0 then
-			wr_automation.playAnimations("on")
-			initTick = true
-		end
 		local currentTime = world.time()
 		local timePassed = math.min(math.max(0, currentTime - storage.uninitTime), storage.fuel)
 		storage.uninitTime = currentTime
 		storage.fuel = math.max(0, storage.fuel - timePassed)
 		for i, product in ipairs(products[1]) do
 			storage.leftovers[i] = (storage.leftovers[i] or 0) + (product.count * timePassed)
+			if storage.leftover[i] >= 1 then
+				hasLeftovers = true
+			end
+		end
+	end
+	if storage.fuel > 0 then
+		wr_automation.playAnimations("on")
+	else
+		wr_automation.playAnimations("off")
+		if not hasLeftovers then
+			script.setUpdateDelta(0)
 		end
 	end
 end
@@ -38,25 +43,20 @@ end
 
 function update(dt)
 	if not world.entityExists(entity.id()) then return end
-	if (not products) or (not products[1]) or ((storage.fuel <= 0) and not initTick) then
-		if products then
-			object.setConfigParameter("status", "noFuel")
-		else
-			object.setConfigParameter("status", "invalid")
-		end
+	if (not products) or (not products[1]) then
+		object.setConfigParameter("status", "invalid")
 		script.setUpdateDelta(0)
 		object.setOutputNodeLevel(0, false)
 		wr_automation.playAnimations("off")
 		active = false
 		return
 	end
-	initTick = false
 
 	local insertedAny = false
 	local attemptedInsert = false
 	for i, product in ipairs(products[1]) do
 		local output = copy(product)
-		local total = (product.count * dt) + (storage.leftovers[i] or 0)
+		local total = (product.count * ((storage.fuel > 0) and dt or 0)) + (storage.leftovers[i] or 0)
 		output.count = math.floor(total)
 		storage.leftovers[i] = total - output.count
 		if output.count > 0 then
@@ -70,20 +70,20 @@ function update(dt)
 		storage.fuel = math.max(0, storage.fuel - ((insertedAny and dt) or 0))
 		-- set the wire node output if the inserter inserted any items on this tick
 		object.setOutputNodeLevel(0, insertedAny)
-		if (not insertedAny) and (not wasFull) then
-			object.setConfigParameter("status", "full")
-			wasFull = true
-			script.setUpdateDelta(math.max(3600, config.getParameter("scriptDelta") or 60))
-		elseif insertedAny and wasFull then
-			wasFull = false
-			script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
-		elseif insertedAny then
+		if insertedAny then
 			object.setConfigParameter("status", "active")
 			active = true
+		else
+			object.setConfigParameter("status", "full")
+			script.setUpdateDelta(0)
 		end
-		if (storage.fuel <= 0) then
-			object.setConfigParameter("status", "noFuel")
-		end
+	end
+	if (storage.fuel <= 0) then
+		object.setConfigParameter("status", "noFuel")
+		script.setUpdateDelta(0)
+		object.setOutputNodeLevel(0, false)
+		wr_automation.playAnimations("off")
+		active = false
 	end
 end
 
@@ -92,7 +92,10 @@ function setProducts(newOutput)
 	if compare(products, newOutput) then return end
 	products = newOutput
 	object.setConfigParameter("products", products)
-	if (not products) or (not products[1]) then return end
+	if (not products) or (not products[1]) then
+		object.setConfigParameter("scriptDelta", 0)
+		return
+	end
 	-- find the fastest product to use it as our tick rate and reset leftover amounts from previous ticks
 	best = 0
 	for i, product in ipairs(products[1]) do
@@ -122,4 +125,8 @@ function addFuel(fuel)
 		script.setUpdateDelta(config.getParameter("scriptDelta") or 60)
 	end
 	return consume, storage.fuel
+end
+
+function containerCallback()
+	script.setUpdateDelta(config.getParameter("scriptDelta") or 0)
 end
