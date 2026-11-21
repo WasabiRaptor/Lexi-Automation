@@ -20,7 +20,7 @@ function init()
 		refreshOutput()
 	end)
 	activePowerConsumption = config.getParameter("activePowerConsumption")
-	activePollution = config.getParameter("efficencyPollution") + config.getParameter("activePollution")
+	activePollution = (config.getParameter("efficencyPollution") or 0) + (config.getParameter("activePollution") or 0)
 	storage.leftovers = storage.leftovers or {}
 
 	if not outputs then
