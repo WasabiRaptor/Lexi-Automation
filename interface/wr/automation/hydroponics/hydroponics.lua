@@ -1,85 +1,26 @@
 require("/scripts/util.lua")
 require("/interface/games/util.lua")
-require("/interface/wr/automation/displayProducts.lua")
 function uninit()
 end
+_ENV.productsScrollArea.noRecipeMessage = "Insert a seed."
+_ENV.productsScrollArea.noProductsMessage = "This seed does not produce any resources."
 
-local recipeRPC
-local inputNodesConfig
-function init()
-	outputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "outputNodesConfig")
-	inputNodesConfig = world.getObjectParameter(pane.sourceEntity(), "inputNodesConfig")
-	_ENV.inputIconWidget:setFile(inputNodesConfig[1].icon)
-end
 local initial = true
 function update()
 	if initial and _ENV.inputItemSlot:item() then
 		initial = false
 		refreshDisplayedProducts()
 	end
-	if recipeRPC and recipeRPC:finished() then
-		recipeRPC = nil
-		refreshDisplayedProducts()
-	end
 end
 
-function refreshDisplayedProducts()
-	local item = _ENV.inputItemSlot:item()
-	if item then
-		local itemConfig = root.itemConfig(item)
-		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
-		_ENV.inputItemLabel:setText(merged.shortdescription or item.name or item.item or "")
-	else
-		_ENV.inputItemLabel:setText("")
-	end
-	local products
-	local recipe = world.getObjectParameter(pane.sourceEntity(), "recipe")
-	local productionRate = 0
-	local maxProductionRate = 0
-	if recipe then
-		local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
-		local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
-		local duration = math.max(
-			0.1, -- to ensure all recipes always have a craft time so things aren't produced infinitely fast
-			(world.getObjectParameter(pane.sourceEntity(), "minimumDuration") or 0),
-			(recipe.duration or root.assetJson("/items/defaultParameters.config:defaultCraftDuration") or 0)
-		)
-		maxProductionRate = craftingSpeed / duration
-		local maxAmount = recipe.input[1].count * maxProductionRate
-		local timeMultiplier, timeLabel = timeScale(maxAmount)
+function _ENV.inputItemSlot:onItemModified()
+    initial = false
+	setProducts()
+end
 
-		if inputs and inputs[1] and ((inputs[1].item or inputs[1].name) == "liquidwater") then
-			productionRate = math.min(maxProductionRate, (inputs[1].count / maxAmount) * maxProductionRate)
-			_ENV.inputAmountLabel.color = (inputs[1].count > maxAmount) and "00FFFF" or "00FF00"
-			_ENV.inputAmountLabel:setText(clipAtThousandth(inputs[1].count * timeMultiplier))
-		else
-			_ENV.inputAmountLabel.color = "FF0000"
-			_ENV.inputAmountLabel:setText("0")
-		end
-		_ENV.inputMaxAmountLabel:setText(clipAtThousandth((maxAmount * timeMultiplier)))
-		_ENV.inputTimeScaleLabel:setText(timeLabel)
-
-		products = jarray()
-		products[1] = copy(recipe.output)
-		for _, product in ipairs(products[1]) do
-			product.count = product.count * productionRate
-		end
-	else
-		_ENV.inputAmountLabel.color = "FF0000"
-		_ENV.inputAmountLabel:setText("0")
-		_ENV.inputMaxAmountLabel:setText("0")
-	end
-
-	displayProducts(products, {
-		type = "label",
-		text = "Insert a harvestable plant.",
-	}, {
-		{
-			type = "label",
-			color = "FF0000",
-			text = "This plant does not produce any resources.",
-		}
-	})
+function _ENV.inputItemSlot:acceptsItem(item)
+	local itemConfig = root.itemConfig(item)
+	return itemConfig.config.objectType == "farmable"
 end
 
 local treasureRolls = 100
@@ -97,11 +38,8 @@ function setProducts()
 
 	local seed = sb.staticRandomI32((item.name or item.item)) + sb.staticRandomI32(sb.printJson(position))
 	local itemCount = 0
-	local products = jarray()
+	productsPossible = jarray()
 	local rand = sb.makeRandomSource(seed)
-
-	local duration = 0
-
 
 	local function addProduct(nodeProducts, item)
 		local found = false
@@ -122,17 +60,54 @@ function setProducts()
 		for i = 1, treasureRolls do
 			for _, treasure in ipairs(root.createTreasure(pool, world.threatLevel(), rand:randu32())) do
 				treasure.count = treasure.count / treasureRolls
-				addProduct(products, treasure)
+				addProduct(productsPossible, treasure)
 			end
 		end
 	end
+	for i = 1, #merged.stages do
+		for j = 1, i do
+			local stage = merged.stages[j]
+			if stage.harvestPool and j == i then
+				addTreasurePool(stage.harvestPool)
+			end
+		end
+	end
+
+	for _, v in ipairs(productsPossible) do
+		itemCount = itemCount + v.count
+	end
+
+	table.sort(productsPossible, function(a, b)
+		return a.count > b.count
+    end)
+
+	for i, v in ipairs(productsPossible) do
+		productsPossible[i].enabled = true
+	end
+
+	world.sendEntityMessage(pane.sourceEntity(), "setControlledProducts", productsPossible)
+	setRecipe()
+	world.sendEntityMessage(pane.sourceEntity(), "setPlantImage", (item.item or item.name))
+end
+
+function setRecipe()
+	local item = _ENV.inputItemSlot:item()
+	if not item then return end
+	local products = jarray()
+	local recipeCost = 0
+    local itemCount = 0
+	local itemConfig = root.itemConfig(item)
+	local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+	local position = world.entityPosition(pane.sourceEntity())
+	local seed = sb.staticRandomI32((item.name or item.item)) + sb.staticRandomI32(sb.printJson(position))
+	local rand = sb.makeRandomSource(seed)
+	local duration = 0
 	for i = 1, #merged.stages do
 		-- we're getting the best duration for harvesting at each stage
 		local harvestDuration = 0
 		for j = 1, i do
 			local stage = merged.stages[j]
 			if stage.harvestPool and j == i then
-				addTreasurePool(stage.harvestPool)
 				if stage.resetToStage then
 					harvestDuration = 0
 					for j = stage.resetToStage + 1, i - 1 do
@@ -148,35 +123,28 @@ function setProducts()
 			end
 		end
 	end
-	duration = math.floor(duration)
 
+
+	for i, v in ipairs(productsPossible) do
+		if productsPossible[i].enabled then
+			table.insert(products,v)
+		end
+	end
 	for _, v in ipairs(products) do
+		local itemConfig = root.itemConfig(v)
+		local merged = sb.jsonMerge(itemConfig.config, itemConfig.parameters)
+		recipeCost = recipeCost + ((merged.price or 0) * v.count)
 		itemCount = itemCount + v.count
 	end
-
-	table.sort(products, function(a, b)
-		return a.count > b.count
-	end)
 
 	local craftingSpeed = world.getObjectParameter(pane.sourceEntity(), "craftingSpeed") or 1
 	local recipe = {
 		input = {
-			{ item = "liquidwater", count = (itemCount + #merged.stages) * (duration / craftingSpeed) }
+			{ item = "liquidwater", count = #merged.stages * (duration / craftingSpeed) + (recipeCost * costPriceMultiplier) + (itemCount * costAmountMultiplier) }
 		},
-		output = products,
+		output = productsPossible,
 		duration = duration
 	}
 
 	recipeRPC = world.sendEntityMessage(pane.sourceEntity(), "setRecipe", recipe)
-	world.sendEntityMessage(pane.sourceEntity(), "setPlantImage", (item.item or item.name))
-end
-
-function _ENV.inputItemSlot:onItemModified()
-	initial = false
-	setProducts()
-end
-
-function _ENV.inputItemSlot:acceptsItem(item)
-	local itemConfig = root.itemConfig(item)
-	return itemConfig.config.objectType == "farmable"
 end

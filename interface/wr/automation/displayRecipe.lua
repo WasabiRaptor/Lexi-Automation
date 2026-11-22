@@ -1,7 +1,10 @@
 require("/interface/wr/automation/labels.lua")
 function displayRecipe(recipe)
-	if not recipe then return end
+	displayRecipeOutputs(recipe, displayRecipeInputs(recipe))
+end
 
+function displayRecipeInputs(recipe)
+	if not recipe then return end
 	local inputs = (world.getObjectParameter(pane.sourceEntity(), "matterStreamInput") or {})[1] or {}
 	for _, newInput in ipairs(inputs) do
 		newInput.used = false
@@ -134,7 +137,11 @@ function displayRecipe(recipe)
 	elseif productionRate < maxProductionRate then
 		color = "FFFF00"
 	end
+	return productionRate, maxProductionRate
+end
 
+function displayRecipeOutputs(recipe, productionRate, maxProductionRate)
+	if not (recipe or productionRate or maxProductionRate) then return end
 	_ENV.outputPanel:clearChildren()
 	local powerPanel
 	if recipe.producePower then
@@ -229,5 +236,4 @@ function displayRecipe(recipe)
 			powerPanel
 		}})
 	end
-
 end

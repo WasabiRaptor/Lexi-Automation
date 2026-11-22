@@ -13,7 +13,7 @@
   "objectType" : "container",
 
   "scriptDelta":0,
-  "scripts" : ["hydroponics.lua","/objects/wr/automation/recipeObject.lua"],
+  "scripts" : ["hydroponics.lua", "/objects/wr/automation/pickProducts.lua","/objects/wr/automation/recipeObject.lua"],
   "inventoryIcon" : "icon.png",
   "orientations" : [
     {
@@ -137,6 +137,10 @@
   "craftingSpeed" : 24, // the amount of times it crafts a recipe per cycle
   "passthrough" : true, // passes unused ingrredients through it's output
   "activePowerConsumption": 15,
+
+  "productPrecision" : 0.25, // percentage of drops that can be excluded
+  "costAmountMultiplier" : 10, // multiplier for nutrient cost per count of item produced
+  "costPriceMultiplier" : 1, // multiplier for nutrient cost per price of items produced
 
   "inputNodes" : [ [0, 0] ],
   "inputNodesConfig" : [{
