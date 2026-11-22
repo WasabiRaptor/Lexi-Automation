@@ -66,7 +66,7 @@ function refreshOutput(force)
 	object.setConfigParameter("matterStreamInput", {newInputs})
 	inputs = newInputs
 	outputCount = newOutputCount
-	local outputs, totalItems = wr_automation.setOutputs({inputs})
+	local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({inputs})
 	wr_automation.addPollution((outputCount == 0 and totalItems or 0) + (config.getParameter("activePollution") or 0))
 end
 

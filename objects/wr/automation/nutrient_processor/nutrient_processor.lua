@@ -81,7 +81,7 @@ function refreshOutput(force)
 		count = nutrientValue
 	}
 	wr_automation.setProducts({{product}})
-	local outputs, totalItems = wr_automation.setOutputs({{product}})
+	local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({{product}})
 	wr_automation.addPollution((outputCount == 0 and totalItems or 0) + (config.getParameter("activePollution") or 0))
 end
 

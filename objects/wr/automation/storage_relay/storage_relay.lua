@@ -163,7 +163,7 @@ function refreshOutput(force)
 			table.insert(streamItems, inputCopy)
 		end
 	end
-	local outputs, totalItems = wr_automation.setOutputs({streamItems})
+	local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({streamItems})
 	wr_automation.addPollution((outputCount == 0 and totalItems or 0) + (config.getParameter("activePollution") or 0))
 	if #insertItems == 0 then
 		wasFull = true

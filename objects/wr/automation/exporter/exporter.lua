@@ -93,7 +93,7 @@ function update(dt)
 		end
 		if not isOutputting then
 			isOutputting = true
-			local outputs, totalItems = wr_automation.setOutputs({outputs})
+			local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({outputs})
 			wr_automation.addPollution(activePollution)
 			wr_automation.usePower(activePowerConsumption)
 		end
@@ -130,7 +130,7 @@ function refreshOutput()
 		if object.getInputNodeLevel(0) then
 			if isOutputting then
 				wr_automation.usePower(activePowerConsumption)
-				local outputs, totalItems = wr_automation.setOutputs({ outputs })
+				local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({ outputs })
 				local efficencyPollution = math.max(0,(totalItems / efficency) - totalItems)
 				object.setConfigParameter("efficencyPollution", efficencyPollution)
 				activePollution = efficencyPollution + (config.getParameter("activePollution") or 0)
@@ -151,7 +151,7 @@ function refreshOutput()
 	else
 		if isOutputting then
 			wr_automation.usePower(activePowerConsumption)
-			local outputs, totalItems = wr_automation.setOutputs({ outputs })
+			local outputs, totalItems, nodeItemCounts = wr_automation.setOutputs({ outputs })
 			local efficencyPollution = math.max(0,(totalItems / efficency) - totalItems)
 			object.setConfigParameter("efficencyPollution", efficencyPollution)
 			activePollution = efficencyPollution + (config.getParameter("activePollution") or 0)
