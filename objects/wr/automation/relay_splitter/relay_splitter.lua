@@ -24,7 +24,7 @@ function init()
 		for i, newItem in ipairs(rightTargetOutput) do
 			local isNew = true
 			for j, input in ipairs(inputs) do
-				if root.itemDescriptorsMatch(input, newItem, recipe.matchInputParameters) then isNew = false break end
+				if root.itemDescriptorsMatch(input, newItem, true) then isNew = false break end
 			end
 			if isNew then table.insert(anyTargetOutput, newItem) end
 		end

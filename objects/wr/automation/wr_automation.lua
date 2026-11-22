@@ -114,7 +114,7 @@ function wr_automation.setOutputs(products, forceRefresh)
 		outputs[nodeIndex] = output
 		outputNodes[nodeIndex] = nodes
 	end
-	if (not forceRefresh) and compare(matterStreamOutput, outputs) then return outputs, totalItems end
+	if (not forceRefresh) and compare(matterStreamOutput, outputs) then return outputs, totalItems, nodeItemCounts end
 	matterStreamOutput = outputs
 	object.setConfigParameter("matterStreamOutput", outputs)
 	for nodeIndex, nodes in ipairs(outputNodes) do
